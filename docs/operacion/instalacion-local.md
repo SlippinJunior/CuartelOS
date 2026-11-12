@@ -80,11 +80,29 @@ asistencias, 246 movimientos. Revisa `nucleo.staging_importacion`.
 ## Problemas comunes
 | Síntoma | Causa probable | Solución |
 |---|---|---|
+| `failed to connect to the docker API at unix:///var/run/docker.sock` | El daemon de Docker no está corriendo | `sudo systemctl enable --now docker` y luego `docker info` |
+| `permission denied ... /var/run/docker.sock` | El usuario no está en el grupo `docker` | `sudo usermod -aG docker $USER` y vuelve a iniciar sesión |
 | "Falta configurar VITE_SUPABASE_URL" | No existe `app/.env` | Copia `.env.example` |
 | Login falla con 400 | Seed no aplicado | `pnpm db:reset` |
 | Migración falla por pg_cron | Entorno sin extensión | La migración lo omite |
 | Emisión falla | Edge Function no servida | `supabase functions serve` |
 | PDF sin verificar | Bucket no creado | Revisa migración de storage |
+| `[inbucket] is deprecated` | Configuración antigua | Ya se usa `[local_smtp]` en `supabase/config.toml` |
+
+### Docker en Arch / CachyOS
+Docker suele venir instalado pero con el servicio desactivado. La primera vez:
+```bash
+sudo systemctl enable --now docker
+docker info
+```
+Si `docker info` funciona, `pnpm supabase start` ya puede levantar los
+contenedores. El usuario debe pertenecer al grupo `docker` (en esta máquina ya
+pertenece). Para comprobar todo antes:
+```bash
+bash scripts/dev/verificar-entorno.sh
+```
+El mensaje `NotFound: FileSystem.readFile (~/.supabase/profile)` que aparece con
+`--debug` es del perfil de telemetría del CLI y no impide el arranque.
 
 ## Relacionado con
 `docs/operacion/supabase-nube.md`, `README.md`.

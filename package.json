@@ -18,7 +18,8 @@
     "db:lint": "supabase db lint",
     "db:test": "supabase test db",
     "seed:ficticio": "python3 scripts/generar-seed-ficticio/generar.py > supabase/seed.sql",
-    "importar:legado": "bash scripts/importar-legado/importar.sh"
+    "importar:legado": "bash scripts/importar-legado/importar.sh",
+    "doctor": "bash scripts/dev/verificar-entorno.sh"
   },
   "devDependencies": {
     "supabase": "^2.39.2",
