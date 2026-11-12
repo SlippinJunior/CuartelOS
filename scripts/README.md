@@ -15,7 +15,7 @@ preparar datos de desarrollo. No contienen datos reales.
 ```bash
 pnpm seed:ficticio          # regenera supabase/seed.sql
 pnpm importar:legado        # requiere data/privado/legado/seed_original.sql
-pnpm doctor                 # verifica Docker y el entorno local
+pnpm entorno                 # verifica Docker y el entorno local
 ```
 
 ## Convenciones
