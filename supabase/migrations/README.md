@@ -25,6 +25,9 @@ se conservan intactas en `docs/legado/sql/`.
 | 001500 | `…_storage.sql` | Buckets privados y políticas |
 | 001600 | `…_cron.sql` | Alerta nocturna con pg_cron |
 | 001700 | `…_grants_servicio.sql` | USAGE y privilegios del rol `service_role` para Edge Functions |
+| 001800 | `…_tesoreria_cuotas.sql` | Pago de cuotas, anulación y grilla `fn_cuotas_estado` |
+| 001900 | `…_actas_ordenes.sql` | Tipos de documento ACTA y ORDEN_CAPITANIA; seguimiento de correo |
+| 002000 | `…_documentos_publicos.sql` | Lectura de órdenes y actas aprobadas por parte de la compañía |
 
 ## Cómo se usa
 ```bash

@@ -523,7 +523,7 @@ categorias = [
 for cid, codigo, nombre, tipo in categorias:
     w(
         "insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values ("
-        f"{cid}, {q(codigo)}, {q(nombre)}, {q(tipo)});"
+        f"{cid}, {q(codigo)}, {q(nombre)}, {q(tipo)}) on conflict (id) do nothing;"
     )
 w("select setval(pg_get_serial_sequence('tesoreria.categoria','id'), 10);")
 w()

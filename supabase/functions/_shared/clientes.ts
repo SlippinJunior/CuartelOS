@@ -176,3 +176,56 @@ export function rolPermitido(perfil: unknown, roles: string[]): boolean {
   const p = perfil as { roles?: string[] } | null;
   return Boolean(p?.roles?.some((r) => roles.includes(r) || r === "admin"));
 }
+
+/** INSERT de PostgREST en un esquema expuesto. Devuelve la fila creada. */
+export async function insertar(
+  esquema: string,
+  tabla: string,
+  datos: Record<string, unknown>,
+  opciones: { authorization: string; servicio?: boolean },
+): Promise<{ data: any; error: string | null }> {
+  const authorization = opciones.servicio ? `Bearer ${SERVICIO}` : opciones.authorization;
+  const resp = await fetch(`${URL_BASE}/rest/v1/${tabla}`, {
+    method: "POST",
+    headers: cabeceras({
+      authorization,
+      key: opciones.servicio ? SERVICIO : ANON,
+      esquema,
+      contentType: "application/json",
+      extra: { Prefer: "return=representation" },
+    }),
+    body: JSON.stringify(datos),
+  });
+  const data = await leer(resp);
+  if (!resp.ok) {
+    return { data: null, error: data?.message ?? `Error ${resp.status} al insertar en ${tabla}` };
+  }
+  return { data, error: null };
+}
+
+/** UPDATE de PostgREST con un filtro ya armado (por ejemplo `id=eq.3`). */
+export async function actualizar(
+  esquema: string,
+  tabla: string,
+  filtro: string,
+  datos: Record<string, unknown>,
+  opciones: { authorization: string; servicio?: boolean },
+): Promise<{ error: string | null }> {
+  const authorization = opciones.servicio ? `Bearer ${SERVICIO}` : opciones.authorization;
+  const resp = await fetch(`${URL_BASE}/rest/v1/${tabla}?${filtro}`, {
+    method: "PATCH",
+    headers: cabeceras({
+      authorization,
+      key: opciones.servicio ? SERVICIO : ANON,
+      esquema,
+      contentType: "application/json",
+      extra: { Prefer: "return=minimal" },
+    }),
+    body: JSON.stringify(datos),
+  });
+  if (!resp.ok) {
+    const data = await leer(resp);
+    return { error: data?.message ?? `Error ${resp.status} al actualizar ${tabla}` };
+  }
+  return { error: null };
+}

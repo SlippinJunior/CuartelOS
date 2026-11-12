@@ -1,6 +1,6 @@
 # Módulo · Tesorería
 
-**Estado:** 🧱 esqueleto + mock (Etapa 2)
+**Estado:** ✅ cuotas, cartola y proyección; conciliación en Etapa 2
 
 ## Alcance comprometido
 - Cartola con saldo corriente por cuenta.
@@ -28,9 +28,17 @@
 `v_cartola`, `v_presupuesto_ejecucion`, `v_compromisos_pendientes`,
 `v_cuotas_pendientes`, `v_saldo_campana` y `fn_proyeccion`.
 
+## Implementado en esta etapa
+- Grilla anual de cuotas por bombero (12 meses), con estados pagada, pendiente, exenta, condonada, futura y no aplica.
+- Registro de pago con monto, fecha, medio y documento. La RPC `registrar_pago_cuota` crea el ingreso en la cartola en la misma transacción.
+- Anulación de pago con motivo; anula también el movimiento.
+- Cartola real con saldo corriente, categoría y fondo (`v_cartola_detalle`).
+- Proyección real con `fn_proyeccion`.
+- Valor de cuota configurable por año.
+
 ## Pendiente
-- Pantalla de registro y conciliación.
-- Gráficos reales (hoy hay mock).
+- Conciliación mensual con cartola bancaria.
+- Registro manual de movimientos desde la interfaz.
 - Folio y firma de P13/P14/P21.
 
 ## Relacionado con

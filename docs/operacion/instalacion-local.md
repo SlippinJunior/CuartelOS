@@ -35,7 +35,7 @@ pnpm dev
 Abre `http://localhost:5173` y prueba con `director@demo.local` / `demo1234`.
 
 ## Base de datos
-- `pnpm db:reset` aplica las 18 migraciones y el seed ficticio.
+- `pnpm db:reset` aplica las 21 migraciones y el seed ficticio.
 - `pnpm db:lint` revisa seguridad y rendimiento.
 - `pnpm db:test` ejecuta pgTAP (requiere el seed).
 - La base local queda en `127.0.0.1:54322`; Studio en `:54323`; Inbucket en
@@ -43,14 +43,19 @@ Abre `http://localhost:5173` y prueba con `director@demo.local` / `demo1234`.
 
 ## Edge Functions
 ```bash
+cp supabase/functions/.env.example supabase/functions/.env
 supabase functions serve --env-file supabase/functions/.env
 ```
-Crea ese archivo con:
+El archivo local trae Mailpit y la URL del frontend:
 ```env
 SITE_URL=http://localhost:5173
-SUPABASE_SERVICE_ROLE_KEY=<service_role key>
+SMTP_HOST=inbucket
+SMTP_PORT=1025
+SMTP_FROM=Segunda Compania <no-reply@demo.local>
 ```
-Luego prueba la emisión de P3 desde la ficha de un bombero.
+`SUPABASE_SERVICE_ROLE_KEY` la inyecta Supabase; no la pongas en el archivo.
+Prueba la emisión P3, el PDF de un acta y una orden de capitanía. Los correos de
+las órdenes se ven en Mailpit (`http://127.0.0.1:54324`).
 
 ## Pruebas completas
 ```bash

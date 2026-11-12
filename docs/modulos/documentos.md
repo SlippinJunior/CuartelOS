@@ -3,10 +3,12 @@
 **Estado:** ✅ funcional para P3 (Etapa 1)
 
 ## Alcance
-- Catálogo P1–P23 con nombre, módulo y firma requerida.
-- Emisión de hoja de vida (P3) con folio correlativo por tipo y año, SHA-256,
-  QR y Storage privado.
+- Catálogo P1–P23 con nombre, módulo y firma requerida, más `ACTA` y
+  `ORDEN_CAPITANIA`.
+- Emisión de hoja de vida (P3), actas de reunión y órdenes de capitanía con
+  folio correlativo por tipo y año, SHA-256, QR y Storage privado.
 - Verificación pública por token, sin datos personales.
+- Órdenes de capitanía visibles para todos los bomberos y enviadas por correo.
 - Historial y anulación con motivo.
 
 ## Cómo funciona

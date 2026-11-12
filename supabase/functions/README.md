@@ -1,7 +1,7 @@
 # Edge Functions
 
-Dos funciones Deno que necesitan la clave de servicio. Se ejecutan en Supabase y
-nunca en el navegador.
+Cuatro funciones Deno. Se ejecutan en Supabase y nunca en el navegador. Usan
+la clave de servicio solo del lado servidor.
 
 ## Variables de entorno
 
@@ -27,6 +27,38 @@ POST /functions/v1/invitar-usuario
 2. `auth.admin.inviteUserByEmail` con redirección a `/auth/establecer`.
 3. Vincula `seguridad.usuario` y asigna el rol mediante
    `nucleo.registrar_usuario` (RPC security definer).
+
+## `emitir-acta`
+
+Emite el PDF de un acta de reunión. Solo Secretaría, Director o admin.
+
+```json
+POST /functions/v1/emitir-acta
+{ "acta_id": 12 }
+```
+
+Genera el PDF, reserva folio `ACTA`, lo sube a Storage, registra la emisión y
+actualiza `secretaria.acta.archivo_id`.
+
+## `orden-capitania`
+
+Crea una orden de capitanía, emite su PDF y la envía por correo a todos los
+bomberos activos. Solo Capitán, Ayudante, Teniente 1°, Director o admin.
+
+```json
+POST /functions/v1/orden-capitania
+{
+  "numero": 3,
+  "fecha": "2026-11-12",
+  "materia": "Guardia nocturna",
+  "texto": "Se cita al personal...",
+  "enviar_correo": true
+}
+```
+
+El correo usa `SMTP_HOST`/`SMTP_PORT`/`SMTP_USER`/`SMTP_PASSWORD` o
+`RESEND_API_KEY`. En local, `SMTP_HOST=inbucket` y `SMTP_PORT=1025` capturan los
+mensajes en Mailpit (`http://127.0.0.1:54324`).
 
 ## `emitir-documento`
 

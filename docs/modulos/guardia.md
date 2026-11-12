@@ -1,6 +1,6 @@
 # Módulo · Guardia
 
-**Estado:** 🧱 esqueleto
+**Estado:** 🧱 esqueleto; órdenes de capitanía funcionales desde Documentos
 
 ## Alcance comprometido
 - Turnos de guardia con jefe y dotación.
@@ -17,6 +17,11 @@
 `operaciones.guardia_turno`, `guardia_integrante`, `orden_capitania` y
 `accidente_servicio`, con RLS: el bombero ve sus guardias; capitán, ayudante y
 teniente 1 escriben.
+
+## Implementado
+- Emisión de órdenes de capitanía desde Documentos (capitán, ayudante, teniente 1, director y admin).
+- PDF con folio y verificación, visible para todos los bomberos.
+- Envío por correo a los bomberos activos (SMTP o Resend).
 
 ## Pendiente
 - Pantalla de turnos y calendario.

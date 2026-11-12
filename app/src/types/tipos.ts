@@ -433,3 +433,75 @@ export interface Parametro {
   descripcion: string | null;
   grupo: string;
 }
+
+export type EstadoCuota = "pagada" | "pendiente" | "exento" | "no_aplica" | "futura" | "condonada";
+
+export interface CuotaEstado {
+  persona_id: string;
+  registro: number;
+  nombre: string;
+  rango: Rango;
+  periodo: string;
+  estado: EstadoCuota;
+  monto: number | null;
+  monto_esperado: number;
+  cuota_id: number | null;
+  movimiento_id: number | null;
+  motivo_anulacion: string | null;
+}
+
+export interface CartolaDetalle {
+  id: number;
+  cuenta_id: number;
+  fecha: string;
+  tipo: "ingreso" | "egreso";
+  monto: number;
+  glosa: string;
+  anulado: boolean;
+  motivo_anulacion: string | null;
+  medio_pago: string;
+  n_documento: string | null;
+  categoria: string | null;
+  fondo: string | null;
+  saldo: number;
+}
+
+export interface OrdenCapitania {
+  id: number;
+  numero: number;
+  anio: number;
+  fecha: string;
+  materia: string | null;
+  texto: string | null;
+  archivo_id: string | null;
+  creado_por: string | null;
+  creado_en: string;
+  enviada_en: string | null;
+  correo_estado: string | null;
+  correo_destinatarios: number | null;
+}
+
+export interface ActaListado {
+  id: number;
+  tipo_sesion_codigo: string;
+  numero: number;
+  anio: number;
+  fecha: string;
+  lista_id: number | null;
+  quorum_ok: boolean | null;
+  aprobada_en_acta_id: number | null;
+  archivo_id: string | null;
+  texto: string | null;
+  tipo_sesion?: { nombre: string } | null;
+}
+
+export interface Acuerdo {
+  id: number;
+  acta_id: number;
+  numero: number;
+  texto: string;
+  monto: number | null;
+  plazo: string | null;
+  estado: string;
+  resultado: string | null;
+}

@@ -16,6 +16,7 @@ con usuarios simulados. Son la red de seguridad de la interfaz.
 | `folio_correlativo.test.sql` | Folios sin saltos, registro y verificación pública |
 | `consentimiento.test.sql` | Se exige y registra la aceptación |
 | `alertas.test.sql` | R01–R12 se generan y son idempotentes |
+| `cuotas.test.sql` | Pago crea movimiento, doble pago bloqueado, anulación con motivo |
 
 ## Cómo se usa
 ```bash

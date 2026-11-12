@@ -108,7 +108,7 @@ export function MiTesoreriaPage() {
         <CardContent>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {MESES.map((mes, i) => {
-              const pagada = delAnio.some((c) => new Date(c.periodo).getMonth() === i && !c.condonada);
+              const pagada = delAnio.some((c) => Number(c.periodo.slice(5, 7)) - 1 === i && !c.condonada);
               const vencida = i + 1 < transcurridos;
               return (
                 <div key={mes} className="flex items-center justify-between rounded-md border border-border p-2 text-sm">

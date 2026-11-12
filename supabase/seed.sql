@@ -1589,16 +1589,16 @@ insert into material.bitacora_unidad (unidad_id, fecha, km, horas_bomba, novedad
 insert into tesoreria.cuenta (id, nombre, banco, numero, tipo) overriding system value values (1, 'Cuenta corriente compañía', 'Banco Ficticio', '000-123456-7', 'corriente');
 select setval(pg_get_serial_sequence('tesoreria.cuenta','id'), 1);
 
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (1, '1001001', 'Cuotas sociales', 'ingreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (2, '1002001', 'Campaña económica', 'ingreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (3, '1003001', 'Donaciones', 'ingreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (4, '1004001', 'Aportes municipales', 'ingreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (5, '2001001', 'Combustible', 'egreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (6, '2002001', 'Mantención de unidades', 'egreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (7, '2003001', 'Material menor', 'egreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (8, '2004001', 'Seguros', 'egreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (9, '2005001', 'Cuotas al Cuerpo', 'egreso');
-insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (10, '2006001', 'Gastos administrativos', 'egreso');
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (1, '1001001', 'Cuotas sociales', 'ingreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (2, '1002001', 'Campaña económica', 'ingreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (3, '1003001', 'Donaciones', 'ingreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (4, '1004001', 'Aportes municipales', 'ingreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (5, '2001001', 'Combustible', 'egreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (6, '2002001', 'Mantención de unidades', 'egreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (7, '2003001', 'Material menor', 'egreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (8, '2004001', 'Seguros', 'egreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (9, '2005001', 'Cuotas al Cuerpo', 'egreso') on conflict (id) do nothing;
+insert into tesoreria.categoria (id, codigo, nombre, tipo) overriding system value values (10, '2006001', 'Gastos administrativos', 'egreso') on conflict (id) do nothing;
 select setval(pg_get_serial_sequence('tesoreria.categoria','id'), 10);
 
 -- Presupuesto 2026

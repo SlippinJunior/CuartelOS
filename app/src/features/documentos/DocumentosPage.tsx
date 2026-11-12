@@ -1,193 +1,27 @@
 import * as React from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { FilePlus2, FileText, ShieldCheck } from "lucide-react";
-import { db, supabase } from "@/lib/supabase";
-import { mensajeError } from "@/lib/errores";
-import { usePerfil } from "@/features/auth/sesion";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ResponsiveList, type Columna } from "@/components/common/ResponsiveList";
-import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { EmptyState } from "@/components/common/EmptyState";
-import { formatearFechaHora } from "@/lib/formato";
-import type { DocumentoEmitido } from "@/types/tipos";
-
-interface PersonaDocumento {
-  id: string;
-  nombres: string;
-  apellido_paterno: string;
-}
+import { Tabs } from "@/components/ui/tabs";
+import { EmitidosTab } from "@/features/documentos/EmitidosTab";
+import { ActasTab } from "@/features/documentos/ActasTab";
+import { OrdenesTab } from "@/features/documentos/OrdenesTab";
 
 export function DocumentosPage() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { data: perfil } = usePerfil();
-  const esOficial = perfil?.es_oficial ?? false;
-  const [anular, setAnular] = React.useState<DocumentoEmitido | null>(null);
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["documentos-emitidos"],
-    queryFn: async () => {
-      const { data, error } = await db.documentos
-        .from("documento_emitido")
-        .select("*")
-        .order("emitido_en", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as DocumentoEmitido[];
-    },
-  });
-
-  const personaIds = React.useMemo(
-    () => Array.from(new Set((data ?? []).map((d) => d.persona_id).filter(Boolean))) as string[],
-    [data],
-  );
-
-  const { data: personas } = useQuery({
-    queryKey: ["documentos-personas", personaIds.join(",")],
-    queryFn: async () => {
-      const { data, error } = await db.personal
-        .from("persona")
-        .select("id, nombres, apellido_paterno")
-        .in("id", personaIds);
-      if (error) throw error;
-      return (data ?? []) as PersonaDocumento[];
-    },
-    enabled: personaIds.length > 0,
-  });
-
-  const nombrePersona = (id: string | null) => {
-    const p = (personas ?? []).find((x) => x.id === id);
-    return p ? `${p.nombres} ${p.apellido_paterno}` : "—";
-  };
-
-  const anularMut = useMutation({
-    mutationFn: async ({ id, motivo }: { id: string; motivo: string }) => {
-      const { error } = await supabase.schema("documentos").rpc("anular_documento", {
-        p_id: id,
-        p_motivo: motivo,
-      });
-      if (error) throw error;
-    },
-    onSuccess: async () => {
-      toast.success("Documento anulado");
-      setAnular(null);
-      await queryClient.invalidateQueries({ queryKey: ["documentos-emitidos"] });
-    },
-    onError: (e) => toast.error(mensajeError(e)),
-  });
-
-  const columnas: Columna<DocumentoEmitido>[] = [
-    {
-      clave: "tipo",
-      titulo: "Documento",
-      render: (d) => (
-        <div>
-          <p className="font-medium">{d.tipo_documento_codigo}</p>
-          <p className="text-xs text-muted-foreground">
-            Folio {d.anio}-{String(d.folio).padStart(4, "0")}
-          </p>
-        </div>
-      ),
-    },
-    {
-      clave: "persona",
-      titulo: "Persona",
-      render: (d) => nombrePersona(d.persona_id),
-    },
-    { clave: "fecha", titulo: "Emitido", render: (d) => formatearFechaHora(d.emitido_en) },
-    {
-      clave: "estado",
-      titulo: "Estado",
-      render: (d) => <Badge variant={d.anulado ? "peligro" : "exito"}>{d.anulado ? "Anulado" : "Válido"}</Badge>,
-    },
-  ];
+  const [tab, setTab] = React.useState("emitidos");
 
   return (
     <div>
       <PageHeader
         titulo="Documentos"
-        descripcion="Emisión de PDF con folio, SHA-256 y verificación por QR."
-        acciones={
-          <Button onClick={() => void navigate({ to: "/documentos/emitir" })}>
-            <FilePlus2 /> Emitir documento
-          </Button>
-        }
+        descripcion="Hoja de vida, actas de reunión y órdenes de capitanía con folio y verificación."
       />
-
-      <div className="mb-4 flex items-center gap-2 rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
-        <ShieldCheck className="size-4 text-exito" />
-        Cada documento lleva folio correlativo y se puede verificar públicamente sin exponer datos personales.
-      </div>
-
-      <ResponsiveList
-        filas={data ?? []}
-        columnas={columnas}
-        claveFila={(d) => d.id}
-        cargando={isLoading}
-        renderTarjeta={(d) => (
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="font-medium">{d.tipo_documento_codigo} · {d.anio}-{String(d.folio).padStart(4, "0")}</p>
-              <p className="text-sm text-muted-foreground">
-                {d.persona_id ? nombrePersona(d.persona_id) : "Sin persona"}
-              </p>
-              <p className="text-xs text-muted-foreground">{formatearFechaHora(d.emitido_en)}</p>
-            </div>
-            <Badge variant={d.anulado ? "peligro" : "exito"}>{d.anulado ? "Anulado" : "Válido"}</Badge>
-          </div>
-        )}
-        vacio={
-          <EmptyState
-            titulo="Sin documentos emitidos"
-            descripcion="Emite una hoja de vida para comenzar el historial."
-            icono={FileText}
-            accion={
-              <Button variant="outline" onClick={() => void navigate({ to: "/documentos/emitir" })}>
-                <FilePlus2 /> Emitir el primero
-              </Button>
-            }
-          />
-        }
-      />
-
-      {(data ?? []).length > 0 && (
-        <div className="mt-4 space-y-2">
-          {(data ?? []).map((d) => (
-            <div key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm">
-              <div>
-                <span className="font-medium">{d.tipo_documento_codigo} {d.anio}-{String(d.folio).padStart(4, "0")}</span>
-                <span className="ml-2 text-muted-foreground">{d.anulado ? `Anulado: ${d.motivo_anulacion}` : ""}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Link to="/verificar/$token" params={{ token: d.token_verificacion }} className="text-primary hover:underline">
-                  Verificar
-                </Link>
-                {esOficial && !d.anulado && (
-                  <Button variant="ghost" size="sm" className="text-peligro" onClick={() => setAnular(d)}>
-                    Anular
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <ConfirmDialog
-        abierto={Boolean(anular)}
-        onCambio={(v) => !v && setAnular(null)}
-        titulo="Anular documento"
-        descripcion="La verificación pública pasará a inválida. La acción queda auditada."
-        textoConfirmar="Anular"
-        variante="destructive"
-        pideMotivo
-        procesando={anularMut.isPending}
-        onConfirmar={(motivo) => {
-          if (anular) anularMut.mutate({ id: anular.id, motivo });
-        }}
+      <Tabs
+        value={tab}
+        onValueChange={setTab}
+        items={[
+          { id: "emitidos", etiqueta: "Emitidos", contenido: <EmitidosTab /> },
+          { id: "actas", etiqueta: "Actas", contenido: <ActasTab /> },
+          { id: "ordenes", etiqueta: "Órdenes de capitanía", contenido: <OrdenesTab /> },
+        ]}
       />
     </div>
   );
