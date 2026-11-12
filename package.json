@@ -1,0 +1,27 @@
+{
+  "name": "erp-segunda-compania",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ERP de la Segunda Compañía de Bomberos de Limache",
+  "packageManager": "pnpm@12.19.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm -C app dev",
+    "build": "pnpm -C app build",
+    "typecheck": "pnpm -C app typecheck",
+    "lint": "pnpm -C app lint",
+    "test": "pnpm -C app test",
+    "supabase": "supabase",
+    "db:reset": "supabase db reset",
+    "db:lint": "supabase db lint",
+    "db:test": "supabase test db",
+    "seed:ficticio": "python3 scripts/generar-seed-ficticio/generar.py > supabase/seed.sql",
+    "importar:legado": "bash scripts/importar-legado/importar.sh"
+  },
+  "devDependencies": {
+    "supabase": "^2.39.2",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,94 @@
+/* =====================================================================
+   Tokens del sistema de diseño · ERP Segunda Compañía
+   Rojo institucional, neutros cálidos, modo claro y oscuro.
+   ===================================================================== */
+:root {
+  --fondo: #faf7f2;
+  --texto: #2b2522;
+  --superficie: #fffdf9;
+  --superficie-texto: #2b2522;
+  --primario: #9b1c1c;
+  --primario-texto: #fff8f2;
+  --secundario: #f1e9df;
+  --secundario-texto: #3f342e;
+  --apagado: #f3ede5;
+  --apagado-texto: #7a6b61;
+  --acento: #f6e7d8;
+  --acento-texto: #5c2a17;
+  --destructivo: #b42318;
+  --destructivo-texto: #fff8f2;
+  --borde: #e7ddd2;
+  --entrada: #d9cdc0;
+  --anillo: #9b1c1c;
+
+  --exito: #1f7a4d;
+  --aviso: #a16207;
+  --peligro: #b42318;
+  --sin-dato: #8a817b;
+
+  --radio: 0.75rem;
+  --radio-sm: 0.5rem;
+  --radio-lg: 1rem;
+  --sombra-suave: 0 1px 2px rgb(43 37 34 / 0.06), 0 8px 24px rgb(43 37 34 / 0.05);
+  --ancho-sidebar: 16rem;
+  --alto-barra-inferior: 4.25rem;
+}
+
+.dark {
+  --fondo: #171310;
+  --texto: #f5efe8;
+  --superficie: #211b17;
+  --superficie-texto: #f5efe8;
+  --primario: #d9564f;
+  --primario-texto: #1c1210;
+  --secundario: #2c2420;
+  --secundario-texto: #f0e6dc;
+  --apagado: #2c2420;
+  --apagado-texto: #b6a89c;
+  --acento: #3a2620;
+  --acento-texto: #ffd8c9;
+  --destructivo: #f97066;
+  --destructivo-texto: #1c1210;
+  --borde: #3a302a;
+  --entrada: #4a3d35;
+  --anillo: #e8786f;
+
+  --exito: #4ade80;
+  --aviso: #fbbf24;
+  --peligro: #f87171;
+  --sin-dato: #a8a29e;
+
+  --sombra-suave: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.25);
+}
+
+@theme inline {
+  --color-background: var(--fondo);
+  --color-foreground: var(--texto);
+  --color-card: var(--superficie);
+  --color-card-foreground: var(--superficie-texto);
+  --color-popover: var(--superficie);
+  --color-popover-foreground: var(--superficie-texto);
+  --color-primary: var(--primario);
+  --color-primary-foreground: var(--primario-texto);
+  --color-secondary: var(--secundario);
+  --color-secondary-foreground: var(--secundario-texto);
+  --color-muted: var(--apagado);
+  --color-muted-foreground: var(--apagado-texto);
+  --color-accent: var(--acento);
+  --color-accent-foreground: var(--acento-texto);
+  --color-destructive: var(--destructivo);
+  --color-destructive-foreground: var(--destructivo-texto);
+  --color-border: var(--borde);
+  --color-input: var(--entrada);
+  --color-ring: var(--anillo);
+  --color-exito: var(--exito);
+  --color-aviso: var(--aviso);
+  --color-peligro: var(--peligro);
+  --color-sin-dato: var(--sin-dato);
+
+  --radius-sm: var(--radio-sm);
+  --radius-md: var(--radio);
+  --radius-lg: var(--radio-lg);
+
+  --shadow-suave: var(--sombra-suave);
+}

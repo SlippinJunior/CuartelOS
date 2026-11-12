@@ -1,0 +1,38 @@
+# Dependencias y builds
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.tsbuildinfo
+
+# Entorno
+.env
+.env.*
+!.env.example
+
+# Datos reales: NUNCA en git
+data/privado/
+!data/privado/.gitkeep
+*.pdf
+!docs/**/*.pdf
+!plantillas/**/*.pdf
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+supabase/.env
+supabase/functions/**/deno.lock
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Playwright
+app/test-results/
+app/playwright-report/
+app/blob-report/
+app/.playwright/
