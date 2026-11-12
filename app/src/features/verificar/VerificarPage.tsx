@@ -1,5 +1,5 @@
+import * as React from "react";
 import { useParams } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { BadgeCheck, ShieldAlert, ShieldX } from "lucide-react";
 import { db } from "@/lib/supabase";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,19 +14,42 @@ interface Verificacion {
   valido: boolean;
 }
 
+interface Estado {
+  cargando: boolean;
+  error: boolean;
+  dato: Verificacion | null;
+}
+
+/**
+ * Página pública. Se consulta con estado local en vez de React Query para
+ * que funcione igual fuera de la sesión y del layout protegido.
+ */
 export function VerificarPage() {
   const { token } = useParams({ strict: false }) as { token: string };
+  const [estado, setEstado] = React.useState<Estado>({ cargando: true, error: false, dato: null });
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["verificar", token],
-    queryFn: async () => {
-      const { data, error } = await db.documentos.rpc("verificar_documento", { p_token: token });
-      if (error) throw error;
-      const filas = (data ?? []) as Verificacion[];
-      return filas[0] ?? null;
-    },
-    retry: false,
-  });
+  React.useEffect(() => {
+    let vivo = true;
+    setEstado({ cargando: true, error: false, dato: null });
+
+    db.documentos
+      .rpc("verificar_documento", { p_token: token })
+      .then(({ data, error }) => {
+        if (!vivo) return;
+        if (error) {
+          setEstado({ cargando: false, error: true, dato: null });
+          return;
+        }
+        const filas = (data ?? []) as Verificacion[];
+        setEstado({ cargando: false, error: false, dato: filas[0] ?? null });
+      });
+
+    return () => {
+      vivo = false;
+    };
+  }, [token]);
+
+  const { dato, cargando, error } = estado;
 
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background p-4">
@@ -40,44 +63,44 @@ export function VerificarPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              {isLoading ? "Consultando…" : data?.valido ? <BadgeCheck className="text-exito" /> : <ShieldX className="text-peligro" />}
-              {isLoading ? "Verificando documento" : data?.valido ? "Documento válido" : "Documento no válido"}
+              {cargando ? "Consultando…" : dato?.valido ? <BadgeCheck className="text-exito" /> : <ShieldX className="text-peligro" />}
+              {cargando ? "Verificando documento" : dato?.valido ? "Documento válido" : "Documento no válido"}
             </CardTitle>
             <CardDescription>
               Esta consulta no muestra datos personales. Solo confirma la existencia y vigencia del folio.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {isLoading && <Skeleton className="h-24 w-full" />}
-            {isError && (
+            {cargando && <Skeleton className="h-24 w-full" />}
+            {error && (
               <div className="flex items-center gap-2 rounded-md bg-peligro/10 p-3 text-sm text-peligro">
                 <ShieldAlert className="size-4" /> No se pudo consultar el documento.
               </div>
             )}
-            {!isLoading && !isError && !data && (
+            {!cargando && !error && !dato && (
               <p className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
                 No existe un documento con este código. Revisa el enlace o el código QR.
               </p>
             )}
-            {data && (
+            {dato && (
               <dl className="space-y-2 text-sm">
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-muted-foreground">Tipo</dt>
-                  <dd className="font-medium">{data.tipo}</dd>
+                  <dd className="font-medium">{dato.tipo}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-muted-foreground">Folio</dt>
-                  <dd className="font-mono font-medium">{data.folio}</dd>
+                  <dd className="font-mono font-medium">{dato.folio}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-muted-foreground">Emitido</dt>
-                  <dd className="font-medium">{formatearFechaHora(data.emitido_en)}</dd>
+                  <dd className="font-medium">{formatearFechaHora(dato.emitido_en)}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
                   <dt className="text-muted-foreground">Estado</dt>
                   <dd>
-                    <Badge variant={data.valido ? "exito" : "peligro"}>
-                      {data.valido ? "Vigente" : "Anulado"}
+                    <Badge variant={dato.valido ? "exito" : "peligro"}>
+                      {dato.valido ? "Vigente" : "Anulado"}
                     </Badge>
                   </dd>
                 </div>

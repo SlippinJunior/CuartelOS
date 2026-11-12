@@ -23,6 +23,12 @@ export interface MarcaLocal {
   actualizadoEn: number;
 }
 
+function avisarPendientes() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("erp-pendientes"));
+  }
+}
+
 const db = new Dexie("erp-offline") as Dexie & {
   listas: EntityTable<ListaLocal, "id">;
   personas: EntityTable<PersonaLocal, "id">;
@@ -94,10 +100,12 @@ export async function guardarMarcaLocal(
     pendiente: true,
     actualizadoEn: Date.now(),
   });
+  avisarPendientes();
 }
 
 export async function marcarSincronizada(clave: string) {
   await db.marcas.update(clave, { pendiente: false });
+  avisarPendientes();
 }
 
 export async function pendientesDeLista(listaId: number) {
@@ -111,4 +119,5 @@ export async function contarPendientes(): Promise<number> {
 export async function limpiarCache() {
   await db.delete();
   await db.open();
+  avisarPendientes();
 }

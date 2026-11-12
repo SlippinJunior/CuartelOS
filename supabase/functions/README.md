@@ -6,12 +6,13 @@ nunca en el navegador.
 ## Variables de entorno
 
 ```bash
-supabase secrets set \
-  SITE_URL="https://erp.segundacompania.cl" \
-  SUPABASE_SERVICE_ROLE_KEY="..."   # ya existe en Supabase
+supabase secrets set SITE_URL="https://erp.segundacompania.cl"
 ```
 
-`SUPABASE_URL` y `SUPABASE_ANON_KEY` las inyecta Supabase automáticamente.
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` y `SUPABASE_SERVICE_ROLE_KEY` las inyecta
+Supabase automáticamente. No las pongas en un archivo `.env`: el CLI las omite
+con un aviso. Localmente basta `SITE_URL` en `supabase/functions/.env`
+(hay una plantilla en `.env.example`).
 
 ## `invitar-usuario`
 
@@ -43,18 +44,21 @@ POST /functions/v1/emitir-documento
 4. Registra la emisión con `documentos.registrar_emision` y devuelve una URL
    firmada por una hora y el token de verificación.
 
-> **Nota técnica:** esta implementación usa `pdf-lib` para que la emisión sea
-> funcional desde el primer día. La plantilla Typst de `plantillas/hoja_de_vida.typ`
-> es el diseño canónico y se conectará en la fase F0/F con `typst.ts` en el
-> navegador o un compilador Typst en la Edge Function, según la prueba de límites
-> de CPU descrita en el plan. El contrato de datos (`personal.v_hoja_vida`), el
-> folio, el hash y la verificación ya son los definitivos.
+> **Nota técnica:** esta implementación usa `pdf-lib` y `qrcode-generator`
+> **vendorizados** en `supabase/functions/_vendor/`, para que la función arranque
+> aunque el contenedor local no tenga salida a esm.sh/npm. Las llamadas a Auth,
+> PostgREST y Storage se hacen con `fetch` directo, sin `supabase-js`.
+>
+> La plantilla Typst de `plantillas/hoja_de_vida.typ` es el diseño canónico y se
+> conectará en la fase F0/F con `typst.ts` en el navegador o un compilador Typst
+> en la Edge Function. El contrato de datos (`personal.v_hoja_vida`), el folio,
+> el hash y la verificación ya son los definitivos.
 
 ## Desarrollo local
 
 ```bash
-supabase functions serve invitar-usuario --env-file supabase/functions/.env
-supabase functions serve emitir-documento --env-file supabase/functions/.env
+cp supabase/functions/.env.example supabase/functions/.env
+supabase functions serve --env-file supabase/functions/.env
 ```
 
 El frontend apunta a `http://127.0.0.1:54321/functions/v1/...` cuando usa el

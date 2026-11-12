@@ -18,7 +18,9 @@ interface ResultadoEmision {
   anio: number;
   folio: number;
   token: string;
-  url: string | null;
+  pdf_bucket?: string;
+  pdf_path?: string;
+  url?: string | null;
 }
 
 export function EmitirPage() {
@@ -52,7 +54,16 @@ export function EmitirPage() {
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      setResultado(data as ResultadoEmision);
+      const resultado = data as ResultadoEmision;
+      // La URL firmada se pide desde el navegador para usar el host público
+      // de Supabase (dentro del contenedor el host interno es "kong").
+      if (resultado.pdf_path) {
+        const { data: firmada } = await supabase.storage
+          .from(resultado.pdf_bucket ?? "documentos")
+          .createSignedUrl(resultado.pdf_path, 3600);
+        resultado.url = firmada?.signedUrl ?? null;
+      }
+      setResultado(resultado);
       toast.success("Hoja de vida emitida");
     } catch (e) {
       setError(mensajeError(e));

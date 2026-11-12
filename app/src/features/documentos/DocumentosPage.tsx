@@ -15,8 +15,10 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { formatearFechaHora } from "@/lib/formato";
 import type { DocumentoEmitido } from "@/types/tipos";
 
-interface DocumentoConPersona extends DocumentoEmitido {
-  persona?: { nombres: string; apellido_paterno: string } | null;
+interface PersonaDocumento {
+  id: string;
+  nombres: string;
+  apellido_paterno: string;
 }
 
 export function DocumentosPage() {
@@ -24,19 +26,42 @@ export function DocumentosPage() {
   const queryClient = useQueryClient();
   const { data: perfil } = usePerfil();
   const esOficial = perfil?.es_oficial ?? false;
-  const [anular, setAnular] = React.useState<DocumentoConPersona | null>(null);
+  const [anular, setAnular] = React.useState<DocumentoEmitido | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["documentos-emitidos"],
     queryFn: async () => {
       const { data, error } = await db.documentos
         .from("documento_emitido")
-        .select("*, persona:persona(nombres, apellido_paterno)")
+        .select("*")
         .order("emitido_en", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as DocumentoConPersona[];
+      return (data ?? []) as DocumentoEmitido[];
     },
   });
+
+  const personaIds = React.useMemo(
+    () => Array.from(new Set((data ?? []).map((d) => d.persona_id).filter(Boolean))) as string[],
+    [data],
+  );
+
+  const { data: personas } = useQuery({
+    queryKey: ["documentos-personas", personaIds.join(",")],
+    queryFn: async () => {
+      const { data, error } = await db.personal
+        .from("persona")
+        .select("id, nombres, apellido_paterno")
+        .in("id", personaIds);
+      if (error) throw error;
+      return (data ?? []) as PersonaDocumento[];
+    },
+    enabled: personaIds.length > 0,
+  });
+
+  const nombrePersona = (id: string | null) => {
+    const p = (personas ?? []).find((x) => x.id === id);
+    return p ? `${p.nombres} ${p.apellido_paterno}` : "—";
+  };
 
   const anularMut = useMutation({
     mutationFn: async ({ id, motivo }: { id: string; motivo: string }) => {
@@ -54,7 +79,7 @@ export function DocumentosPage() {
     onError: (e) => toast.error(mensajeError(e)),
   });
 
-  const columnas: Columna<DocumentoConPersona>[] = [
+  const columnas: Columna<DocumentoEmitido>[] = [
     {
       clave: "tipo",
       titulo: "Documento",
@@ -70,7 +95,7 @@ export function DocumentosPage() {
     {
       clave: "persona",
       titulo: "Persona",
-      render: (d) => (d.persona ? `${d.persona.nombres} ${d.persona.apellido_paterno}` : "—"),
+      render: (d) => nombrePersona(d.persona_id),
     },
     { clave: "fecha", titulo: "Emitido", render: (d) => formatearFechaHora(d.emitido_en) },
     {
@@ -107,7 +132,7 @@ export function DocumentosPage() {
             <div>
               <p className="font-medium">{d.tipo_documento_codigo} · {d.anio}-{String(d.folio).padStart(4, "0")}</p>
               <p className="text-sm text-muted-foreground">
-                {d.persona ? `${d.persona.nombres} ${d.persona.apellido_paterno}` : "Sin persona"}
+                {d.persona_id ? nombrePersona(d.persona_id) : "Sin persona"}
               </p>
               <p className="text-xs text-muted-foreground">{formatearFechaHora(d.emitido_en)}</p>
             </div>

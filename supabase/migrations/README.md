@@ -24,6 +24,7 @@ se conservan intactas en `docs/legado/sql/`.
 | 001400 | `…_api_rpc.sql` | `mi_perfil`, `mis_roles`, consentimiento, admin de roles, panel |
 | 001500 | `…_storage.sql` | Buckets privados y políticas |
 | 001600 | `…_cron.sql` | Alerta nocturna con pg_cron |
+| 001700 | `…_grants_servicio.sql` | USAGE y privilegios del rol `service_role` para Edge Functions |
 
 ## Cómo se usa
 ```bash

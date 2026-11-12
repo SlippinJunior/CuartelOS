@@ -25,9 +25,11 @@ export function useConexion() {
     };
     actualizar();
     const intervalo = window.setInterval(actualizar, 10_000);
+    window.addEventListener("erp-pendientes", actualizar);
     return () => {
       vivo = false;
       window.clearInterval(intervalo);
+      window.removeEventListener("erp-pendientes", actualizar);
     };
   }, [enLinea]);
 

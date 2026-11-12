@@ -1,7 +1,7 @@
-import { PDFDocument, StandardFonts, rgb } from "https://esm.sh/pdf-lib@1.17.1";
-import qrcode from "https://esm.sh/qrcode-generator@1.4.4";
+import { PDFDocument, StandardFonts, rgb } from "../_vendor/pdf-lib.esm.min.js";
+import qrcode from "../_vendor/qrcode.js";
 import { corsHeaders, json } from "../_shared/cors.ts";
-import { autenticar, clienteAdmin } from "../_shared/clientes.ts";
+import { autenticar, rpc, seleccionar, subirArchivo } from "../_shared/clientes.ts";
 
 const ROJO = rgb(0.608, 0.11, 0.11);
 const GRIS = rgb(0.48, 0.42, 0.38);
@@ -34,10 +34,10 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
 
   try {
-    const { cliente, user, error: authError } = await autenticar(req);
-    if (!user) return json({ error: "Sesión no válida", detalle: authError?.message }, 401);
+    const { user, authorization, error: authError } = await autenticar(req);
+    if (!user) return json({ error: "Sesión no válida", detalle: authError }, 401);
 
-    const { data: perfil } = await cliente.schema("nucleo").rpc("mi_perfil");
+    const { data: perfil } = await rpc("nucleo", "mi_perfil", {}, { authorization });
     if (!(perfil as { es_oficial?: boolean } | null)?.es_oficial) {
       return json({ error: "Solo la oficialidad puede emitir documentos." }, 403);
     }
@@ -48,22 +48,26 @@ Deno.serve(async (req) => {
     if (!personaId) return json({ error: "Falta persona_id." }, 400);
     if (tipo !== "P3") return json({ error: "Por ahora solo se emite P3 (hoja de vida)." }, 400);
 
-    const admin = clienteAdmin();
     const siteUrl = Deno.env.get("SITE_URL") ?? "http://localhost:5173";
 
-    const { data: hv, error: hvError } = await admin
-      .schema("personal")
-      .from("v_hoja_vida")
-      .select("datos")
-      .eq("persona_id", personaId)
-      .single();
-    if (hvError || !hv) return json({ error: "No se encontró la hoja de vida." }, 404);
-    const d = (hv as { datos: Record<string, any> }).datos;
+    const { data: filas, error: hvError } = await seleccionar(
+      "personal",
+      "v_hoja_vida",
+      `select=datos&persona_id=eq.${encodeURIComponent(personaId)}&limit=1`,
+      { authorization: "", servicio: true },
+    );
+    if (hvError || !Array.isArray(filas) || filas.length === 0) {
+      return json({ error: "No se encontró la hoja de vida." }, 404);
+    }
+    const d = (filas[0] as { datos: Record<string, any> }).datos;
 
-    const { data: folioData, error: folioError } = await admin
-      .schema("documentos")
-      .rpc("siguiente_folio", { p_tipo: tipo });
-    if (folioError) return json({ error: folioError.message }, 400);
+    const { data: folioData, error: folioError } = await rpc(
+      "documentos",
+      "siguiente_folio",
+      { p_tipo: tipo },
+      { authorization: "", servicio: true },
+    );
+    if (folioError) return json({ error: folioError }, 400);
     const folio = Number(folioData);
     const anio = new Date().getFullYear();
     const folioTexto = `${anio}-${String(folio).padStart(4, "0")}`;
@@ -291,28 +295,29 @@ Deno.serve(async (req) => {
     const ruta = `emitidos/${tipo}/${anio}/${String(folio).padStart(4, "0")}.pdf`;
     const nombre = `hoja-de-vida-${d.registro}-${folioTexto}.pdf`;
 
-    const { error: subidaError } = await admin.storage
-      .from("documentos")
-      .upload(ruta, bytes, { contentType: "application/pdf", upsert: true });
-    if (subidaError) return json({ error: `No se pudo subir el PDF: ${subidaError.message}` }, 500);
+    const { error: subidaError } = await subirArchivo("documentos", ruta, bytes, "application/pdf");
+    if (subidaError) return json({ error: `No se pudo subir el PDF: ${subidaError}` }, 500);
 
-    const { data: doc, error: registroError } = await admin.schema("documentos").rpc("registrar_emision", {
-      p_tipo: tipo,
-      p_persona_id: personaId,
-      p_referencia: `P3:${personaId}`,
-      p_hash: hash,
-      p_pdf_bucket: "documentos",
-      p_pdf_path: ruta,
-      p_nombre_archivo: nombre,
-      p_mime: "application/pdf",
-      p_tamano: bytes.length,
-      p_folio: folio,
-      p_token: token,
-      p_emitido_por: user.id,
-    });
-    if (registroError) return json({ error: registroError.message }, 500);
-
-    const { data: firmada } = await admin.storage.from("documentos").createSignedUrl(ruta, 3600);
+    const { data: doc, error: registroError } = await rpc(
+      "documentos",
+      "registrar_emision",
+      {
+        p_tipo: tipo,
+        p_persona_id: personaId,
+        p_referencia: `P3:${personaId}`,
+        p_hash: hash,
+        p_pdf_bucket: "documentos",
+        p_pdf_path: ruta,
+        p_nombre_archivo: nombre,
+        p_mime: "application/pdf",
+        p_tamano: bytes.length,
+        p_folio: folio,
+        p_token: token,
+        p_emitido_por: user.id,
+      },
+      { authorization: "", servicio: true },
+    );
+    if (registroError) return json({ error: registroError }, 500);
 
     return json({
       documento_id: (doc as { id?: string } | null)?.id ?? null,
@@ -321,7 +326,8 @@ Deno.serve(async (req) => {
       folio,
       token,
       hash_sha256: hash,
-      url: firmada?.signedUrl ?? null,
+      pdf_bucket: "documentos",
+      pdf_path: ruta,
     });
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : "Error inesperado" }, 500);

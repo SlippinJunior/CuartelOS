@@ -16,12 +16,17 @@ cp app/.env.example app/.env
 ```
 
 `supabase start` imprime `API URL`, `anon key` y `service_role key`. Copia la
-URL y la anon key en `app/.env`:
+URL y la **anon key** (el JWT que empieza con `eyJ...`) en `app/.env`:
 
 ```env
 VITE_SUPABASE_URL=http://127.0.0.1:54321
-VITE_SUPABASE_ANON_KEY=<anon key>
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
 ```
+
+> No uses la `PUBLISHABLE_KEY` (`sb_publishable_...`) en esta variable: el
+> cliente actual la envía como JWT y PostgREST rechaza las llamadas anónimas
+> con `Expected 3 parts in JWT`. La verificación pública y otras RPC sin sesión
+> dejarían de funcionar.
 
 Luego:
 ```bash
@@ -30,7 +35,7 @@ pnpm dev
 Abre `http://localhost:5173` y prueba con `director@demo.local` / `demo1234`.
 
 ## Base de datos
-- `pnpm db:reset` aplica las 17 migraciones y el seed ficticio.
+- `pnpm db:reset` aplica las 18 migraciones y el seed ficticio.
 - `pnpm db:lint` revisa seguridad y rendimiento.
 - `pnpm db:test` ejecuta pgTAP (requiere el seed).
 - La base local queda en `127.0.0.1:54322`; Studio en `:54323`; Inbucket en
