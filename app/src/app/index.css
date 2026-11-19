@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./tema.css";
+@import "./dialogos.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

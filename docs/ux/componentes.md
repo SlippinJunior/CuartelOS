@@ -12,8 +12,8 @@
 | `Badge` | Estado | Variantes semáforo |
 | `Table` | Datos tabulares | Solo escritorio |
 | `Tabs` | Secciones | Controlado o no |
-| `Dialog` | Confirmación / formulario corto | `<dialog>` nativo |
-| `Sheet` | Hoja inferior / panel lateral | `<dialog>` nativo |
+| `Dialog` | Confirmación / formulario | `<dialog>` nativo centrado, montado solo al abrirse; tamaños `sm`/`md`/`lg` |
+| `Sheet` | Hoja inferior / panel lateral | `<dialog>` nativo, montado solo al abrirse |
 | `Switch` | Sí/no | `role="switch"` |
 | `Skeleton` | Carga | No abusar |
 | `Separator` | División | — |
@@ -36,6 +36,14 @@
 - Un componente no llama a Supabase; recibe datos y callbacks.
 - Los textos de botones son verbos concretos ("Guardar ficha", "Cerrar lista").
 - Los iconos solos llevan `aria-label`.
+- Los diálogos se centran con estilos en línea (`margin: auto`) porque el
+  preflight de Tailwind fija `margin: 0` en todos los elementos. No dependas
+  solo de `m-auto`.
+- Un diálogo abierto desde otro se monta en el momento: no mantengas varios
+  `<dialog>` abiertos en el DOM, porque `showModal()` en un elemento fuera del
+  contexto de pila modal lanza `InvalidStateError`.
+- Escape y clic en el fondo cierran el diálogo; la barra de acciones en el
+  celular queda debajo del contenido, con los botones apilados.
 
 ## Relacionado con
 `app/src/components/`, `app/components.json`.

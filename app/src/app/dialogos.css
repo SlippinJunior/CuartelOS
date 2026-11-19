@@ -1,0 +1,18 @@
+@layer base {
+  /*
+   * El preflight de Tailwind v4 aplica margin: 0 a todos los elementos y anula
+   * el centrado nativo de <dialog>. Estas reglas lo restituyen.
+   */
+  .dialogo-centrado:modal {
+    inset: 0;
+    margin: auto;
+  }
+
+  .hoja-dialogo:modal {
+    inset: 0;
+  }
+
+  dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.5);
+  }
+}
