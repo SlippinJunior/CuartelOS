@@ -39,6 +39,10 @@
 - La inscripción de cada semana se cierra el **último día previo a su inicio**
   (el domingo, a las 20:00 de Chile). Desde ese momento corre la asignación
   automática.
+- Solo se autoasigna a quien **debe cubrir guardia esa semana** según la
+  Orden N° 01/2026: `0–4` en Semana 1 y Semana 2; `5–9` solo al cierre de la
+  Semana 2; `10–19` y `20–34` solo en la última semana de su bimestre o
+  trimestre si aún no cumplen.
 - Quien **debía guardia y no se inscribió** queda asignado automáticamente al
   **día con menos guardianes** de la semana; si hay empate, el día se elige
   **al azar**.
@@ -95,6 +99,7 @@
 |---|---|
 | Cupo por semana | `operaciones.inscribirse_guardia` + `semana_cubierta` |
 | Cierre y autoasignación | `operaciones.cerrar_semana_guardia` + `asignar_automaticamente_semana` |
+| Obligación por categoría | `operaciones.obligacion_guardia` + `periodo_guardia` |
 | Día con menos guardianes (empate al azar) | `operaciones.dia_con_menos_guardianes` |
 | Baja libre o reemplazo | `operaciones.bajarse_guardia` |
 | Jefe calculado | `operaciones.jefe_guardia_de_turno` |
@@ -102,6 +107,12 @@
 | Charlie Z8/Z20 | `operaciones.guardar_reporte_guardia` |
 | Antigüedad manual restringida | trigger `personal.fn_proteger_campos_sensibles` |
 | Categoría de guardia | `personal.categoria_guardia_de` |
+
+## Permisos
+- Cerrar la semana exige rol de Capitanía, Teniente 1°, Ayudante, Director o
+  admin; un bombero recibe `insufficient_privilege`.
+- Las convocatorias se envían solo a quienes deben guardia y no la cumplieron
+  (ni exentos ni quienes ya cumplieron su bimestre/trimestre).
 
 ## Pendiente
 - Asignación manual de bomberos por día desde Gestión.

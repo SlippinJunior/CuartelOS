@@ -20,6 +20,7 @@ con usuarios simulados. Son la red de seguridad de la interfaz.
 | `antiguedad.test.sql` | Premios + abonos, ajuste manual y categorías de guardia |
 | `guardias.test.sql` | 14 turnos, cupo semanal, reemplazo, Charlie Z8 y firma |
 | `autoasignacion_guardias.test.sql` | Cierre semanal, día con menos guardianes, empates y avisos |
+| `secretaria.test.sql` | Permisos, actas aprobadas, compromisos, votación y aspirantes |
 
 ## Cómo se usa
 ```bash

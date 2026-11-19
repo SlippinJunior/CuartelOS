@@ -521,6 +521,7 @@ export interface Acuerdo {
   plazo: string | null;
   estado: string;
   resultado: string | null;
+  seguimiento?: string | null;
 }
 
 // ---------------------------------------------------------------------------

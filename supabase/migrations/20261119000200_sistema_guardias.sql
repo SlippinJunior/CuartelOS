@@ -152,8 +152,7 @@ language sql
 stable
 as $$
   select seguridad.tiene_rol('capitan', 'teniente_1', 'ayudante', 'director', 'admin')
-      or current_user in ('postgres', 'supabase_admin')
-      or auth.role() = 'service_role'
+      or coalesce(nullif(current_setting('request.jwt.claim.role', true), ''), '') = 'service_role'
 $$;
 comment on function operaciones.puede_gestionar_guardias() is 'Roles que agendan, asignan y envían avisos de guardia.';
 

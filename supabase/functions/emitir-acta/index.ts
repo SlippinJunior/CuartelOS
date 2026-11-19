@@ -81,11 +81,37 @@ Deno.serve(async (req) => {
     pdf.caja([
       ["Fecha", textoFecha(acta.fecha)],
       ["Tipo de sesión", acta.tipo_sesion?.nombre ?? acta.tipo_sesion_codigo ?? "-"],
+      ["Estado", acta.aprobada_en_acta_id ? `Aprobada (acta N° ${acta.aprobada_en_acta_id})` : "Borrador"],
       ["Quórum", acta.quorum_ok ? "Cumplido" : "No registrado"],
       ["Asistencia", `${asistencias} asisten · ${permisos} permisos/licencias · ${faltas} faltas`],
     ]);
-    pdf.seccion("Texto del acta");
-    pdf.parrafo(acta.texto || "Sin texto registrado.");
+
+    // Secciones reglamentarias del editor estructurado. Las actas heredadas
+    // solo tienen `texto` y siguen imprimiéndose igual.
+    const secciones = (acta.secciones ?? {}) as Record<string, string>;
+    const bloques: Array<[string, string]> = [
+      ["hora_inicio", "Hora de inicio"],
+      ["hora_termino", "Hora de término"],
+      ["preside", "Preside la sesión"],
+      ["acta_anterior", "Lectura del acta anterior"],
+      ["correspondencia", "Correspondencia"],
+      ["cuenta_oficiales", "Cuenta de los oficiales"],
+      ["incidentes", "Incidentes"],
+      ["varios", "Varios"],
+    ];
+    if (Object.keys(secciones).length > 0) {
+      for (const [clave, etiqueta] of bloques) {
+        const valor = String(secciones[clave] ?? "").trim();
+        if (!valor) continue;
+        pdf.seccion(etiqueta);
+        pdf.parrafo(valor, 9.5);
+      }
+    }
+
+    if (acta.texto) {
+      pdf.seccion("Observaciones generales");
+      pdf.parrafo(acta.texto);
+    }
     pdf.seccion("Acuerdos");
     pdf.lista(
       acuerdos.map((a) =>

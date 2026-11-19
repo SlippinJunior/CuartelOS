@@ -1,31 +1,44 @@
 # Hoja de ruta
 
-La Etapa 1 deja la fundación y dos módulos funcionales. Las siguientes etapas se
-construyen sobre el mismo modelo, sin migraciones destructivas.
+Estado real del sistema y los pasos siguientes, en orden de prioridad.
 
-| Etapa | Contenido | Depende de |
+## Estado actual
+
+| Módulo | Estado |
+|---|---|
+| Base de datos (10 esquemas, RLS, auditoría, 25 migraciones) | ✅ |
+| Personal / Hoja de vida (antigüedad, categoría de guardia, Charlie) | ✅ |
+| Asistencia con pase de lista sin conexión | ✅ |
+| Guardias nocturnas (ciclos, cupo semanal, reporte, firma, autoasignación) | ✅ |
+| Tesorería: cuotas con cartola automática, proyección | ✅ (base) |
+| Secretaría: actas estructuradas, acuerdos, correspondencia, postulaciones, altas y bajas | ✅ |
+| Documentos: P3, actas, órdenes de capitanía, P1, P2, P4, verificación QR | ✅ |
+| Administración (usuarios, roles, catálogos, parámetros) | ✅ |
+| Material mayor 2D, vestuario y EPP | 🧱 esqueleto con mock |
+| Disciplina (Consejo) | 🧱 modelo y RLS listos |
+| Modelo dimensional `analitica`, VIPER | 📄 documentado |
+
+## Próximos pasos
+
+| Paso | Contenido | Por qué en este orden |
 |---|---|---|
-| **1** | Fundación + Personal/Hoja de vida + Asistencia + documentos P3 + importación | — |
-| **2** | **Tesorería cartola**: registro, conciliación mensual, compromisos, recurrentes, escenarios, gráficos (saldo 3/6/12 meses, ejecución, ingresos vs egresos), P13 y P21 | Etapa 1 |
-| **3** | **Material mayor 2D**: editor de zonas sobre foto, inventario por cajonera, revisión en terreno, vestuario/EPP (P8, P9), guardia nocturna (P7), bitácoras (P10) | Etapa 1 |
-| **4** | Premios de constancia con quinquenios y arrastre (P12) | Personal + asistencia |
-| **5** | Electoral (P15), disciplina (P16), traspaso anual (P17), memoria y carpeta anual | Secretaría + actas |
-| **6** | Esquema `analitica` (modelo dimensional), módulo de informes, integración API VIPER | Datos estables |
-| Transversal | Dominio, Cloudflare Pages, Supabase nube, respaldos y capacitación | Etapa 1 |
-
-## Criterios de cierre de cada etapa
-1. Migraciones aplicadas y `db lint` limpio.
-2. pgTAP de las nuevas reglas.
-3. Pantallas probadas en celular y escritorio.
-4. Documentación del módulo actualizada.
-5. Respaldo y plan de reversa.
+| **Siguiente · Paso A** | **Completar Tesorería (Etapa 2)**: registro de ingresos y egresos con comprobantes, compromisos y recurrentes editables, conciliación mensual, gráficos de proyección y PDFs P13/P21 | Ya está el 60 % construido (`TesoreriaPage` con cuotas y cartola); cerrarlo da control financiero total al Tesorero |
+| **Paso B** | **Material mayor 2D + Vestuario/EPP (Etapa 3)**: editor interactivo 2D sobre fotos reales de las unidades, inventario por cajonera, hojas de cargo P8, paz y salvo P9 y bitácora P10 | Queda listo justo cuando llegue la actualización de inventario real de la compañía |
+| **Paso C (Transversal)** | **Salida a producción**: proyecto Supabase en São Paulo, Cloudflare Pages, dominio propio, carga de `seed_real.sql` e invitación de oficiales | Con Personal, Asistencia, Guardias, Secretaría y Tesorería listos, la compañía ya puede operar en vivo |
+| **Paso D (Opcional)** | **Actas con NVIDIA Nemotron 3.5 Transcribe** | Ver `docs/integraciones/nemotron-actas.md`; se activa cuando el Director apruebe el costo mensual (menos de $2.000 CLP) y usa el editor de actas ya construido |
+| **Pasos E–F** | Premios de constancia (P12) → Electoral (P15), Disciplina (P16), Traspaso (P17) → esquema dimensional `analitica` e integración API VIPER | Requieren datos históricos acumulados en producción |
 
 ## Deuda técnica conocida
-- PDF con `pdf-lib` en vez de Typst (ver ADR 0004).
-- Mock estático de material 2D y tesorería.
+
+- PDF con `pdf-lib` en la Edge Function; la plantilla Typst sigue como diseño
+  canónico (ADR 0004).
+- Mock estático de material 2D.
+- Postulaciones: los certificados sensibles aún no se suben al bucket
+  `sensibles`; hoy solo se marca el checklist.
+- Autoasignación de guardias: el aviso es in-app; falta enviarlo también por
+  correo y WhatsApp.
 - Búsqueda global `Ctrl K` y command palette pendientes.
-- Notificaciones push y correo masivo.
 - Auditoría de accesibilidad con axe.
 
 ## Relacionado con
-`plan_implementacion.md`, `docs/modulos/`.
+`docs/modulos/`, `docs/integraciones/nemotron-actas.md`.

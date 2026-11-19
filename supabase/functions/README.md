@@ -72,6 +72,18 @@ POST /functions/v1/notificar-guardias
 { "modo": "llegadas_tardias" }
 ```
 
+## `emitir-secretaria-pdf`
+
+Emite el **P1** (expediente de postulación), **P2** (acta de votación de
+ingreso, sin número de votos) y **P4** (comunicación de altas y bajas).
+
+```json
+POST /functions/v1/emitir-secretaria-pdf
+{ "tipo": "P1", "postulacion_id": 4 }
+{ "tipo": "P2", "postulacion_id": 4 }
+{ "tipo": "P4", "evento_ids": [12, 13] }
+```
+
 ## `emitir-guardia-pdf`
 
 PDF **P7 · Rol y Libro de Guardia** con folio `ROL_GUARDIA`, hash y QR.

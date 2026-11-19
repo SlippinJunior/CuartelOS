@@ -44,28 +44,20 @@ Deno.serve(async (req) => {
       const conCupo = dias.filter((d) => Number(d.guardianes) < Number(grilla.ciclo.cupo_base));
       const fechas = dias.map((d) => String(d.fecha).slice(8, 10) + "-" + String(d.fecha).slice(5, 7));
 
+      // Solo se avisa a quienes deben cubrir guardia esta semana según la
+      // Orden 01/2026 (no a los exentos ni a quienes ya cumplieron su período).
       const { data: personas } = await rpcFilas(
         "operaciones",
-        "catalogo_guardia_personas",
-        {},
+        "destinatarios_convocatoria",
+        { p_ciclo: cicloId, p_semana: semana },
         { authorization: "", servicio: true },
       );
 
-      let destinatarios: Array<{ nombre: string; email: string | null; telefono: string | null }> = [];
-      if (Array.isArray(personas)) {
-        const ids = (personas as Array<{ id: string }>).map((p) => p.id);
-        const { data: detalle } = await seleccionar(
-          "personal",
-          "persona",
-          `select=id,nombres,apellido_paterno,email,telefono&estado=eq.activo&id=in.(${ids.join(",")})`,
-          { authorization: "", servicio: true },
-        );
-        destinatarios = ((detalle ?? []) as Array<Record<string, any>>).map((p) => ({
-          nombre: `${p.nombres} ${p.apellido_paterno}`,
-          email: p.email,
-          telefono: p.telefono,
-        }));
-      }
+      const destinatarios = ((personas ?? []) as Array<Record<string, any>>).map((p) => ({
+        nombre: String(p.nombre ?? ""),
+        email: p.email ?? null,
+        telefono: p.telefono ?? null,
+      }));
 
       const titulo = `Guardia Semana ${semana} · ${grilla.ciclo.nombre}`;
       const lineas = [

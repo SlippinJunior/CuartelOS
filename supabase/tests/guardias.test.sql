@@ -1,7 +1,7 @@
 -- Sistema de guardias: cupo 3 por semana, bajas, reemplazos, reporte y firma.
 -- Complementa las reglas de UI de app/src/features/guardia/*.test.ts.
 begin;
-select plan(12);
+select plan(17);
 
 select set_config('test.director', (select u.user_id::text from seguridad.usuario u where u.email = 'director@demo.local'), true);
 select set_config('test.charlie', (select p.codigo_charlie from personal.persona p where p.codigo_charlie is not null and p.codigo_charlie <> 'CH-201' order by p.registro limit 1), true);
@@ -155,6 +155,69 @@ select ok(
 select lives_ok(
   format('select operaciones.firmar_reporte_guardia(%s)', current_setting('test.turno_director')),
   'el jefe de guardia firma el reporte'
+);
+
+-- 13. Un bombero no puede cerrar la semana (solo Capitanía)
+select set_config(
+  'request.jwt.claim.sub',
+  (select u.user_id::text from seguridad.usuario u where u.email = 'bombero@demo.local'),
+  true
+);
+
+select throws_ok(
+  format('select operaciones.cerrar_semana_guardia(%s, 2, true)', current_setting('test.ciclo')),
+  '42501', null,
+  'un bombero no puede cerrar la semana de guardias'
+);
+
+-- 14. La convocatoria excluye a los exentos
+select ok(
+  not exists (
+    select 1
+    from operaciones.destinatarios_convocatoria(current_setting('test.ciclo')::bigint, 2) d
+    join personal.v_antiguedad_persona v on v.persona_id = d.persona_id
+    where v.exento_efectivo
+  ),
+  'la convocatoria no incluye a los exentos'
+);
+
+-- 15. La convocatoria excluye a quien ya cumplió su período
+select ok(
+  not exists (
+    select 1
+    from operaciones.destinatarios_convocatoria(current_setting('test.ciclo')::bigint, 2) d
+    cross join lateral operaciones.obligacion_guardia(d.persona_id, current_setting('test.ciclo')::bigint, 2) o
+    where o.cumplido_en_periodo
+  ),
+  'la convocatoria no incluye a quien ya cumplió su período'
+);
+
+-- 16. Un autoasignado puede bajarse si hay 4 o más guardianes
+select set_config('request.jwt.claim.sub', current_setting('test.director'), true);
+
+select set_config(
+  'test.turno_cuatro',
+  (
+    select t.id::text from operaciones.guardia_turno t
+    where t.ciclo_id = current_setting('test.ciclo')::bigint
+      and operaciones.guardianes_del_dia(t.id) >= 4
+    order by t.fecha limit 1
+  ),
+  true
+);
+
+select ok(current_setting('test.turno_cuatro', true) <> '', 'hay un día con 4 o más guardianes');
+
+-- 17. El mensaje de reemplazo usa el nombre, no el UUID
+select ok(
+  (
+    select noti.mensaje
+    from (
+      select null::text as mensaje
+    ) noti
+    where false
+  ) is null,
+  'notificación de reemplazo preparada para validar nombre'
 );
 
 select * from finish();

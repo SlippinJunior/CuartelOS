@@ -18,9 +18,9 @@ describe("permisos por rol", () => {
     expect(s).toContain("asistencia");
   });
 
-  it("el tesorero ve tesorería y no secretaría", () => {
+  it("el tesorero ve tesorería y secretaría (lectura)", () => {
     expect(puedeVer(["tesorero"], "tesoreria")).toBe(true);
-    expect(puedeVer(["tesorero"], "secretaria")).toBe(false);
+    expect(puedeVer(["tesorero"], "secretaria")).toBe(true);
   });
 
   it("el consejo ve disciplina", () => {
@@ -50,5 +50,18 @@ describe("permisos por rol", () => {
   it("etiqueta los roles largos", () => {
     expect(etiquetaRol("teniente_1")).toBe("Teniente 1°");
     expect(etiquetaRol("consejo")).toBe("Consejo de Disciplina");
+  });
+});
+
+describe("secretaría para la oficialidad", () => {
+  it("la oficialidad accede a Secretaría", () => {
+    for (const rol of ["director", "secretario", "prosecretario", "tesorero", "protesorero", "capitan", "teniente_1", "teniente_2", "teniente_3", "ayudante", "admin"]) {
+      expect(puedeVer([rol], "secretaria")).toBe(true);
+    }
+  });
+
+  it("el bombero y el consejo no ven Secretaría en el menú", () => {
+    expect(puedeVer(["bombero"], "secretaria")).toBe(false);
+    expect(puedeVer(["consejo"], "secretaria")).toBe(false);
   });
 });

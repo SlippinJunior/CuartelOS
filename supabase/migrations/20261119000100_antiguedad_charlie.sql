@@ -43,8 +43,7 @@ begin
       or new.motivo_exencion is distinct from old.motivo_exencion)
      and not (seguridad.tiene_rol('director', 'secretario', 'admin')
               -- Semilla, importación, migraciones y Edge Functions usan el rol de servicio.
-              or auth.role() = 'service_role'
-              or current_user in ('postgres', 'supabase_admin')) then
+              or auth.role() = 'service_role') then
     raise exception 'Solo Director, Secretario o admin pueden ajustar la antigüedad manual o la exención de guardia.'
       using errcode = 'insufficient_privilege';
   end if;

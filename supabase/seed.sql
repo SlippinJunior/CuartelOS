@@ -1329,7 +1329,8 @@ insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_c
 insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (2, 1, 2, 'Adquirir equipos de protección personal para la guardia nocturna.', 7, 1, 1, 'aprobado', 850000, '2026-06-30', 'en_curso') on conflict do nothing;
 insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (3, 2, 1, 'Autorizar la campaña económica 2026.', 9, 0, 0, 'aprobado', null, null, 'cumplido') on conflict do nothing;
 insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (4, 3, 1, 'Contratar mantención preventiva de la unidad M-21.', 5, 0, 0, 'aprobado', 320000, '2026-08-15', 'pendiente') on conflict do nothing;
-select setval(pg_get_serial_sequence('secretaria.acuerdo','id'), 4);
+select setval(pg_get_serial_sequence('secretaria.acuerdo','id'), (select max(id) from secretaria.acuerdo));
+select setval(pg_get_serial_sequence('secretaria.acta','id'), (select max(id) from secretaria.acta));
 -- Cargos 2026
 insert into personal.cargo_periodo (persona_id, cargo_id, desde, acta_id) select 'e58014ec-d954-5bde-8fd9-655529ac50eb', id, '2026-01-15', 1 from personal.cargo where codigo = 'DIR';
 insert into personal.cargo_periodo (persona_id, cargo_id, desde, acta_id) select '20fb4035-3feb-58da-a9ab-77df01ce6a8e', id, '2026-01-15', 1 from personal.cargo where codigo = 'SEC';
@@ -1619,11 +1620,12 @@ select setval(pg_get_serial_sequence('tesoreria.presupuesto','id'), 1);
 
 -- Compromisos
 insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (1, 'Compra de EPP para guardia nocturna', 850000, '2026-11-30', 'comprometido', 2, 7);
-insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (2, 'Mantención preventiva M-21', 320000, '2026-11-20', 'devengado', 4, 6);
+insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (2, 'Mantención preventiva M-21', 320000, '2026-11-20', 'devengado', 2, 6);
 insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (3, 'Pago de seguro de unidades', 450000, '2026-12-15', 'comprometido', 1, 8);
 insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (4, 'Cuota anual al Cuerpo', 900000, '2026-12-31', 'comprometido', 1, 9);
 insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (5, 'Reparación de material menor', 120000, '2026-10-15', 'pagado', 1, 7);
-select setval(pg_get_serial_sequence('tesoreria.compromiso','id'), 5);
+insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) overriding system value values (6, 'Cuota de capacitación ANB 2026', 260000, '2026-12-20', 'comprometido', null, 10);
+select setval(pg_get_serial_sequence('tesoreria.compromiso','id'), 6);
 
 -- Movimientos de 6 meses
 insert into tesoreria.movimiento (id, fecha, tipo, cuenta_id, fondo_id, categoria_id, monto, glosa, medio_pago, anulado) overriding system value values (1, '2026-05-27', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 343558, 'Recaudación de cuotas sociales', 'transferencia', false),
@@ -1986,7 +1988,7 @@ insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, orige
 select setval(pg_get_serial_sequence('operaciones.guardia_turno','id'), 6);
 
 -- Ciclo de guardias de 14 días: Semana 1 en curso y Semana 2 abierta
-do $$ begin perform operaciones.crear_ciclo_guardia('Ciclo noviembre 2026', '2026-11-09', 3); end $$;
+select set_config('request.jwt.claim.role', 'service_role', true); do $$ begin perform operaciones.crear_ciclo_guardia('Ciclo noviembre 2026', '2026-11-09', 3); end $$;
 update operaciones.guardia_ciclo set estado = 'en_curso' where fecha_inicio = '2026-11-09';
 insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'e58014ec-d954-5bde-8fd9-655529ac50eb'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-09' on conflict do nothing;
 insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '20fb4035-3feb-58da-a9ab-77df01ce6a8e'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-09' on conflict do nothing;
@@ -2005,7 +2007,7 @@ insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado
 insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'a5ac36f5-693c-55b3-81b1-c1535a355af7'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-19' on conflict do nothing;
 
 -- Reporte y firma de una noche pasada, con Charlie Z8
-do $$ declare v_turno bigint; v_persona uuid; begin select id into v_turno from operaciones.guardia_turno where ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and fecha = '2026-11-09' limit 1; select id into v_persona from personal.persona where id = 'e58014ec-d954-5bde-8fd9-655529ac50eb'; perform set_config('request.jwt.claim.sub', v_persona::text, true); perform set_config('request.jwt.claim.role', 'authenticated', true); perform operaciones.guardar_reporte_guardia(v_turno, time '23:40', 'Z8', 'CH-201', '{}'::uuid[], '{}'::uuid[], 'Guardia normal, sin novedades.'); perform operaciones.firmar_reporte_guardia(v_turno); end $$;
+do $$ declare v_turno bigint; v_persona uuid; begin select id into v_turno from operaciones.guardia_turno where ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and fecha = '2026-11-09' limit 1; select id into v_persona from personal.persona where id = 'c1e20062-0df0-528a-85fd-03ac52aa9158'; perform set_config('request.jwt.claim.role', 'service_role', true); perform operaciones.guardar_reporte_guardia(v_turno, time '23:40', 'Z8', 'CH-201', '{}'::uuid[], '{}'::uuid[], 'Guardia normal, sin novedades.'); perform operaciones.firmar_reporte_guardia(v_turno); end $$;
 
 -- Disciplina (solo visible para consejo; director ve sanciones ejecutoriadas)
 insert into disciplina.expediente (id, numero, anio, persona_id, fecha_apertura, estado, causa, instructor_persona_id) overriding system value values (1, 1, 2026, '2ef99536-6cbf-5e68-a4f2-a9c6e151220e', '2026-09-05', 'resuelto', 'Incumplimiento ficticio de guardia', '2b273959-45fa-5c61-b757-359a169f2e1e');

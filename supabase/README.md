@@ -8,7 +8,7 @@ ficticio, pruebas pgTAP, Edge Functions y configuración local.
 | Ruta | Qué hay |
 |---|---|
 | `config.toml` | Puertos, esquemas expuestos y Auth sin registro abierto |
-| `migrations/` | 25 migraciones planas, ordenadas por dominio |
+| `migrations/` | 27 migraciones planas, ordenadas por dominio |
 | `seed.sql` | Datos ficticios de desarrollo (se regenera con un script) |
 | `tests/` | pgTAP: RLS, reglas de negocio, folios, consentimiento y alertas |
 | `functions/` | `invitar-usuario`, `emitir-documento`, `emitir-acta`, `orden-capitania`, `notificar-guardias` y `emitir-guardia-pdf` (Deno) |

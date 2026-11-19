@@ -1,6 +1,6 @@
 -- Autoasignacion al cierre de la semana: dia con menos guardianes, empates al azar.
 begin;
-select plan(12);
+select plan(13);
 
 select set_config('test.ciclo', (select id::text from operaciones.guardia_ciclo order by fecha_inicio desc limit 1), true);
 select set_config('request.jwt.claim.sub', (select u.user_id::text from seguridad.usuario u where u.email = 'director@demo.local'), true);
@@ -92,14 +92,23 @@ select cmp_ok(
   'el reparto deja los dias equilibrados'
 );
 
--- 9. Ningun dia queda bajo el cupo tras el cierre
-select is(
-  (select count(*)::int from operaciones.guardia_turno t
+-- 9. Solo se asigno a quienes les vence en la semana (no a todos los activos)
+select ok(
+  (select count(*)::int from operaciones.pendientes_de_semana(
+     current_setting('test.ciclo')::bigint, 2)) = 0,
+  'solo se asigna a quienes les vence la obligacion esta semana'
+);
+
+select ok(
+  (select count(*)::int from personal.v_antiguedad_persona v
+    where v.estado = 'activo'
+      and not v.exento_efectivo) >
+  (select count(*)::int from operaciones.guardia_integrante gi
+    join operaciones.guardia_turno t on t.id = gi.turno_id
     where t.ciclo_id = current_setting('test.ciclo')::bigint
       and t.semana_num = 2
-      and operaciones.guardianes_del_dia(t.id) < 3),
-  0,
-  'ningun dia queda bajo el cupo tras el cierre'
+      and gi.origen = 'autoasignacion'),
+  'no se asigna a todos los activos, solo a los que deben guardia'
 );
 
 -- 10. Cada asignado recibe un aviso in-app

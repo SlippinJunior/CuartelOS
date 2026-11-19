@@ -303,7 +303,8 @@ for idx, (acta, texto, vf, vc, ab, res, monto, plazo, estado) in enumerate(acuer
         f"{idx}, {acta}, {numeros[acta]}, {q(texto)}, {vf}, {vc}, {ab}, {q(res)}, "
         f"{q(monto)}, {q(plazo)}, {q(estado)}) on conflict do nothing;"
     )
-w("select setval(pg_get_serial_sequence('secretaria.acuerdo','id'), 4);")
+w("select setval(pg_get_serial_sequence('secretaria.acuerdo','id'), (select max(id) from secretaria.acuerdo));")
+w("select setval(pg_get_serial_sequence('secretaria.acta','id'), (select max(id) from secretaria.acta));")
 
 
 w("-- Cargos 2026")
@@ -559,18 +560,21 @@ w()
 w("-- Compromisos")
 compromisos = [
     (1, "Compra de EPP para guardia nocturna", 850000, date(2026, 11, 30), "comprometido", 2, 7),
-    (2, "Mantención preventiva M-21", 320000, date(2026, 11, 20), "devengado", 4, 6),
+    (2, "Mantención preventiva M-21", 320000, date(2026, 11, 20), "devengado", 2, 6),
     (3, "Pago de seguro de unidades", 450000, date(2026, 12, 15), "comprometido", 1, 8),
     (4, "Cuota anual al Cuerpo", 900000, date(2026, 12, 31), "comprometido", 1, 9),
     (5, "Reparación de material menor", 120000, date(2026, 10, 15), "pagado", 1, 7),
+    # El acuerdo 4 queda sin compromiso a propósito para probar R04 y la
+    # creación de compromisos desde el Libro de Acuerdos.
+    (6, "Cuota de capacitación ANB 2026", 260000, date(2026, 12, 20), "comprometido", None, 10),
 ]
 for cid, desc, monto, fecha, estado, acuerdo, cat in compromisos:
     w(
         "insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado, acuerdo_id, categoria_id) "
         "overriding system value values ("
-        f"{cid}, {q(desc)}, {monto}, {q(fecha)}, {q(estado)}, {acuerdo}, {cat});"
+        f"{cid}, {q(desc)}, {monto}, {q(fecha)}, {q(estado)}, {q(acuerdo)}, {cat});"
     )
-w("select setval(pg_get_serial_sequence('tesoreria.compromiso','id'), 5);")
+w("select setval(pg_get_serial_sequence('tesoreria.compromiso','id'), 6);")
 w()
 
 w("-- Movimientos de 6 meses")
@@ -735,6 +739,7 @@ w("-- Ciclo de guardias de 14 días: Semana 1 en curso y Semana 2 abierta")
 hoy = date.today()
 inicio_ciclo = hoy - timedelta(days=hoy.weekday() % 7 + 7)
 w(
+    "select set_config('request.jwt.claim.role', 'service_role', true); "
     "do $$ begin perform operaciones.crear_ciclo_guardia("
     f"'Ciclo {MESES_LARGO[inicio_ciclo.month - 1]} {inicio_ciclo.year}', {q(inicio_ciclo)}, 3); end $$;"
 )
@@ -774,9 +779,8 @@ w("-- Reporte y firma de una noche pasada, con Charlie Z8")
 w(
     "do $$ declare v_turno bigint; v_persona uuid; begin "
     f"select id into v_turno from operaciones.guardia_turno where ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = {q(inicio_ciclo)}) and fecha = {q(inicio_ciclo)} limit 1; "
-    f"select id into v_persona from personal.persona where id = {q(persona_id(201))}; "
-    "perform set_config('request.jwt.claim.sub', v_persona::text, true); "
-    "perform set_config('request.jwt.claim.role', 'authenticated', true); "
+    f"select id into v_persona from personal.persona where id = {q(persona_id(206))}; "
+    "perform set_config('request.jwt.claim.role', 'service_role', true); "
     "perform operaciones.guardar_reporte_guardia(v_turno, time '23:40', 'Z8', 'CH-201', '{}'::uuid[], '{}'::uuid[], 'Guardia normal, sin novedades.'); "
     "perform operaciones.firmar_reporte_guardia(v_turno); "
     "end $$;"
