@@ -1,5 +1,7 @@
-name: Deploy a Cloudflare Pages
+name: Deploy a Cloudflare Pages (alternativa)
 
+# Desactivado: el despliegue principal de la demo es Vercel (deploy-vercel.yml).
+# Se mantiene como alternativa y solo corre manualmente.
 on:
   workflow_dispatch:
     inputs:

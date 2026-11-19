@@ -1,8 +1,9 @@
 name: Deploy a Vercel (demo)
 
 on:
-  push:
-    branches: [main]
+  # El despliegue principal lo hace la integración Git de Vercel
+  # (conectar el repo en vercel.com). Este workflow es la alternativa con la CLI
+  # y solo corre a mano.
   workflow_dispatch:
 
 concurrency:
