@@ -31,6 +31,10 @@ Thumbs.db
 !.vscode/extensions.json
 *.swp
 
+# Vercel CLI (contiene IDs del proyecto y tokens de OIDC)
+.vercel/
+.env*local
+
 # Playwright
 app/test-results/
 app/playwright-report/

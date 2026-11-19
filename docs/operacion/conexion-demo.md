@@ -10,100 +10,82 @@ terminar la conexión en pocos minutos.
 | Paso | Estado | Detalle |
 |---|---|---|
 | Repositorio en GitHub | ✅ | `SlippinJunior/CuartelOS`, rama `main`, CI en verde |
-| Token de Vercel | ✅ | Cuenta `slippinjunior`, sin proyectos aún |
-| Proyecto Supabase | ✅ | `gcedmlrmgtdktpglxqdl`, API por HTTPS responde |
-| Aplicar migraciones | ⛔ | **Bloqueado por red**: la base solo acepta `:5432` y esa red bloquea el puerto |
-| `anon key` entregada | ⚠️ | La cadena recibida no es un JWT válido (`sb_publishable` y `anon` responden `Invalid API key`) |
+| Proyecto Supabase | ✅ | `gcedmlrmgtdktpglxqdl` (us-east-2), 27 migraciones aplicadas por HTTPS |
+| Datos ficticios | ✅ | `supabase/seed.sql`: 30 personas, 40 listas, 14 guardias, 4 actas, 13 usuarios |
+| Esquemas en PostgREST | ✅ | `nucleo`, `personal`, `asistencia`, `operaciones`, `material`, `tesoreria`, `secretaria`, `disciplina`, `documentos` |
+| Edge Functions | ✅ | Las 7 desplegadas, `SITE_URL=https://cuartel-os.vercel.app` |
+| Auth | ✅ | Site URL y redirección `/auth/establecer`; registro cerrado |
+| Vercel | ✅ | Proyecto `cuartel-os` en <https://cuartel-os.vercel.app> |
+| Integración Git de Vercel | ⚠️ | Pendiente autorizar GitHub desde el panel (solo lo puede hacer el dueño) |
 
-### Por qué se bloqueó la aplicación de migraciones
-La base de datos de Supabase expone PostgreSQL en el puerto **5432**, también a
-través del pooler. Desde esta red:
+### Cómo se resolvió
 
-```text
-db.gcedmlrmgtdktpglxqdl.supabase.co:5432  → IPv6 only, red sin IPv6
-aws-0-*.pooler.supabase.com:5432 / :6543 → timeout
-gcedmlrmgtdktpglxqdl.supabase.co:443      → funciona
-```
-
-La API de administración de Supabase también requiere un token de acceso
-personal (`sbp_...`), que no se recibió. Por eso la base quedó **sin tablas**.
-
----
-
-## Opción A · Tú aplicas las migraciones (5 minutos)
-
-La forma más segura, porque no hay que compartir credenciales de base.
-
-### 1. Descargar el SQL
-
-1. En GitHub, abre **`supabase/migrations`**.
-2. En el repositorio hay 27 archivos en orden. En **Supabase → SQL Editor**,
-   pega y ejecuta los 27 en orden alfabético. Es tedioso pero funciona.
-
-Alternativa recomendada (una sola vez):
+La red sigue bloqueando `:5432`, pero con un **token personal de Supabase**
+(`sbp_...`) se aplicó todo por la Management API (HTTPS):
 
 ```bash
-git clone https://github.com/SlippinJunior/CuartelOS.git
-cd CuartelOS
-supabase login
-supabase link --project-ref gcedmlrmgtdktpglxqdl
-supabase db push
+# migraciones, una por archivo en orden
+curl -X POST "https://api.supabase.com/v1/projects/<ref>/database/query" \
+  -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "<contenido del .sql>"}'
+
+# seed
+# (misma llamada, con el contenido de supabase/seed.sql)
+
+# esquemas visibles en PostgREST
+curl -X PATCH "https://api.supabase.com/v1/projects/<ref>/postgrest" \
+  -d '{"db_schema":"public,graphql_public,nucleo,personal,asistencia,operaciones,material,tesoreria,secretaria,disciplina,documentos"}'
+# + en SQL: alter role authenticator set pgrst.db_schemas = '<esa lista>'
+# + todas las sesiones de esos roles son de pgrst: el ajuste por rol lo aplica
+#   PostgREST; las versiones se registran en supabase_migrations.schema_migrations
+
+# Edge Functions (la API exige multipart, por eso se usa la CLI)
+SUPABASE_ACCESS_TOKEN=... supabase link --project-ref <ref>
+supabase secrets set SITE_URL=https://cuartel-os.vercel.app
+supabase functions deploy <nombre>
 ```
-
-`supabase db push` aplica las 27 migraciones de una vez.
-
-### 2. Cargar los datos ficticios
-
-En **SQL Editor** pega y ejecuta el contenido de `supabase/seed.sql`
-(200 KB). Crea los 30 bomberos ficticios, las listas, las guardias y los
-usuarios demo.
-
-### 3. Obtener la clave correcta
-
-En **Supabase → Settings → API Keys → Legacy API Keys**, copia:
-- `anon` (empieza con `eyJ...`)
-- `service_role` (solo se usa dentro de Supabase, no en Vercel)
 
 ---
 
-## Opción B · Yo aplico las migraciones
+## Replicar la demo en otro proyecto
 
-Necesito una credencial que funcione por HTTPS. Cualquiera de estas dos:
+Con un token personal (`sbp_...`):
 
-1. **Token de acceso personal de Supabase** (`sbp_...`): se crea en
-   [supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens).
-   Con él aplico las migraciones y configuro Auth por la Management API.
-2. **Habilitar conexión IPv4** al proyecto y darme acceso a una red que permita
-   el puerto 5432 (por ejemplo, un servidor propio).
+1. Aplicar las 27 migraciones de `supabase/migrations` en orden por
+   `POST /v1/projects/<ref>/database/query`.
+2. Ejecutar `supabase/seed.sql` igual.
+3. `PATCH /v1/projects/<ref>/postgrest` con
+   `"db_schema": "public,graphql_public,nucleo,personal,asistencia,operaciones,material,tesoreria,secretaria,disciplina,documentos"`
+   y luego, en SQL,
+   `alter role authenticator set pgrst.db_schemas = '<esa lista>';`
+   (recomendado exponer sólo `nucleo, personal, asistencia` en demos con
+   invitados desconocidos).
+4. `supabase link`, `supabase secrets set SITE_URL=...` y desplegar las 7
+   Edge Functions.
+5. En Vercel, crear el proyecto y cargar `VITE_SUPABASE_URL` y
+   `VITE_SUPABASE_ANON_KEY` (JWT `eyJ...`).
+6. `PATCH /v1/projects/<ref>/config/auth` con `site_url`, `uri_allow_list`
+   (incluye `/auth/establecer`), `disable_signup=true`.
 
-> La opción 1 es la más simple y no expone la contraseña de la base.
+> `scripts/preparar-demo.sh` hace los pasos 1–4 por psql cuando el puerto 5432
+> está disponible.
 
 ---
 
 ## Despliegue en Vercel
 
-Cuando la base tenga tablas y la `anon key` correcta:
-
-1. En [vercel.com](https://vercel.com) → **Add New → Project → Import** →
-   `SlippinJunior/CuartelOS`.
-2. Vercel lee `vercel.json`: build del monorepo, salida `app/dist`.
-3. Variables de entorno:
-   ```env
-   VITE_SUPABASE_URL=https://gcedmlrmgtdktpglxqdl.supabase.co
-   VITE_SUPABASE_ANON_KEY=<anon key eyJ...>
-   ```
-4. Deploy. La URL queda como `https://cuartel-os.vercel.app`.
-5. En **Supabase → Authentication → URL Configuration**:
-   - Site URL: `https://cuartel-os.vercel.app`
-   - Redirect URLs: `https://cuartel-os.vercel.app/auth/establecer`
-
-También se puede desplegar por CLI con el token entregado:
+El proyecto ya existe (`cuartel-os`). Para publicar cambios sin integración Git:
 
 ```bash
-npx vercel --token "$VERCEL_TOKEN" --prod \
-  --env VITE_SUPABASE_URL=... \
-  --env VITE_SUPABASE_ANON_KEY=...
+cd /ruta/al/repo
+npx vercel link --project cuartel-os --scope slippinjuniors-projects
+npx vercel deploy --prod
 ```
+
+Para habilitar el despliegue automático en cada `push`, autoriza GitHub en
+Vercel → **Account Settings → Connect Git Account** y conecta
+`SlippinJunior/CuartelOS` en **Settings → Git** del proyecto.
 
 ---
 
@@ -111,9 +93,26 @@ npx vercel --token "$VERCEL_TOKEN" --prod \
 
 | Paso | Cómo |
 |---|---|
-| Edge Functions | `supabase secrets set SITE_URL=...` y `supabase functions deploy <nombre>` para las 7 |
-| Prueba de humo | Login `director@demo.local` / `demo1234`, abrir Guardia y Secretaría |
-| Restauración | Si la demo se ensucia, volver a ejecutar migraciones y `supabase/seed.sql` |
+| Correo | `supabase secrets set SMTP_...` (opcional; sin esto no salen mails) |
+| Prueba de humo | Login `director@demo.local` / `demo1234`, recorrer Guardia y Secretaría |
+| Restauración | Repetir seed (ver `demo-vercel.md`) |
+| Seguridad | Rotar el token personal de Supabase y el token de Vercel usados para montarla |
+
+### Verificado en la demo publicada (2026-11-19)
+
+| Prueba | Resultado |
+|---|---|
+| Login `director@demo.local` y recorrido de Inicio, Personal, Guardia, Asistencia, Tesorería, Secretaría, Documentos, Administración | ✅ sin errores de consola |
+| Login `capitan@demo.local` → Guardia y Material | ✅ |
+| Login `bombero@demo.local` → muro de consentimiento | ✅ (comportamiento esperado) |
+| Edge Function `emitir-acta` → PDF en Storage + folio 2026-0001 | ✅ HTTP 200 |
+| `/verificar/<token>` público y `/verificar/<token-inválido>` | ✅ "Documento válido" / "Documento no válido" |
+
+> Nota técnica: la CLI de Supabase sólo permite exponer esquemas al vincular el
+> proyecto por Postgres (`:5432`), inaccesible desde esta red. Los esquemas se
+> configuraron por la Management API y, además, se registraron las 27 versiones
+> en `supabase_migrations.schema_migrations` para que un futuro
+> `supabase db push` no las repita.
 
 ---
 

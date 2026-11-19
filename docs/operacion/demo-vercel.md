@@ -3,6 +3,9 @@
 Este entorno permite **presentar y compartir** el sistema con personas externas
 sin exponer datos reales. Todo lo que hay aquí es **ficticio**.
 
+> **Demo en línea:** <https://cuartel-os.vercel.app>
+> Contraseña de todos los usuarios: `demo1234`
+
 ---
 
 ## Qué se publica
@@ -10,7 +13,7 @@ sin exponer datos reales. Todo lo que hay aquí es **ficticio**.
 | Pieza | Dónde | Contenido |
 |---|---|---|
 | Frontend | **Vercel** | SPA estática generada desde `app/` |
-| Base de datos | **Supabase Cloud** (São Paulo) | Migraciones + `supabase/seed.sql` ficticio |
+| Base de datos | **Supabase Cloud** (us-east-2) | Migraciones + `supabase/seed.sql` ficticio |
 | Storage | Supabase | Buckets privados `documentos`, `sensibles`, `material` |
 | Edge Functions | Supabase | `invitar-usuario`, `emitir-documento`, `emitir-acta`, `orden-capitania`, `notificar-guardias`, `emitir-guardia-pdf`, `emitir-secretaria-pdf` |
 
@@ -54,7 +57,7 @@ ingreso.
 ## Preparar el proyecto Supabase de la demo
 
 ```bash
-# 1. Crear proyecto en https://supabase.com (región São Paulo)
+# 1. Crear proyecto en https://supabase.com (la demo usa us-east-2)
 #    Guardar: Project URL y anon key (Settings → API)
 
 # 2. Vincular el repositorio
@@ -113,7 +116,23 @@ resto de la demo funciona.
 5. Copia la URL pública (`https://cuartel-os.vercel.app`) y úsala como
    `SITE_URL` en Supabase.
 
-Cada `git push` a `main` vuelve a desplegar automáticamente.
+### Despliegue por CLI (sin integración Git)
+La demo actual se publicó con la CLI porque la integración Git de Vercel aún no
+está autorizada a leer el repositorio:
+
+```bash
+npx vercel link --project cuartel-os --scope slippinjuniors-projects
+npx vercel env add VITE_SUPABASE_URL production   # y VITE_SUPABASE_ANON_KEY
+npx vercel deploy --prod
+```
+
+Para que cada `git push` a `main` despliegue solo:
+
+1. En Vercel → **Account Settings → Connect Git Account** autoriza GitHub.
+2. En el proyecto `cuartel-os` → **Settings → Git** conecta
+   `SlippinJunior/CuartelOS` (rama `main`).
+3. Agrega en GitHub el secreto `VERCEL_TOKEN` si prefieres el workflow
+   `.github/workflows/deploy-vercel.yml` en vez de la integración nativa.
 
 ---
 
