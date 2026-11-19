@@ -35,6 +35,23 @@
 - Mientras algún día de la semana tenga menos de 3, ningún día puede pasar de 3.
 - Cuando los 7 días llegan a 3 o más, se liberan cupos extra en toda la semana.
 
+### Cierre semanal y autoasignación
+- La inscripción de cada semana se cierra el **último día previo a su inicio**
+  (el domingo, a las 20:00 de Chile). Desde ese momento corre la asignación
+  automática.
+- Quien **debía guardia y no se inscribió** queda asignado automáticamente al
+  **día con menos guardianes** de la semana; si hay empate, el día se elige
+  **al azar**.
+- Primero se completan los días bajo el cupo; si la semana ya está completa, el
+  bombero se suma como cupo extra al día con menos dotación.
+- Cada bombero asignado queda en **un solo día** de la semana y recibe un aviso
+  in-app.
+- El cierre corre por `pg_cron` (`operaciones.cerrar_semanas_pendientes`, 23:00
+  UTC de cada día) y también se puede disparar desde **Guardia → Gestión** o
+  desde la grilla con el botón *Cerrar semana y asignar*.
+- La grilla muestra el plazo (`Cierra en 3 días`, `Cierra hoy`, `Inscripción
+  cerrada`) y cada autoasignado lleva la etiqueta **Asignado**.
+
 ### Bajas y reemplazos (§5)
 - Con 4 o más guardianes, el bombero puede bajarse libremente.
 - Con 3 o menos, rige el **reemplazo formal**: indica reemplazante y el titular
@@ -77,6 +94,8 @@
 | Regla | Dónde |
 |---|---|
 | Cupo por semana | `operaciones.inscribirse_guardia` + `semana_cubierta` |
+| Cierre y autoasignación | `operaciones.cerrar_semana_guardia` + `asignar_automaticamente_semana` |
+| Día con menos guardianes (empate al azar) | `operaciones.dia_con_menos_guardianes` |
 | Baja libre o reemplazo | `operaciones.bajarse_guardia` |
 | Jefe calculado | `operaciones.jefe_guardia_de_turno` |
 | Firma | `operaciones.firmar_reporte_guardia` |
@@ -86,6 +105,7 @@
 
 ## Pendiente
 - Asignación manual de bomberos por día desde Gestión.
+- Aviso por correo/WhatsApp de la autoasignación (hoy es solo in-app).
 - Bandeja móvil de situaciones especiales para el bombero.
 - Cron Trigger de Cloudflare o GitHub Actions como alternativa a `pg_net`.
 - Historial de múltiples ciclos y arrastre de períodos bimestrales/trimestrales.

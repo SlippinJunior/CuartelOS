@@ -31,6 +31,7 @@ se conservan intactas en `docs/legado/sql/`.
 | 20261119000100 | `…_antiguedad_charlie.sql` | Antigüedad efectiva, Charlie, exenciones y vista |
 | 20261119000200 | `…_sistema_guardias.sql` | Ciclos, turnos, integrantes, RPC, situaciones y notificaciones |
 | 20261119000300 | `…_guardias_cron_alertas.sql` | P7, R13/R14, panel y parámetros de guardia |
+| 20261119000400 | `…_autoasignacion_guardias.sql` | Cierre semanal y autoasignación al día con menos guardianes |
 
 ## Cómo se usa
 ```bash

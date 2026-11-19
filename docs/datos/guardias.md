@@ -27,10 +27,22 @@ personal.categoria_guardia_de(anios, fecha_nacimiento, exento)
 | `operaciones.estado_ciclo` | `planificado`, `abierto`, `en_curso`, `cerrado` |
 | `operaciones.estado_turno` | `programada`, `constituida`, `firmada` |
 | `operaciones.charlie_modalidad` | `Z8`, `Z20`, `sin_maquinista` |
-| `operaciones.origen_integrante` | `inscripcion`, `asignacion_capitania`, `reemplazo`, `llegada_tardia`, `charlie_z8` |
+| `operaciones.origen_integrante` | `inscripcion`, `asignacion_capitania`, `reemplazo`, `llegada_tardia`, `charlie_z8`, `autoasignacion` |
 | `operaciones.estado_integrante` | `inscrito`, `reemplazado`, `cumplida`, `ausente` |
 | `operaciones.tipo_notificacion_guardia` | `convocatoria_semana`, `llegada_tardia`, `reemplazo`, `situacion_especial` |
 | `operaciones.estado_situacion_guardia` | `pendiente`, `aprobada`, `rechazada` |
+
+## Cierre de semana
+| Función | Rol |
+|---|---|
+| `pendientes_de_semana(ciclo, semana)` | Activos no exentos sin participación |
+| `dia_con_menos_guardianes(ciclo, semana, cupo, respetar)` | Turno con menor dotación; empate al azar |
+| `asignar_automaticamente_semana(ciclo, semana)` | Reparte a los pendientes |
+| `cerrar_semana_guardia(ciclo, semana, forzar)` | Valida el plazo y ejecuta el reparto |
+| `cerrar_semanas_pendientes()` | Recorre los ciclos activos (pg_cron) |
+| `estado_cierre_semana(ciclo, semana)` | Plazo, cierre y aviso para la interfaz |
+
+`guardia_turno.autoasignado_en` marca que la semana ya se cerró.
 
 ## Reglas
 - Un turno nocturno por fecha y ciclo (índice único parcial).

@@ -554,8 +554,15 @@ export type EstadoCiclo = "planificado" | "abierto" | "en_curso" | "cerrado";
 export type EstadoTurnoGuardia = "programada" | "constituida" | "firmada";
 export type CharlieModalidad = "Z8" | "Z20" | "sin_maquinista";
 export type OrigenIntegrante =
-  | "inscripcion" | "asignacion_capitania" | "reemplazo" | "llegada_tardia" | "charlie_z8";
+  | "inscripcion" | "asignacion_capitania" | "reemplazo" | "llegada_tardia" | "charlie_z8" | "autoasignacion";
 export type EstadoIntegrante = "inscrito" | "reemplazado" | "cumplida" | "ausente";
+
+export interface CierreSemana {
+  vence: string;
+  cerrada: boolean;
+  vence_hoy: boolean;
+  dias_para_cierre: number;
+}
 
 export interface GuardiaCiclo {
   id: number;

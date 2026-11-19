@@ -77,6 +77,16 @@ export function evaluarInscripcion(
   };
 }
 
+/** Texto del plazo para cerrar la semana (autoasignación). */
+export function textoCierreSemana(cierre: { cerrada: boolean; dias_para_cierre: number } | null | undefined): string {
+  if (!cierre) return "Sin información de cierre";
+  if (cierre.cerrada) return "Inscripción cerrada: ya se asignaron los pendientes";
+  if (cierre.dias_para_cierre < 0) return "Plazo de cierre vencido";
+  if (cierre.dias_para_cierre === 0) return "Cierra hoy: los pendientes se asignan automáticamente";
+  if (cierre.dias_para_cierre === 1) return "Cierra mañana";
+  return `Cierra en ${cierre.dias_para_cierre} días`;
+}
+
 export function puedeBajarseLibremente(guardianes: number): boolean {
   return guardianes > 3;
 }

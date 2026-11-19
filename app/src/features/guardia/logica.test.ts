@@ -7,6 +7,7 @@ import {
   periodoCategoria,
   puedeBajarseLibremente,
   semaforoDotacion,
+  textoCierreSemana,
   varianteDotacion,
 } from "@/features/guardia/logica";
 import type { GuardiaTurnoGrilla } from "@/types/tipos";
@@ -91,5 +92,16 @@ describe("guardias · reglas de UI", () => {
   it("formatea la hora", () => {
     expect(horaCorta(null)).toBe("—");
     expect(horaCorta("2026-11-19T23:30:00-03:00")).toMatch(/\d{2}:\d{2}/);
+  });
+
+  describe("cierre de semana", () => {
+    it("avisa cuándo cierra la inscripción", () => {
+      expect(textoCierreSemana({ cerrada: false, dias_para_cierre: 3 })).toBe("Cierra en 3 días");
+      expect(textoCierreSemana({ cerrada: false, dias_para_cierre: 1 })).toBe("Cierra mañana");
+      expect(textoCierreSemana({ cerrada: false, dias_para_cierre: 0 })).toMatch(/Cierra hoy/);
+      expect(textoCierreSemana({ cerrada: true, dias_para_cierre: 0 })).toMatch(/cerrada/);
+      expect(textoCierreSemana({ cerrada: false, dias_para_cierre: -2 })).toBe("Plazo de cierre vencido");
+      expect(textoCierreSemana(null)).toBe("Sin información de cierre");
+    });
   });
 });

@@ -35,7 +35,7 @@ pnpm dev
 Abre `http://localhost:5173` y prueba con `director@demo.local` / `demo1234`.
 
 ## Base de datos
-- `pnpm db:reset` aplica las 24 migraciones y el seed ficticio.
+- `pnpm db:reset` aplica las 25 migraciones y el seed ficticio.
 - `pnpm db:lint` revisa seguridad y rendimiento.
 - `pnpm db:test` ejecuta pgTAP (requiere el seed).
 - La base local queda en `127.0.0.1:54322`; Studio en `:54323`; Inbucket en

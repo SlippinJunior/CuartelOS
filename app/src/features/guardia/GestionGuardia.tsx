@@ -9,6 +9,7 @@ import {
   Mail,
   MessageCircle,
   Send,
+  UserCheck,
   X,
 } from "lucide-react";
 import { db, supabase } from "@/lib/supabase";
@@ -22,6 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatearFecha } from "@/lib/formato";
+import { textoCierreSemana } from "@/features/guardia/logica";
 import type { GrillaGuardia } from "@/types/tipos";
 
 interface CicloLista {
@@ -74,6 +76,41 @@ export function GestionGuardia() {
   const recargar = React.useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: ["guardia"] });
   }, [queryClient]);
+
+  const cierreQ = useQuery({
+    queryKey: ["guardia", "cierre-general", grillaQ.data?.ciclo.id],
+    queryFn: async () => {
+      const [s1, s2] = await Promise.all([
+        db.operaciones.rpc("estado_cierre_semana", { p_ciclo: grillaQ.data!.ciclo.id, p_semana: 1 }),
+        db.operaciones.rpc("estado_cierre_semana", { p_ciclo: grillaQ.data!.ciclo.id, p_semana: 2 }),
+      ]);
+      if (s1.error) throw s1.error;
+      if (s2.error) throw s2.error;
+      return {
+        1: s1.data as unknown as { vence: string; cerrada: boolean; dias_para_cierre: number; vence_hoy: boolean },
+        2: s2.data as unknown as { vence: string; cerrada: boolean; dias_para_cierre: number; vence_hoy: boolean },
+      };
+    },
+    enabled: Boolean(grillaQ.data?.ciclo.id),
+  });
+
+  const cerrar = useMutation({
+    mutationFn: async (semana: number) => {
+      const { data, error } = await db.operaciones.rpc("cerrar_semana_guardia", {
+        p_ciclo: grillaQ.data!.ciclo.id,
+        p_semana: semana,
+        p_forzar: false,
+      });
+      if (error) throw error;
+      return Number(data ?? 0);
+    },
+    onSuccess: async (n) => {
+      toast.success(n > 0 ? `${n} bomberos asignados automáticamente.` : "La semana ya estaba cerrada.");
+      await recargar();
+      await queryClient.invalidateQueries({ queryKey: ["guardia", "cierre-general"] });
+    },
+    onError: (e) => toast.error(mensajeError(e)),
+  });
 
   const cambiarEstado = useMutation({
     mutationFn: async ({ id, estado }: { id: number; estado: string }) => {
@@ -177,6 +214,44 @@ export function GestionGuardia() {
           )}
         </CardContent>
       </Card>
+
+      {cierreQ.data && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2">
+              <UserCheck className="size-5 text-primary" /> Cierre de inscripción
+            </CardTitle>
+            <CardDescription>
+              Al cerrar la semana, quienes no se inscribieron quedan asignados al día con menos guardianes.
+              Si hay empate, se elige al azar.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {[1, 2].map((semana) => {
+              const info = cierreQ.data?.[semana as 1 | 2];
+              if (!info) return null;
+              return (
+                <div key={semana} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2 text-sm">
+                  <div>
+                    <p className="font-medium">Semana {semana}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {textoCierreSemana(info)} · vence {formatearFecha(info.vence)}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant={info.cerrada ? "outline" : "secondary"}
+                    disabled={info.cerrada || !info.vence_hoy || cerrar.isPending}
+                    onClick={() => cerrar.mutate(semana)}
+                  >
+                    {info.cerrada ? "Cerrada" : info.vence_hoy ? "Cerrar y asignar" : "Aún no corresponde"}
+                  </Button>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-2">

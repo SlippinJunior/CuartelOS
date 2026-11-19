@@ -21,6 +21,7 @@ import {
   periodoCategoria,
   puedeBajarseLibremente,
   semaforoDotacion,
+  textoCierreSemana,
   varianteDotacion,
 } from "@/features/guardia/logica";
 import {
@@ -28,7 +29,13 @@ import {
   DialogoLlegadaTardia,
   DialogoReporteGuardia,
 } from "@/features/guardia/dialogos";
-import type { CumplimientoGuardia, GrillaGuardia, NotificacionGuardia, GuardiaTurnoGrilla } from "@/types/tipos";
+import type {
+  CierreSemana,
+  CumplimientoGuardia,
+  GrillaGuardia,
+  NotificacionGuardia,
+  GuardiaTurnoGrilla,
+} from "@/types/tipos";
 
 const DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
@@ -72,6 +79,21 @@ export function GrillaGuardia({ gestiona }: { gestiona: boolean }) {
     },
   });
 
+  const [cerrando, setCerrando] = React.useState(false);
+
+  const cierreQ = useQuery({
+    queryKey: ["guardia", "cierre", grillaQ.data?.ciclo.id, semana],
+    queryFn: async () => {
+      const { data, error } = await db.operaciones.rpc("estado_cierre_semana", {
+        p_ciclo: grillaQ.data!.ciclo.id,
+        p_semana: semana,
+      });
+      if (error) throw error;
+      return data as unknown as CierreSemana;
+    },
+    enabled: Boolean(grillaQ.data?.ciclo.id),
+  });
+
   const notificacionesQ = useQuery({
     queryKey: ["guardia", "notificaciones"],
     queryFn: async () => {
@@ -85,6 +107,27 @@ export function GrillaGuardia({ gestiona }: { gestiona: boolean }) {
     await queryClient.invalidateQueries({ queryKey: ["guardia"] });
     await queryClient.invalidateQueries({ queryKey: ["panel-inicio"] });
   }, [queryClient]);
+
+  const cerrarAhora = async () => {
+    if (!grillaQ.data) return;
+    setCerrando(true);
+    try {
+      const { data, error } = await db.operaciones.rpc("cerrar_semana_guardia", {
+        p_ciclo: grillaQ.data.ciclo.id,
+        p_semana: semana,
+        p_forzar: false,
+      });
+      if (error) throw error;
+      const n = Number(data ?? 0);
+      toast.success(n > 0 ? `${n} bomberos asignados automáticamente.` : "La semana ya estaba cerrada.");
+      await recargar();
+      await queryClient.invalidateQueries({ queryKey: ["guardia", "cierre"] });
+    } catch (e) {
+      toast.error(mensajeError(e));
+    } finally {
+      setCerrando(false);
+    }
+  };
 
   const inscribirse = useMutation({
     mutationFn: async (turnoId: number) => {
@@ -246,6 +289,20 @@ export function GrillaGuardia({ gestiona }: { gestiona: boolean }) {
           {diasCubiertos(dias, cupo)}/7 días cubiertos (mín. {cupo})
           {semanaCubierta ? " · cupos extra liberados" : ""}
         </Badge>
+        {cierreQ.data && (
+          <Badge
+            variant={cierreQ.data.cerrada ? "apagado" : cierreQ.data.dias_para_cierre <= 1 ? "aviso" : "outline"}
+            className="self-center"
+            title="Al cerrar la semana, quienes no se inscribieron quedan asignados al día con menos guardianes"
+          >
+            {textoCierreSemana(cierreQ.data)}
+          </Badge>
+        )}
+        {cierreQ.data && !cierreQ.data.cerrada && cierreQ.data.dias_para_cierre <= 0 && gestiona && (
+          <Button size="sm" variant="outline" onClick={() => void cerrarAhora()} disabled={cerrando}>
+            {cerrando ? "Asignando…" : "Cerrar semana y asignar"}
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
@@ -333,6 +390,7 @@ function TarjetaDia({
               {i.origen === "charlie_z8" && <Badge variant="secondary">Charlie Z8</Badge>}
               {i.origen === "reemplazo" && <Badge variant="aviso">Reemplazo</Badge>}
               {i.origen === "llegada_tardia" && <Badge variant="outline">Llegada {horaCorta(i.hora_llegada)}</Badge>}
+              {i.origen === "autoasignacion" && <Badge variant="secondary">Asignado</Badge>}
             </li>
           ))}
         </ul>

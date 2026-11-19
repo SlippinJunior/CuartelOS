@@ -18,7 +18,7 @@ Requisitos: Node 22+, pnpm 10+, Docker, Supabase CLI.
 ```bash
 pnpm install
 pnpm supabase start          # primera vez: descarga imágenes (varios minutos)
-pnpm supabase db reset       # aplica las 24 migraciones + seed ficticio
+pnpm supabase db reset       # aplica las 25 migraciones + seed ficticio
 cp app/.env.example app/.env # pega la URL y la anon key que imprime el CLI
 pnpm dev
 ```
