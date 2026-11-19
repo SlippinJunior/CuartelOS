@@ -10,6 +10,7 @@ preparar datos de desarrollo. No contienen datos reales.
 | `importar-legado/` | Carga el esquema antiguo, transforma y exporta `data/privado/seed_real.sql` |
 | `generar-seed-ficticio/` | Genera `supabase/seed.sql` con 30 bomberos, listas, unidades y tesorería inventadas |
 | `dev/` | Comprueba Node, pnpm, Docker y puertos antes de `supabase start` |
+| `preparar-demo.sh` | Aplica migraciones, seed y Edge Functions al Supabase de la demo |
 
 ## Cómo se usa
 ```bash

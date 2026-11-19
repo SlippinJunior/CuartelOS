@@ -22,7 +22,14 @@ VITE_SUPABASE_URL=https://<project-ref>.supabase.co
 VITE_SUPABASE_ANON_KEY=<anon key pública del proyecto>
 ```
 
+### ⚠️ Usa la clave `anon` (JWT), no la `publishable`
+El cliente actual envía `VITE_SUPABASE_ANON_KEY` como JWT. Con la
+`publishable key` (`sb_publishable_...`) PostgREST rechaza las llamadas
+anónimas y la verificación pública de documentos deja de funcionar. Busca en
+**Settings → API Keys → Legacy API Keys** la clave `anon` (empieza con `eyJ`).
+
 La `anon key` es pública por diseño: la seguridad la impone RLS en la base.
+La `service_role` nunca se usa en el frontend.
 
 ---
 

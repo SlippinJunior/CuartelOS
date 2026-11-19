@@ -1,6 +1,8 @@
 # ERP · Segunda Compañía de Bomberos de Limache
 
-> Repositorio: [`SlippinJunior/CuartelOS`](https://github.com/SlippinJunior/CuartelOS) · Demo: Vercel
+> Repositorio: [`SlippinJunior/CuartelOS`](https://github.com/SlippinJunior/CuartelOS)
+
+[![CI](https://github.com/SlippinJunior/CuartelOS/actions/workflows/ci.yml/badge.svg)](https://github.com/SlippinJunior/CuartelOS/actions/workflows/ci.yml)
 
 Sistema de gestión de la Segunda Compañía, construido a partir del documento
 *ERP Segunda Compañía CBL*. La Etapa 1 deja una fundación completa y funcional:
