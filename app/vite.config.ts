@@ -47,6 +47,20 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  build: {
+    // Rutas con nombres estables para cachear el shell en Cloudflare/Vercel.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom"],
+          "supabase": ["@supabase/supabase-js"],
+          "router": ["@tanstack/react-router"],
+          "query": ["@tanstack/react-query"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 900,
+  },
   server: {
     port: 5173,
     host: true,

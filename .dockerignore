@@ -1,0 +1,16 @@
+# Solo herramientas de la raíz y la app.
+node_modules
+dist
+dist-ssr
+*.tsbuildinfo
+coverage
+.git
+.github
+docs/legado/pdf
+data/privado
+app/test-results
+app/playwright-report
+app/dist
+.env
+.env.*
+!.env.example

@@ -1,5 +1,7 @@
 # ERP · Segunda Compañía de Bomberos de Limache
 
+> Repositorio: [`SlippinJunior/CuartelOS`](https://github.com/SlippinJunior/CuartelOS) · Demo: Vercel
+
 Sistema de gestión de la Segunda Compañía, construido a partir del documento
 *ERP Segunda Compañía CBL*. La Etapa 1 deja una fundación completa y funcional:
 base de datos normalizada con seguridad por fila, **Personal / Hoja de vida** y
@@ -10,6 +12,14 @@ esqueletos navegables para los módulos de las etapas siguientes.
 > respaldo real se guardan en `data/privado/`, que está ignorado.
 
 ---
+
+## Demo pública
+
+La demo corre en Vercel contra un proyecto Supabase con **datos ficticios**.
+Los usuarios demo (`director@demo.local`, `tesorero@demo.local`,
+`bombero@demo.local`…, contraseña `demo1234`) aparecen como botones en el login.
+
+Pasos completos para desplegarla: [`docs/operacion/demo-vercel.md`](docs/operacion/demo-vercel.md).
 
 ## Empezar en 5 minutos
 
@@ -47,6 +57,8 @@ Para probar en el celular, abre `http://<tu-ip>:5173` en la misma red.
 
 ```
 .
+├── vercel.json          Configuración de la demo en Vercel
+├── Dockerfile           Imagen de la demo (nginx)
 ├── app/                 Frontend React + Vite + TypeScript (PWA)
 ├── supabase/            Migraciones, seed, pruebas pgTAP y Edge Functions
 ├── plantillas/          Diseño Typst de la hoja de vida y escudo
