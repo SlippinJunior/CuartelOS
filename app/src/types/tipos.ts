@@ -24,6 +24,10 @@ export interface Persona {
   estado: EstadoPersona;
   fecha_estado: string | null;
   observaciones: string | null;
+  codigo_charlie?: string | null;
+  anios_servicio_manual?: number | null;
+  exento_guardia?: boolean;
+  motivo_exencion?: string | null;
   creado_en?: string;
   actualizado_en?: string;
 }
@@ -365,6 +369,19 @@ export interface Perfil {
 
 export interface PanelInicio {
   alertas: Alerta[];
+  guardia?: CumplimientoGuardia | null;
+  notificaciones_guardia?: Array<{
+    id: number;
+    tipo: string;
+    turno_id: number | null;
+    mensaje: string | null;
+    creado_en: string;
+  }>;
+  reportes_por_firmar?: Array<{
+    turno_id: number;
+    fecha: string;
+    detalle: string;
+  }>;
   tareas: Array<{
     tipo: string;
     id: number;
@@ -504,4 +521,147 @@ export interface Acuerdo {
   plazo: string | null;
   estado: string;
   resultado: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Antigüedad y guardias
+// ---------------------------------------------------------------------------
+
+export type CategoriaGuardia = "0_4" | "5_9" | "10_19" | "20_34" | "exento";
+export type OrigenAntiguedad = "manual" | "calculado";
+
+export interface AntiguedadPersona {
+  persona_id: string;
+  registro: number;
+  nombre: string;
+  codigo_charlie: string | null;
+  anios_premios: number;
+  anios_abonos: number;
+  anios_calculados: number;
+  anios_servicio_manual: number | null;
+  anios_servicio: number;
+  origen_antiguedad: OrigenAntiguedad;
+  edad: number | null;
+  exento_guardia: boolean;
+  exento_efectivo: boolean;
+  motivo_exencion: string | null;
+  categoria_guardia: CategoriaGuardia;
+  fecha_ingreso: string | null;
+  estado: EstadoPersona;
+}
+
+export type EstadoCiclo = "planificado" | "abierto" | "en_curso" | "cerrado";
+export type EstadoTurnoGuardia = "programada" | "constituida" | "firmada";
+export type CharlieModalidad = "Z8" | "Z20" | "sin_maquinista";
+export type OrigenIntegrante =
+  | "inscripcion" | "asignacion_capitania" | "reemplazo" | "llegada_tardia" | "charlie_z8";
+export type EstadoIntegrante = "inscrito" | "reemplazado" | "cumplida" | "ausente";
+
+export interface GuardiaCiclo {
+  id: number;
+  nombre: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  cupo_base: number;
+  estado: EstadoCiclo;
+  notificado_s1_en: string | null;
+  notificado_s2_en: string | null;
+}
+
+export interface GuardiaIntegranteGrilla {
+  persona_id: string;
+  registro: number;
+  nombre: string;
+  codigo_charlie: string | null;
+  origen: OrigenIntegrante;
+  estado: EstadoIntegrante;
+  hora_llegada: string | null;
+  reemplaza_a_persona_id: string | null;
+  reemplazo_nota: string | null;
+  es_jefe: boolean;
+}
+
+export interface GuardiaTurnoGrilla {
+  turno_id: number;
+  fecha: string;
+  semana_num: 1 | 2;
+  estado: EstadoTurnoGuardia;
+  inicio: string;
+  termino: string | null;
+  feriado: string | null;
+  hora_aviso_central: string | null;
+  charlie_modalidad: CharlieModalidad | null;
+  charlie_codigo: string | null;
+  observacion: string | null;
+  jefe_persona_id: string | null;
+  firmado_en: string | null;
+  guardianes: number;
+  integrantes: GuardiaIntegranteGrilla[];
+}
+
+export interface GrillaGuardia {
+  ciclo: GuardiaCiclo;
+  semana_1_cubierta: boolean;
+  semana_2_cubierta: boolean;
+  dias: GuardiaTurnoGrilla[];
+}
+
+export interface CumplimientoGuardia {
+  vinculado: boolean;
+  persona_id?: string;
+  anios_servicio?: number;
+  origen_antiguedad?: OrigenAntiguedad;
+  categoria_guardia?: CategoriaGuardia;
+  exento?: boolean;
+  motivo_exencion?: string | null;
+  ciclo_id?: number | null;
+  ciclo_inicio?: string | null;
+  ciclo_fin?: string | null;
+  cumplidas?: number;
+  inscritas?: number;
+  requiere_guardia?: boolean;
+  pendiente?: boolean;
+  notificaciones_sin_leer?: number;
+}
+
+export interface NotificacionGuardia {
+  id: number;
+  tipo: string;
+  turno_id: number | null;
+  mensaje: string | null;
+  creado_en: string;
+  leida_en: string | null;
+}
+
+export interface PersonaGuardiaCatalogo {
+  id: string;
+  registro: number;
+  nombre: string;
+  codigo_charlie: string | null;
+  anios_servicio: number;
+  categoria_guardia: CategoriaGuardia;
+  exento: boolean;
+}
+
+export interface EstadisticasGuardia {
+  periodo: { desde: string; hasta: string };
+  por_categoria: Array<{
+    categoria: CategoriaGuardia;
+    personas: number;
+    cumplidas: number;
+    llegadas_tardias: number;
+  }>;
+  por_dia_semana: Array<{ dia: number; guardianes: number }>;
+  maquinistas: Array<{ persona_id: string; codigo: string; z8: number; z20: number }>;
+}
+
+export interface GuardiaSituacion {
+  id: number;
+  persona_id: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  motivo: string;
+  estado: "pendiente" | "aprobada" | "rechazada";
+  respuesta: string | null;
+  creado_en: string;
 }

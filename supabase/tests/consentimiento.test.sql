@@ -18,7 +18,7 @@ select is((nucleo.mi_perfil()->'consentimiento'->>'aceptado')::boolean, true,
 reset role;
 
 select is((select count(*)::int from seguridad.consentimiento c
-           join seguridad.usuario u using (usuario_id)
+           join seguridad.usuario u on u.user_id = c.usuario_id
            where u.email = 'bombero@demo.local'), 1,
   'queda un registro de consentimiento');
 

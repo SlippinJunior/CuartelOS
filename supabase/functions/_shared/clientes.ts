@@ -89,6 +89,16 @@ export async function rpc(
 }
 
 /** SELECT de PostgREST en un esquema expuesto. */
+/** Ejecuta una RPC y devuelve las filas (útil para funciones que retornan TABLE). */
+export async function rpcFilas(
+  esquema: string,
+  funcion: string,
+  args: Record<string, unknown>,
+  opciones: { authorization: string; servicio?: boolean },
+): Promise<{ data: any; error: string | null }> {
+  return rpc(esquema, funcion, args, opciones);
+}
+
 export async function seleccionar(
   esquema: string,
   tabla: string,
@@ -228,4 +238,12 @@ export async function actualizar(
     return { error: data?.message ?? `Error ${resp.status} al actualizar ${tabla}` };
   }
   return { error: null };
+}
+
+/** Verifica el token interno de cron (Cloudflare, GitHub Actions o pg_net). */
+export function esLlamadaServicio(req: Request): boolean {
+  const secreto = Deno.env.get("CRON_SECRET") ?? "";
+  const header = req.headers.get("x-cron-secret") ?? "";
+  const bearer = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+  return Boolean(secreto) && (header === secreto || bearer === secreto);
 }

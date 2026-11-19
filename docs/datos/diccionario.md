@@ -32,7 +32,7 @@ psql "$DATABASE_URL" -c "\copy (select ...) to 'data/privado/diccionario.csv' cs
 | `seguridad` | `usuario`, `usuario_rol`, `consentimiento_texto`, `consentimiento`, `auditoria` | Identidad y trazabilidad |
 | `personal` | `persona`, `persona_evento`, `persona_dato_sensible`, `licencia_conducir`, `antiguedad_abono`, `cargo`, `cargo_periodo`, `curso`, `persona_curso`, `premio_tipo`, `persona_premio`, `situacion_especial`, `postulacion` | Ficha y hoja de vida |
 | `asistencia` | `tipo_acto`, `lista`, `asistencia` | Libro de asistencia |
-| `operaciones` | `orden_capitania`, `guardia_turno`, `guardia_integrante`, `accidente_servicio` | Capitanía |
+| `operaciones` | `orden_capitania`, `guardia_ciclo`, `guardia_turno`, `guardia_integrante`, `guardia_situacion`, `guardia_notificacion`, `accidente_servicio` | Capitanía y guardias |
 | `material` | `tipo_unidad`, `unidad`, `unidad_documento`, `unidad_vista`, `ubicacion`, `categoria_articulo`, `articulo`, `item`, `asignacion`, `mantencion`, `revision_inventario`, `revision_detalle`, `bitacora_unidad` | Material mayor y menor |
 | `tesoreria` | `cuenta`, `fondo`, `categoria`, `presupuesto`, `presupuesto_linea`, `movimiento`, `compromiso`, `recurrente`, `escenario`, `escenario_ajuste`, `cuota_valor`, `cuota_pago`, `cierre_mensual`, `campana`, `talonario`, `campana_participacion`, `beneficio`, `donacion` | Dinero |
 | `secretaria` | `tipo_sesion`, `acta`, `acuerdo`, `correspondencia`, `eleccion`, `candidatura`, `traspaso_cargo` | Libro de actas |

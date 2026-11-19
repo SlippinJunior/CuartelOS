@@ -43,7 +43,7 @@ insert into personal.persona (id, compania_id, registro, rut, nombres, apellido_
 insert into personal.persona_dato_sensible (persona_id, grupo_sanguineo, alergias, contacto_emergencia_nombre, contacto_emergencia_telefono, notas) values ('e58014ec-d954-5bde-8fd9-655529ac50eb', 'O+', 'Penicilina', 'Contacto de emergencia 201', '+56900000000', 'Dato ficticio de desarrollo');
 insert into personal.persona_dato_sensible (persona_id, grupo_sanguineo, alergias, contacto_emergencia_nombre, contacto_emergencia_telefono, notas) values ('17f48af4-6fc3-5512-b003-ba76920910ff', 'A-', null, 'Contacto de emergencia 204', '+56900000000', 'Dato ficticio de desarrollo');
 insert into personal.persona_dato_sensible (persona_id, grupo_sanguineo, alergias, contacto_emergencia_nombre, contacto_emergencia_telefono, notas) values ('7a5efba2-1e47-51a1-bff9-7045345a182d', 'B+', 'Látex', 'Contacto de emergencia 210', '+56900000000', 'Dato ficticio de desarrollo');
-insert into personal.persona_dato_sensible (persona_id, grupo_sanguineo, alergias, contacto_emergencia_nombre, contacto_emergencia_telefono, notas) values ('87585a59-cd24-5815-bbb7-9b7fbbc01c16', 'AB+', null, 'Contacto de emergencia 212', '+56900000000', 'Dato ficticio de desarrollo');
+insert into personal.persona_dato_sensible (persona_id, grupo_sanguineo, alergias, contacto_emergencia_nombre, contacto_emergencia_telefono, notas) values ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', 'AB+', null, 'Contacto de emergencia 219', '+56900000000', 'Dato ficticio de desarrollo');
 
 -- Usuarios demo de Supabase Auth (contraseña: demo1234)
 insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, recovery_token, email_change_token_new, email_change) values ('00000000-0000-0000-0000-000000000000', '4d612390-e116-5ceb-a439-82067cb183da', 'authenticated', 'authenticated', 'director@demo.local', extensions.crypt('demo1234', extensions.gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, now(), now(), '', '', '', '');
@@ -1318,16 +1318,18 @@ update asistencia.lista set estado = 'cerrada', cerrada_en = '2026-11-05'::times
 select setval(pg_get_serial_sequence('asistencia.lista','id'), 40);
 
 -- Actas y acuerdos
-insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (1, 'RO', 1, 2026, '2026-01-15', 1, true);
-insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (2, 'RO', 2, 2026, '2026-04-09', 2, true);
-insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (3, 'REO', 1, 2026, '2026-07-02', 1, true);
-insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (4, 'RO', 3, 2026, '2026-10-08', 3, true);
+insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (1, 'RO', 1, 2026, '2026-01-15', 1, true) on conflict do nothing;
+insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (2, 'RO', 2, 2026, '2026-04-09', 2, true) on conflict do nothing;
+insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (3, 'REO', 1, 2026, '2026-07-02', 1, true) on conflict do nothing;
+insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) overriding system value values (4, 'RO', 3, 2026, '2026-10-08', 3, true) on conflict do nothing;
 update secretaria.acta set aprobada_en_acta_id = 2 where id = 1;
 update secretaria.acta set aprobada_en_acta_id = 3 where id = 2;
 update secretaria.acta set aprobada_en_acta_id = 4 where id = 3;
-insert into secretaria.acuerdo (acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) values (1, 1, 'Aprobar el presupuesto anual 2026 presentado por Tesorería.', 8, 0, 1, 'aprobado', 12000000, '2026-03-31', 'cumplido'),(1, 2, 'Adquirir equipos de protección personal para la guardia nocturna.', 7, 1, 1, 'aprobado', 850000, '2026-06-30', 'en_curso'),(2, 1, 'Autorizar la campaña económica 2026.', 9, 0, 0, 'aprobado', null, null, 'cumplido'),(3, 1, 'Contratar mantención preventiva de la unidad M-21.', 5, 0, 0, 'aprobado', 320000, '2026-08-15', 'pendiente');
-select setval(pg_get_serial_sequence('secretaria.acta','id'), 4);
-
+insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (1, 1, 1, 'Aprobar el presupuesto anual 2026 presentado por Tesorería.', 8, 0, 1, 'aprobado', 12000000, '2026-03-31', 'cumplido') on conflict do nothing;
+insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (2, 1, 2, 'Adquirir equipos de protección personal para la guardia nocturna.', 7, 1, 1, 'aprobado', 850000, '2026-06-30', 'en_curso') on conflict do nothing;
+insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (3, 2, 1, 'Autorizar la campaña económica 2026.', 9, 0, 0, 'aprobado', null, null, 'cumplido') on conflict do nothing;
+insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) overriding system value values (4, 3, 1, 'Contratar mantención preventiva de la unidad M-21.', 5, 0, 0, 'aprobado', 320000, '2026-08-15', 'pendiente') on conflict do nothing;
+select setval(pg_get_serial_sequence('secretaria.acuerdo','id'), 4);
 -- Cargos 2026
 insert into personal.cargo_periodo (persona_id, cargo_id, desde, acta_id) select 'e58014ec-d954-5bde-8fd9-655529ac50eb', id, '2026-01-15', 1 from personal.cargo where codigo = 'DIR';
 insert into personal.cargo_periodo (persona_id, cargo_id, desde, acta_id) select '20fb4035-3feb-58da-a9ab-77df01ce6a8e', id, '2026-01-15', 1 from personal.cargo where codigo = 'SEC';
@@ -1929,58 +1931,81 @@ insert into nucleo.contraparte (tipo, nombre) values ('donante', 'Donante fictic
 insert into nucleo.contraparte (tipo, nombre) values ('donante', 'Donante ficticio 3') on conflict do nothing;
 insert into tesoreria.beneficio (nombre, descripcion, monto, activo) values ('Ayuda de sepelio', 'Beneficio ficticio para socios', 300000, true),('Beca de formación', 'Apoyo a cursos ANB', 150000, true);
 
--- Guardias nocturnas
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (1, '2026-08-01', 'nocturna', 'e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-08-01'::timestamptz + interval '23 hours', '2026-08-02'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (1, 'e58014ec-d954-5bde-8fd9-655529ac50eb', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (1, '20fb4035-3feb-58da-a9ab-77df01ce6a8e', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (1, '2c27012d-f957-58be-aa9e-7c4cd2355b18', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (1, '17f48af4-6fc3-5512-b003-ba76920910ff', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (2, '2026-08-08', 'nocturna', 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', '2026-08-08'::timestamptz + interval '23 hours', '2026-08-09'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (2, '20fb4035-3feb-58da-a9ab-77df01ce6a8e', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (2, '2c27012d-f957-58be-aa9e-7c4cd2355b18', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (2, '17f48af4-6fc3-5512-b003-ba76920910ff', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (2, '4345e829-8b8a-5149-90b2-810ee247e60a', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (3, '2026-08-15', 'nocturna', '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', '2026-08-15'::timestamptz + interval '23 hours', '2026-08-16'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (3, '2c27012d-f957-58be-aa9e-7c4cd2355b18', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (3, '17f48af4-6fc3-5512-b003-ba76920910ff', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (3, '4345e829-8b8a-5149-90b2-810ee247e60a', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (3, 'c1e20062-0df0-528a-85fd-03ac52aa9158', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (4, '2026-08-22', 'nocturna', '7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-08-22'::timestamptz + interval '23 hours', '2026-08-23'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (4, '17f48af4-6fc3-5512-b003-ba76920910ff', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (4, '4345e829-8b8a-5149-90b2-810ee247e60a', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (4, 'c1e20062-0df0-528a-85fd-03ac52aa9158', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (4, 'e87444d3-a2a6-5222-af23-a3292cd4842c', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (5, '2026-08-29', 'nocturna', '2b273959-45fa-5c61-b757-359a169f2e1e', '2026-08-29'::timestamptz + interval '23 hours', '2026-08-30'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (5, '4345e829-8b8a-5149-90b2-810ee247e60a', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (5, 'c1e20062-0df0-528a-85fd-03ac52aa9158', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (5, 'e87444d3-a2a6-5222-af23-a3292cd4842c', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (5, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (6, '2026-09-05', 'nocturna', '87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-09-05'::timestamptz + interval '23 hours', '2026-09-06'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (6, 'c1e20062-0df0-528a-85fd-03ac52aa9158', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (6, 'e87444d3-a2a6-5222-af23-a3292cd4842c', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (6, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (6, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (7, '2026-09-12', 'nocturna', 'a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-09-12'::timestamptz + interval '23 hours', '2026-09-13'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (7, 'e87444d3-a2a6-5222-af23-a3292cd4842c', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (7, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (7, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (7, '7a5efba2-1e47-51a1-bff9-7045345a182d', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (8, '2026-09-19', 'nocturna', '719c8def-873f-50f2-83c4-7006e03ceb8c', '2026-09-19'::timestamptz + interval '23 hours', '2026-09-20'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (8, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (8, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (8, '7a5efba2-1e47-51a1-bff9-7045345a182d', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (8, '2b273959-45fa-5c61-b757-359a169f2e1e', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (9, '2026-09-26', 'nocturna', '8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-09-26'::timestamptz + interval '23 hours', '2026-09-27'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (9, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (9, '7a5efba2-1e47-51a1-bff9-7045345a182d', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (9, '2b273959-45fa-5c61-b757-359a169f2e1e', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (9, '87585a59-cd24-5815-bbb7-9b7fbbc01c16', 'voluntario');
-insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (10, '2026-10-03', 'nocturna', 'd5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-10-03'::timestamptz + interval '23 hours', '2026-10-04'::timestamptz + interval '7 hours');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (10, '7a5efba2-1e47-51a1-bff9-7045345a182d', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (10, '2b273959-45fa-5c61-b757-359a169f2e1e', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (10, '87585a59-cd24-5815-bbb7-9b7fbbc01c16', 'voluntario');
-insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values (10, 'a5ac36f5-693c-55b3-81b1-c1535a355af7', 'voluntario');
-select setval(pg_get_serial_sequence('operaciones.guardia_turno','id'), 10);
+-- Antigüedad manual, exenciones y códigos Charlie
+update personal.persona set anios_servicio_manual = 12, exento_guardia = false where id = 'e58014ec-d954-5bde-8fd9-655529ac50eb';
+update personal.persona set codigo_charlie = 'CH-201' where id = 'e58014ec-d954-5bde-8fd9-655529ac50eb';
+update personal.persona set codigo_charlie = 'CH-202' where id = '20fb4035-3feb-58da-a9ab-77df01ce6a8e';
+update personal.persona set codigo_charlie = 'CH-203' where id = '2c27012d-f957-58be-aa9e-7c4cd2355b18';
+update personal.persona set codigo_charlie = 'CH-204' where id = '17f48af4-6fc3-5512-b003-ba76920910ff';
+update personal.persona set exento_guardia = true, motivo_exencion = 'Miembro Honorario del Directorio General' where id = '4345e829-8b8a-5149-90b2-810ee247e60a';
+update personal.persona set anios_servicio_manual = 18, exento_guardia = false where id = 'e87444d3-a2a6-5222-af23-a3292cd4842c';
+update personal.persona set anios_servicio_manual = 24, exento_guardia = false where id = 'a5ac36f5-693c-55b3-81b1-c1535a355af7';
+update personal.persona set exento_guardia = true, motivo_exencion = 'Miembro Honorario del Directorio General' where id = 'd5bb007f-958d-5c73-ac74-2abbcc9606dd';
+update personal.persona set anios_servicio_manual = 30, exento_guardia = false where id = '6961e3db-e3cc-5a18-a7ec-47c623cd734a';
+update personal.persona set anios_servicio_manual = 36, exento_guardia = false where id = 'dd6e2df9-978b-521f-8271-c8b87df4af97';
+update personal.persona set exento_guardia = true, motivo_exencion = 'Miembro Honorario del Directorio General' where id = '5734d562-6470-5225-9137-6c4023409340';
+update personal.persona set codigo_charlie = 'CH-209' where id = '8f8831d0-40e9-5d41-ada6-aed4cda2a60f';
+update personal.persona set codigo_charlie = 'CH-214' where id = '719c8def-873f-50f2-83c4-7006e03ceb8c';
+
+-- Abonos de antigüedad
+insert into personal.antiguedad_abono (persona_id, anios, fecha, motivo, resolucion) values ('2c27012d-f957-58be-aa9e-7c4cd2355b18', 1, '2025-03-01', 'Abono por servicio en otra compañía', 'Acta de Oficiales N° 12/2025');
+insert into personal.antiguedad_abono (persona_id, anios, fecha, motivo, resolucion) values ('dee56da3-9c6b-5091-9d8e-32e95ca908e3', 1.5, '2025-03-01', 'Abono por servicio en otra compañía', 'Acta de Oficiales N° 12/2025');
+insert into personal.antiguedad_abono (persona_id, anios, fecha, motivo, resolucion) values ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', 1, '2025-03-01', 'Abono por servicio en otra compañía', 'Acta de Oficiales N° 12/2025');
+
+-- Guardias nocturnas históricas (compatibilidad)
+insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (1, '2026-08-01', 'nocturna', 'e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-08-01'::timestamptz + interval '23 hours 30 minutes', '2026-08-02'::timestamptz + interval '9 hours 30 minutes');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (1, 'e58014ec-d954-5bde-8fd9-655529ac50eb'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (1, '20fb4035-3feb-58da-a9ab-77df01ce6a8e'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (1, '2c27012d-f957-58be-aa9e-7c4cd2355b18'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (1, '17f48af4-6fc3-5512-b003-ba76920910ff'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (2, '2026-08-08', 'nocturna', 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', '2026-08-08'::timestamptz + interval '23 hours 30 minutes', '2026-08-09'::timestamptz + interval '9 hours 30 minutes');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (2, '20fb4035-3feb-58da-a9ab-77df01ce6a8e'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (2, '2c27012d-f957-58be-aa9e-7c4cd2355b18'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (2, '17f48af4-6fc3-5512-b003-ba76920910ff'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (2, '4345e829-8b8a-5149-90b2-810ee247e60a'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (3, '2026-08-15', 'nocturna', '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', '2026-08-15'::timestamptz + interval '23 hours 30 minutes', '2026-08-16'::timestamptz + interval '9 hours 30 minutes');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (3, '2c27012d-f957-58be-aa9e-7c4cd2355b18'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (3, '17f48af4-6fc3-5512-b003-ba76920910ff'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (3, '4345e829-8b8a-5149-90b2-810ee247e60a'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (3, 'c1e20062-0df0-528a-85fd-03ac52aa9158'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (4, '2026-08-22', 'nocturna', '7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-08-22'::timestamptz + interval '23 hours 30 minutes', '2026-08-23'::timestamptz + interval '9 hours 30 minutes');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (4, '17f48af4-6fc3-5512-b003-ba76920910ff'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (4, '4345e829-8b8a-5149-90b2-810ee247e60a'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (4, 'c1e20062-0df0-528a-85fd-03ac52aa9158'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (4, 'e87444d3-a2a6-5222-af23-a3292cd4842c'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (5, '2026-08-29', 'nocturna', '2b273959-45fa-5c61-b757-359a169f2e1e', '2026-08-29'::timestamptz + interval '23 hours 30 minutes', '2026-08-30'::timestamptz + interval '9 hours 30 minutes');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (5, '4345e829-8b8a-5149-90b2-810ee247e60a'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (5, 'c1e20062-0df0-528a-85fd-03ac52aa9158'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (5, 'e87444d3-a2a6-5222-af23-a3292cd4842c'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (5, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) overriding system value values (6, '2026-09-05', 'nocturna', '87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-09-05'::timestamptz + interval '23 hours 30 minutes', '2026-09-06'::timestamptz + interval '9 hours 30 minutes');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (6, 'c1e20062-0df0-528a-85fd-03ac52aa9158'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (6, 'e87444d3-a2a6-5222-af23-a3292cd4842c'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (6, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values (6, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f'::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');
+select setval(pg_get_serial_sequence('operaciones.guardia_turno','id'), 6);
+
+-- Ciclo de guardias de 14 días: Semana 1 en curso y Semana 2 abierta
+do $$ begin perform operaciones.crear_ciclo_guardia('Ciclo noviembre 2026', '2026-11-09', 3); end $$;
+update operaciones.guardia_ciclo set estado = 'en_curso' where fecha_inicio = '2026-11-09';
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'e58014ec-d954-5bde-8fd9-655529ac50eb'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-09' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '20fb4035-3feb-58da-a9ab-77df01ce6a8e'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-09' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '2c27012d-f957-58be-aa9e-7c4cd2355b18'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-09' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '4345e829-8b8a-5149-90b2-810ee247e60a'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-10' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'c1e20062-0df0-528a-85fd-03ac52aa9158'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-10' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'e87444d3-a2a6-5222-af23-a3292cd4842c'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-10' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-11' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-12' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '7a5efba2-1e47-51a1-bff9-7045345a182d'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-12' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '87585a59-cd24-5815-bbb7-9b7fbbc01c16'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-13' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'a5ac36f5-693c-55b3-81b1-c1535a355af7'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-13' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '719c8def-873f-50f2-83c4-7006e03ceb8c'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-13' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-15' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, '7a5efba2-1e47-51a1-bff9-7045345a182d'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-17' on conflict do nothing;
+insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) select t.id, 'a5ac36f5-693c-55b3-81b1-c1535a355af7'::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and t.fecha = '2026-11-19' on conflict do nothing;
+
+-- Reporte y firma de una noche pasada, con Charlie Z8
+do $$ declare v_turno bigint; v_persona uuid; begin select id into v_turno from operaciones.guardia_turno where ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = '2026-11-09') and fecha = '2026-11-09' limit 1; select id into v_persona from personal.persona where id = 'e58014ec-d954-5bde-8fd9-655529ac50eb'; perform set_config('request.jwt.claim.sub', v_persona::text, true); perform set_config('request.jwt.claim.role', 'authenticated', true); perform operaciones.guardar_reporte_guardia(v_turno, time '23:40', 'Z8', 'CH-201', '{}'::uuid[], '{}'::uuid[], 'Guardia normal, sin novedades.'); perform operaciones.firmar_reporte_guardia(v_turno); end $$;
 
 -- Disciplina (solo visible para consejo; director ve sanciones ejecutoriadas)
 insert into disciplina.expediente (id, numero, anio, persona_id, fecha_apertura, estado, causa, instructor_persona_id) overriding system value values (1, 1, 2026, '2ef99536-6cbf-5e68-a4f2-a9c6e151220e', '2026-09-05', 'resuelto', 'Incumplimiento ficticio de guardia', '2b273959-45fa-5c61-b757-359a169f2e1e');

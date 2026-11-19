@@ -1,12 +1,13 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowRight, Banknote, CalendarClock, ClipboardCheck, FileText, Plus, UserRound } from "lucide-react";
+import { AlertTriangle, ArrowRight, Banknote, CalendarClock, ClipboardCheck, FileText, Plus, ShieldCheck, UserRound } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { usePerfil } from "@/features/auth/sesion";
 import { seccionesDe, SECCIONES } from "@/lib/permisos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SeveridadBadge } from "@/components/common/StatusBadge";
 import { formatearFechaHora } from "@/lib/formato";
@@ -129,12 +130,15 @@ export function InicioPage() {
         </Card>
       </section>
 
+      <TarjetasGuardia panel={panel ?? undefined} />
+
       <section>
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Accesos rápidos</h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {secciones.includes("asistencia") && (
             <AccesoRapido to="/asistencia" titulo="Pasar lista" icono={ClipboardCheck} />
           )}
+          <AccesoRapido to="/guardia" titulo="Guardias" icono={ShieldCheck} />
           <AccesoRapido to="/personal" titulo="Mi hoja de vida" icono={UserRound} />
           <AccesoRapido to="/mis-cuotas" titulo="Mis cuotas" icono={Banknote} />
           {secciones.includes("tesoreria") && (
@@ -180,5 +184,79 @@ function AccesoRapido({
       <Icono className="size-5 text-primary" />
       <span className="text-sm font-medium">{titulo}</span>
     </Link>
+  );
+}
+
+function TarjetasGuardia({ panel }: { panel?: PanelInicio }) {
+  const guardia = panel?.guardia;
+  const avisos = panel?.notificaciones_guardia ?? [];
+  const firmar = panel?.reportes_por_firmar ?? [];
+
+  if (!guardia && avisos.length === 0 && firmar.length === 0) return null;
+
+  return (
+    <section className="grid gap-3 lg:grid-cols-2">
+      {guardia?.vinculado && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2">
+              <ShieldCheck className="size-5 text-primary" /> Tu guardia
+            </CardTitle>
+            <CardDescription>
+              {guardia.exento
+                ? "Estás exento de guardia."
+                : guardia.pendiente
+                  ? "Aún no tienes una guardia inscrita en el ciclo vigente."
+                  : `${guardia.cumplidas ?? 0} cumplidas · ${guardia.inscritas ?? 0} inscritas`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap items-center gap-2">
+            {guardia.exento ? (
+              <Badge variant="apagado">⚪ Exento</Badge>
+            ) : guardia.pendiente ? (
+              <Badge variant="peligro">🔴 Falta inscribirse</Badge>
+            ) : (
+              <Badge variant="exito">🟢 Al día</Badge>
+            )}
+            <Badge variant="outline">{guardia.anios_servicio ?? 0} años de servicio</Badge>
+            <Link to="/guardia">
+              <Button variant="outline" size="sm">Ir a guardias <ArrowRight className="size-3" /></Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
+      {firmar.length > 0 && (
+        <Card className="border-aviso/40 bg-aviso/5">
+          <CardHeader className="pb-2">
+            <CardTitle>Reportes por firmar</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {firmar.map((r) => (
+              <Link key={r.turno_id} to="/guardia" className="block rounded-md border border-border bg-card p-3 text-sm hover:bg-accent">
+                {r.detalle}
+              </Link>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {avisos.length > 0 && (
+        <Card className="border-aviso/40 bg-aviso/5 lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle>Avisos de guardia</CardTitle>
+            <CardDescription>Llegadas tardías y reemplazos sin leer.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {avisos.map((n) => (
+              <p key={n.id} className="rounded-md border border-border bg-card p-2 text-sm">{n.mensaje}</p>
+            ))}
+            <Link to="/guardia">
+              <Button variant="outline" size="sm">Entendido</Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+    </section>
   );
 }

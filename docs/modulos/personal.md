@@ -24,6 +24,9 @@
 - `persona_evento` es el único camino para cambiar rango/estado.
 - Los datos sensibles no entran al PDF P3.
 - Cada lectura sensible deja auditoría con IP.
+- Años de servicio = premios de constancia + abonos, con ajuste manual solo
+  para Director, Secretario y admin (ver `docs/modulos/guardia.md`).
+- Rango y estado se cambian con un evento, no editando la ficha.
 
 ## Pendiente
 - Editor de hoja de vida en PDF con Typst.

@@ -17,6 +17,11 @@ from datetime import date, timedelta
 
 random.seed(20261112)
 
+MESES_LARGO = [
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+]
+
 NS = uuid.UUID("11111111-2222-3333-4444-555555555555")
 COMPANIA = 1
 PASSWORD = "demo1234"
@@ -120,7 +125,7 @@ w()
 # Datos sensibles: solo para un par, para probar la lectura auditada.
 w("-- Datos sensibles (1 a 1)")
 for reg, grupo, alergias in [
-    (201, "O+", "Penicilina"), (204, "A-", None), (210, "B+", "Látex"), (212, "AB+", None),
+    (201, "O+", "Penicilina"), (204, "A-", None), (210, "B+", "Látex"), (219, "AB+", None),
 ]:
     w(
         "insert into personal.persona_dato_sensible (persona_id, grupo_sanguineo, alergias, "
@@ -276,19 +281,30 @@ actas = [
 for i, tipo, num, fecha, texto in actas:
     w(
         "insert into secretaria.acta (id, tipo_sesion_codigo, numero, anio, fecha, lista_id, quorum_ok) "
-        f"overriding system value values ({i}, {q(tipo)}, {num}, 2026, {q(fecha)}, {num}, true);"
+        f"overriding system value values ({i}, {q(tipo)}, {num}, 2026, {q(fecha)}, {num}, true) "
+        "on conflict do nothing;"
     )
 for i in range(1, 4):
     w(f"update secretaria.acta set aprobada_en_acta_id = {i + 1} where id = {i};")
-w(
-    "insert into secretaria.acuerdo (acta_id, numero, texto, votos_favor, votos_contra, abstenciones, resultado, monto, plazo, estado) "
-    "values (1, 1, 'Aprobar el presupuesto anual 2026 presentado por Tesorería.', 8, 0, 1, 'aprobado', 12000000, '2026-03-31', 'cumplido'),"
-    "(1, 2, 'Adquirir equipos de protección personal para la guardia nocturna.', 7, 1, 1, 'aprobado', 850000, '2026-06-30', 'en_curso'),"
-    "(2, 1, 'Autorizar la campaña económica 2026.', 9, 0, 0, 'aprobado', null, null, 'cumplido'),"
-    "(3, 1, 'Contratar mantención preventiva de la unidad M-21.', 5, 0, 0, 'aprobado', 320000, '2026-08-15', 'pendiente');"
-)
-w("select setval(pg_get_serial_sequence('secretaria.acta','id'), 4);")
-w()
+
+# Los acuerdos se numeran 1..N por acta; los ids de actor se fijan más abajo.
+acuerdos_por_acta = [
+    (1, "Aprobar el presupuesto anual 2026 presentado por Tesorería.", 8, 0, 1, "aprobado", 12000000, "2026-03-31", "cumplido"),
+    (1, "Adquirir equipos de protección personal para la guardia nocturna.", 7, 1, 1, "aprobado", 850000, "2026-06-30", "en_curso"),
+    (2, "Autorizar la campaña económica 2026.", 9, 0, 0, "aprobado", None, None, "cumplido"),
+    (3, "Contratar mantención preventiva de la unidad M-21.", 5, 0, 0, "aprobado", 320000, "2026-08-15", "pendiente"),
+]
+numeros: dict[int, int] = {}
+for idx, (acta, texto, vf, vc, ab, res, monto, plazo, estado) in enumerate(acuerdos_por_acta, start=1):
+    numeros[acta] = numeros.get(acta, 0) + 1
+    w(
+        "insert into secretaria.acuerdo (id, acta_id, numero, texto, votos_favor, votos_contra, "
+        "abstenciones, resultado, monto, plazo, estado) overriding system value values ("
+        f"{idx}, {acta}, {numeros[acta]}, {q(texto)}, {vf}, {vc}, {ab}, {q(res)}, "
+        f"{q(monto)}, {q(plazo)}, {q(estado)}) on conflict do nothing;"
+    )
+w("select setval(pg_get_serial_sequence('secretaria.acuerdo','id'), 4);")
+
 
 w("-- Cargos 2026")
 cargos = [
@@ -666,9 +682,38 @@ w()
 # ---------------------------------------------------------------------------
 # Operaciones: guardias
 # ---------------------------------------------------------------------------
-w("-- Guardias nocturnas")
+w("-- Antigüedad manual, exenciones y códigos Charlie")
+for idx, p in enumerate(personas):
+    if idx % 6 == 0:
+        w(
+            "update personal.persona set anios_servicio_manual = "
+            f"{12 + idx}, exento_guardia = false where id = {q(p['id'])};"
+        )
+    if idx % 11 == 4:
+        w(
+            "update personal.persona set exento_guardia = true, "
+            f"motivo_exencion = 'Miembro Honorario del Directorio General' where id = {q(p['id'])};"
+        )
+    if idx < 4:
+        w(
+            f"update personal.persona set codigo_charlie = 'CH-{201 + idx}' where id = {q(p['id'])};"
+        )
+for reg in (209, 214):
+    w(f"update personal.persona set codigo_charlie = 'CH-{reg}' where id = {q(persona_id(reg))};")
+w()
+
+w("-- Abonos de antigüedad")
+for i, reg in enumerate([203, 208, 215]):
+    w(
+        "insert into personal.antiguedad_abono (persona_id, anios, fecha, motivo, resolucion) values ("
+        f"{q(persona_id(reg))}, {1.5 if i % 2 else 1}, '2025-03-01', "
+        "'Abono por servicio en otra compañía', 'Acta de Oficiales N° 12/2025');"
+    )
+w()
+
+w("-- Guardias nocturnas históricas (compatibilidad)")
 guardia_id = 0
-for k in range(10):
+for k in range(6):
     guardia_id += 1
     fecha = date(2026, 8, 1) + timedelta(days=7 * k)
     jefe = personas[(k % 10) + 6]
@@ -676,14 +721,66 @@ for k in range(10):
         "insert into operaciones.guardia_turno (id, fecha, tipo, jefe_persona_id, inicio, termino) "
         "overriding system value values ("
         f"{guardia_id}, {q(fecha)}, 'nocturna', {q(jefe['id'])}, "
-        f"{q(fecha)}::timestamptz + interval '23 hours', {q(fecha + timedelta(days=1))}::timestamptz + interval '7 hours');"
+        f"{q(fecha)}::timestamptz + interval '23 hours 30 minutes', {q(fecha + timedelta(days=1))}::timestamptz + interval '9 hours 30 minutes');"
     )
     for p in personas[k:k + 4]:
         w(
-            "insert into operaciones.guardia_integrante (turno_id, persona_id, funcion) values ("
-            f"{guardia_id}, {q(p['id'])}, 'voluntario');"
+            "insert into operaciones.guardia_integrante (turno_id, persona_id, funcion, origen, estado) values ("
+            f"{guardia_id}, {q(p['id'])}::uuid, 'voluntario', 'asignacion_capitania', 'cumplida');"
         )
-w("select setval(pg_get_serial_sequence('operaciones.guardia_turno','id'), 10);")
+w("select setval(pg_get_serial_sequence('operaciones.guardia_turno','id'), 6);")
+w()
+
+w("-- Ciclo de guardias de 14 días: Semana 1 en curso y Semana 2 abierta")
+hoy = date.today()
+inicio_ciclo = hoy - timedelta(days=hoy.weekday() % 7 + 7)
+w(
+    "do $$ begin perform operaciones.crear_ciclo_guardia("
+    f"'Ciclo {MESES_LARGO[inicio_ciclo.month - 1]} {inicio_ciclo.year}', {q(inicio_ciclo)}, 3); end $$;"
+)
+w(
+    "update operaciones.guardia_ciclo set estado = 'en_curso' "
+    f"where fecha_inicio = {q(inicio_ciclo)};"
+)
+# Semana 1: algunos días con 3, otros con 1 o 2 para probar la regla de cobertura.
+candidatos = [p for p in personas if p["estado"] == "activo" and p["registro"] not in (204, 211)]
+cubiertos = [3, 3, 1, 2, 3, 0, 1]
+base = 0
+for dia in range(7):
+    n = cubiertos[dia]
+    for j in range(n):
+        p = candidatos[(base + j) % len(candidatos)]
+        w(
+            "insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) "
+            "select t.id, "
+            f"{q(p['id'])}::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t "
+            f"where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = {q(inicio_ciclo)}) "
+            f"and t.fecha = {q(inicio_ciclo + timedelta(days=dia))} on conflict do nothing;"
+        )
+    base += n
+# Semana 2: solo dos días con una persona, para dejar cupos abiertos.
+for dia in (8, 10):
+    p = candidatos[dia % len(candidatos)]
+    w(
+        "insert into operaciones.guardia_integrante (turno_id, persona_id, origen, estado) "
+        "select t.id, "
+        f"{q(p['id'])}::uuid, 'inscripcion', 'inscrito' from operaciones.guardia_turno t "
+        f"where t.ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = {q(inicio_ciclo)}) "
+        f"and t.fecha = {q(inicio_ciclo + timedelta(days=dia))} on conflict do nothing;"
+    )
+w()
+
+w("-- Reporte y firma de una noche pasada, con Charlie Z8")
+w(
+    "do $$ declare v_turno bigint; v_persona uuid; begin "
+    f"select id into v_turno from operaciones.guardia_turno where ciclo_id = (select id from operaciones.guardia_ciclo where fecha_inicio = {q(inicio_ciclo)}) and fecha = {q(inicio_ciclo)} limit 1; "
+    f"select id into v_persona from personal.persona where id = {q(persona_id(201))}; "
+    "perform set_config('request.jwt.claim.sub', v_persona::text, true); "
+    "perform set_config('request.jwt.claim.role', 'authenticated', true); "
+    "perform operaciones.guardar_reporte_guardia(v_turno, time '23:40', 'Z8', 'CH-201', '{}'::uuid[], '{}'::uuid[], 'Guardia normal, sin novedades.'); "
+    "perform operaciones.firmar_reporte_guardia(v_turno); "
+    "end $$;"
+)
 w()
 
 # ---------------------------------------------------------------------------

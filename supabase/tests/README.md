@@ -17,6 +17,8 @@ con usuarios simulados. Son la red de seguridad de la interfaz.
 | `consentimiento.test.sql` | Se exige y registra la aceptación |
 | `alertas.test.sql` | R01–R12 se generan y son idempotentes |
 | `cuotas.test.sql` | Pago crea movimiento, doble pago bloqueado, anulación con motivo |
+| `antiguedad.test.sql` | Premios + abonos, ajuste manual y categorías de guardia |
+| `guardias.test.sql` | 14 turnos, cupo semanal, reemplazo, Charlie Z8 y firma |
 
 ## Cómo se usa
 ```bash

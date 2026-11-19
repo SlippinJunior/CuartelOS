@@ -1,6 +1,6 @@
 -- Folio correlativo y verificación pública.
 begin;
-select plan(7);
+select plan(6);
 
 select set_config('test.director', (select user_id::text from seguridad.usuario where email = 'director@demo.local'), true);
 select set_config('test.persona', (select persona_id::text from seguridad.usuario where email = 'director@demo.local'), true);

@@ -18,7 +18,7 @@ Requisitos: Node 22+, pnpm 10+, Docker, Supabase CLI.
 ```bash
 pnpm install
 pnpm supabase start          # primera vez: descarga imágenes (varios minutos)
-pnpm supabase db reset       # aplica las 21 migraciones + seed ficticio
+pnpm supabase db reset       # aplica las 24 migraciones + seed ficticio
 cp app/.env.example app/.env # pega la URL y la anon key que imprime el CLI
 pnpm dev
 ```
@@ -74,7 +74,8 @@ Convenciones · Relacionado con**.
 | Documentos: emisión P3, actas, órdenes de capitanía, folio, SHA-256, QR y verificación pública | ✅ |
 | Tesorería: cuotas con grilla anual, cartola automática y proyección | ✅ (base) |
 | Administración: usuarios, roles, catálogos y parámetros | ✅ |
-| Guardia, Material 2D, Tesorería cartola, Secretaría y Disciplina | 🧱 esqueleto con mock y README |
+| Guardia: ciclos de 14 días, cupo por semana, Charlie, reporte y firma | ✅ |
+| Material 2D, Tesorería cartola, Secretaría y Disciplina | 🧱 esqueleto con mock y README |
 | Modelo dimensional e integración VIPER | 📄 documentados |
 
 ---

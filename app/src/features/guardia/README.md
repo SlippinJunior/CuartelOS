@@ -1,20 +1,36 @@
-# features/guardia/ · Guardia (esqueleto)
+# features/guardia/ · Guardias nocturnas
 
 ## Propósito
-Turnos de guardia, órdenes de capitanía y accidentes en acto de servicio.
+Agendar ciclos de 14 días, inscribirse en los turnos, informar la guardia y
+firmar el reporte con el Jefe de Guardia calculado.
 
 ## Contenido
-`GuardiaPage.tsx`: pantalla "módulo en construcción" con el alcance comprometido.
-La base ya tiene `operaciones.guardia_turno`, `guardia_integrante`,
-`orden_capitania` y `accidente_servicio` con RLS.
+| Archivo | Rol |
+|---|---|
+| `GuardiaPage.tsx` | Contenedor con Grilla · Mis guardias · Estadísticas · Gestión |
+| `GrillaGuardia.tsx` | Estado personal, selector de ciclo/semana y tarjetas por día |
+| `dialogos.tsx` | Reporte nocturno, reemplazo y llegada tardía |
+| `EstadisticasGuardia.tsx` | Cumplimiento por categoría, día de la semana y maquinistas |
+| `GestionGuardia.tsx` | Nuevo ciclo, estado, convocatorias, PDF P7 y situaciones |
+| `MisGuardias.tsx` | Historial personal y reportes del ciclo |
+| `logica.ts` | Etiquetas, semáforo, regla de cupo y períodos |
+| `reglas-reporte.ts` | Responsable de firma, ventana de llegada tardía |
 
 ## Cómo se usa
-Se habilitará en la Etapa 3. La estructura actual ya separa turno e integrantes
-(una fila por persona ya no existe).
+- **Grilla**: muestra los 7 días de la semana elegida. Botones grandes
+  *Inscribirme*, *Bajarme* o *Gestionar reemplazo*, *Llegué a la guardia* y
+  *Reporte*.
+- **Reporte**: cualquier integrante informa; *Firmar reporte* solo aparece
+  habilitado para el Jefe de Guardia o respaldo de Capitanía.
+- **Gestión**: solo Capitanía, Teniente 1°, Ayudante, Director y admin.
 
 ## Convenciones
-- Jefe de guardia e integrantes con función y cumplimiento.
-- Los accidentes se registran dentro de 24 horas (P6).
+- Los datos vienen de `operaciones.grilla_ciclo`; no se arma la lógica en el
+  navegador.
+- `logica.ts` y `reglas-reporte.ts` replican las reglas de UI para probarlas con
+  Vitest, pero la autoridad es la base.
+- El semáforo usa los colores institucionales: rojo vacío, ámbar incompleto,
+  verde completo, azul cupo extra.
 
 ## Relacionado con
-`docs/modulos/guardia.md`, migración `…_operaciones.sql`.
+`docs/modulos/guardia.md`, `supabase/tests/guardias.test.sql`.

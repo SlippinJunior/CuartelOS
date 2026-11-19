@@ -32,6 +32,9 @@ const esquema = z.object({
   rango: z.enum(["aspirante", "bombero", "honorario", "insigne", "martir"]),
   estado: z.enum(["activo", "suspendido", "renunciado", "separado", "expulsado", "fallecido", "trasladado"]),
   observaciones: z.string().optional(),
+  codigo_charlie: z
+    .union([z.string().max(20), z.literal("")])
+    .optional(),
 });
 
 type Formulario = z.infer<typeof esquema>;
@@ -51,6 +54,7 @@ const VACIOS: Formulario = {
   rango: "bombero",
   estado: "activo",
   observaciones: "",
+  codigo_charlie: "",
 };
 
 export function PersonaFormPage({ modo }: { modo: "crear" | "editar" }) {
@@ -96,13 +100,14 @@ export function PersonaFormPage({ modo }: { modo: "crear" | "editar" }) {
         rango: p.rango,
         estado: p.estado,
         observaciones: p.observaciones ?? "",
+        codigo_charlie: p.codigo_charlie ?? "",
       });
     }
   }, [modo, personaQ.data, reset]);
 
   const guardar = useMutation({
     mutationFn: async (datos: Formulario) => {
-      const payload = {
+      const payload: Record<string, unknown> = {
         registro: Number(datos.registro),
         rut: datos.rut || null,
         nombres: datos.nombres.trim(),
@@ -114,16 +119,20 @@ export function PersonaFormPage({ modo }: { modo: "crear" | "editar" }) {
         telefono: datos.telefono || null,
         direccion: datos.direccion || null,
         fecha_ingreso: datos.fecha_ingreso || null,
-        rango: datos.rango,
-        estado: datos.estado,
         observaciones: datos.observaciones || null,
+        codigo_charlie: datos.codigo_charlie ? datos.codigo_charlie.trim().toUpperCase() : null,
       };
 
       if (modo === "editar" && personaId) {
+        // Rango y estado NO se sobrescriben aquí: cambian solo mediante
+        // persona_evento para conservar el historial.
         const { error } = await db.personal.from("persona").update(payload as never).eq("id", personaId);
         if (error) throw error;
         return personaId;
       }
+
+      payload.rango = datos.rango;
+      payload.estado = datos.estado;
 
       const { data, error } = await db.personal.from("persona").insert(payload as never).select("id").single();
       if (error) throw error;
@@ -192,8 +201,11 @@ export function PersonaFormPage({ modo }: { modo: "crear" | "editar" }) {
               <Campo etiqueta="Fecha de ingreso" error={errors.fecha_ingreso?.message}>
                 <Input type="date" {...register("fecha_ingreso")} />
               </Campo>
-              <Campo etiqueta="Rango">
-                <Select {...register("rango")}>
+              <Campo etiqueta="Código Charlie">
+                <Input placeholder="CH-201" {...register("codigo_charlie")} />
+              </Campo>
+              <Campo etiqueta={modo === "editar" ? "Rango (se cambia con un evento)" : "Rango"}>
+                <Select {...register("rango")} disabled={modo === "editar"}>
                   <option value="aspirante">Aspirante</option>
                   <option value="bombero">Bombero</option>
                   <option value="honorario">Honorario</option>
@@ -201,8 +213,8 @@ export function PersonaFormPage({ modo }: { modo: "crear" | "editar" }) {
                   <option value="martir">Mártir</option>
                 </Select>
               </Campo>
-              <Campo etiqueta="Estado">
-                <Select {...register("estado")}>
+              <Campo etiqueta={modo === "editar" ? "Estado (se cambia con un evento)" : "Estado"}>
+                <Select {...register("estado")} disabled={modo === "editar"}>
                   <option value="activo">Activo</option>
                   <option value="suspendido">Suspendido</option>
                   <option value="renunciado">Renunciado</option>
@@ -213,6 +225,13 @@ export function PersonaFormPage({ modo }: { modo: "crear" | "editar" }) {
                 </Select>
               </Campo>
             </section>
+
+            {modo === "editar" && (
+              <p className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+                El rango y el estado no se editan aquí: usa <strong>Registrar evento</strong> en la ficha
+                para conservar el historial y la auditoría.
+              </p>
+            )}
 
             <Campo etiqueta="Observaciones" error={errors.observaciones?.message}>
               <Textarea {...register("observaciones")} />

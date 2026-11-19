@@ -65,15 +65,15 @@ export const SECCIONES_POR_ROL: Record<Rol, Seccion[]> = {
     "secretaria", "documentos", "administracion",
   ],
   secretario: ["inicio", "personal", "asistencia", "secretaria", "documentos", "guardia", "material"],
-  prosecretario: ["inicio", "personal", "asistencia", "secretaria", "documentos"],
-  tesorero: ["inicio", "personal", "tesoreria", "documentos", "material"],
-  protesorero: ["inicio", "personal", "tesoreria", "documentos"],
+  prosecretario: ["inicio", "personal", "asistencia", "secretaria", "documentos", "guardia"],
+  tesorero: ["inicio", "personal", "tesoreria", "documentos", "material", "guardia"],
+  protesorero: ["inicio", "personal", "tesoreria", "documentos", "guardia"],
   capitan: ["inicio", "personal", "asistencia", "guardia", "material", "documentos"],
   teniente_1: ["inicio", "personal", "guardia", "asistencia", "documentos"],
   teniente_2: ["inicio", "personal", "material", "guardia", "documentos"],
   teniente_3: ["inicio", "personal", "material", "guardia", "documentos"],
-  ayudante: ["inicio", "personal", "asistencia", "documentos"],
-  consejo: ["inicio", "disciplina", "personal"],
+  ayudante: ["inicio", "personal", "asistencia", "documentos", "guardia"],
+  consejo: ["inicio", "disciplina", "personal", "guardia"],
   bombero: BASE_BOMBERO,
 };
 
@@ -94,8 +94,8 @@ export function puedeVer(roles: readonly string[], seccion: Seccion): boolean {
 
 /** Orden preferente de la barra inferior en el celular. */
 const PREFERENCIA_BARRA: Seccion[] = [
-  "inicio", "asistencia", "personal", "tesoreria", "material",
-  "documentos", "guardia", "secretaria", "administracion", "disciplina",
+  "inicio", "guardia", "asistencia", "personal", "tesoreria", "material",
+  "documentos", "secretaria", "administracion", "disciplina",
 ];
 
 export function barraInferior(roles: readonly string[]): Seccion[] {
@@ -109,6 +109,13 @@ export function restantesDeBarra(roles: readonly string[]): Seccion[] {
   const visibles = seccionesDe(roles);
   const barra = barraInferior(roles);
   return visibles.filter((s) => !barra.includes(s));
+}
+
+/** Roles que gestionan el ciclo de guardias (Capitanía y Ayudantía). */
+export function puedeGestionarGuardias(roles: readonly string[]): boolean {
+  return roles.some((r) =>
+    ["capitan", "teniente_1", "ayudante", "director", "admin"].includes(r),
+  );
 }
 
 /** Etiqueta legible de un rol. */

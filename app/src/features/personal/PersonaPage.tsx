@@ -35,7 +35,9 @@ import {
   DialogoPremio,
   DialogoSensible,
 } from "@/features/personal/dialogos";
+import { DialogoAbono, DialogoAntiguedad, TarjetaAntiguedad, useAntiguedad } from "@/features/personal/antiguedad";
 import type {
+  AntiguedadPersona,
   Asignacion,
   AsistenciaPersona,
   CargoPeriodo,
@@ -56,9 +58,15 @@ export function PersonaPage() {
   const roles = perfil?.roles ?? [];
   const puedeEscribir = roles.some((r) => ["secretario", "prosecretario", "director", "admin"].includes(r));
   const esPropia = perfil?.persona?.id === personaId;
+  const esOficial = perfil?.es_oficial ?? false;
+  const puedeLeerSensible = esOficial || esPropia;
   const puedeSensible = puedeEscribir || esPropia;
+  const puedeAjustarAntiguedad = roles.some((r) => ["director", "secretario", "admin"].includes(r));
+  const antiguedadQ = useAntiguedad(personaId);
 
-  const [dialogo, setDialogo] = React.useState<"evento" | "cargo" | "curso" | "premio" | "licencia" | "sensible" | null>(null);
+  const [dialogo, setDialogo] = React.useState<
+    "evento" | "cargo" | "curso" | "premio" | "licencia" | "sensible" | "antiguedad" | "abono" | null
+  >(null);
 
   const personaQ = useQuery({
     queryKey: ["persona", personaId],
@@ -191,7 +199,7 @@ export function PersonaPage() {
       if (error) throw error;
       return data as unknown as DatoSensible | null;
     },
-    enabled: puedeSensible,
+    enabled: puedeLeerSensible,
     retry: false,
   });
 
@@ -260,12 +268,15 @@ export function PersonaPage() {
             contenido: (
               <Resumen
                 persona={p}
+                antiguedad={antiguedadQ.data}
                 situaciones={situacionesQ.data ?? []}
                 eventos={eventosQ.data ?? []}
                 licencias={licenciasQ.data ?? []}
                 puedeEscribir={puedeEscribir}
+                puedeAjustarAntiguedad={puedeAjustarAntiguedad}
                 alAgregarEvento={() => setDialogo("evento")}
                 alAgregarLicencia={() => setDialogo("licencia")}
+                alAjustarAntiguedad={() => setDialogo("antiguedad")}
               />
             ),
           },
@@ -304,6 +315,7 @@ export function PersonaPage() {
                 premios={premiosQ.data ?? []}
                 puedeEscribir={puedeEscribir}
                 alAgregar={() => setDialogo("premio")}
+                alAgregarAbono={() => setDialogo("abono")}
               />
             ),
           },
@@ -337,6 +349,17 @@ export function PersonaPage() {
       <DialogoCurso personaId={personaId} abierto={dialogo === "curso"} onCambio={(v) => setDialogo(v ? "curso" : null)} />
       <DialogoPremio personaId={personaId} abierto={dialogo === "premio"} onCambio={(v) => setDialogo(v ? "premio" : null)} />
       <DialogoLicencia personaId={personaId} abierto={dialogo === "licencia"} onCambio={(v) => setDialogo(v ? "licencia" : null)} />
+      <DialogoAntiguedad
+        personaId={personaId}
+        actual={antiguedadQ.data}
+        abierto={dialogo === "antiguedad"}
+        onCambio={(v) => setDialogo(v ? "antiguedad" : null)}
+      />
+      <DialogoAbono
+        personaId={personaId}
+        abierto={dialogo === "abono"}
+        onCambio={(v) => setDialogo(v ? "abono" : null)}
+      />
       <DialogoSensible
         personaId={personaId}
         abierto={dialogo === "sensible"}
@@ -361,24 +384,30 @@ function Dato({ icono: Icono, etiqueta, valor }: { icono: React.ComponentType<{ 
 
 function Resumen({
   persona,
+  antiguedad,
   situaciones,
   eventos,
   licencias,
   puedeEscribir,
+  puedeAjustarAntiguedad,
   alAgregarEvento,
   alAgregarLicencia,
+  alAjustarAntiguedad,
 }: {
   persona: Persona;
+  antiguedad: AntiguedadPersona | null | undefined;
   situaciones: SituacionEspecial[];
   eventos: PersonaEvento[];
   licencias: LicenciaConducir[];
   puedeEscribir: boolean;
+  puedeAjustarAntiguedad: boolean;
   alAgregarEvento: () => void;
   alAgregarLicencia: () => void;
+  alAjustarAntiguedad: () => void;
 }) {
   const hoy = new Date();
   const ingreso = persona.fecha_ingreso ? new Date(persona.fecha_ingreso) : null;
-  const antiguedad = ingreso ? hoy.getFullYear() - ingreso.getFullYear() : null;
+  const aniosDesdeIngreso = ingreso ? hoy.getFullYear() - ingreso.getFullYear() : null;
   const vigentes = situaciones.filter((s) => !s.hasta || s.hasta >= hoy.toISOString().slice(0, 10));
 
   return (
@@ -391,7 +420,11 @@ function Resumen({
           <Dato icono={IdCard} etiqueta="RUT" valor={persona.rut} />
           <Dato icono={CalendarDays} etiqueta="Nacimiento" valor={formatearFecha(persona.fecha_nacimiento)} />
           <Dato icono={CalendarDays} etiqueta="Ingreso" valor={formatearFecha(persona.fecha_ingreso)} />
-          <Dato icono={History} etiqueta="Antigüedad" valor={antiguedad !== null ? `${antiguedad} años` : "—"} />
+          <Dato
+            icono={History}
+            etiqueta="Ingreso hace"
+            valor={aniosDesdeIngreso !== null ? `${aniosDesdeIngreso} años` : "—"}
+          />
           <Dato icono={Mail} etiqueta="Correo" valor={persona.email} />
           <Dato icono={Phone} etiqueta="Teléfono" valor={persona.telefono} />
           <Dato icono={MapPin} etiqueta="Dirección" valor={persona.direccion} />
@@ -403,6 +436,16 @@ function Resumen({
       </Card>
 
       <div className="space-y-4">
+        <Card>
+          <CardContent className="pt-4">
+            <TarjetaAntiguedad
+              antiguedad={antiguedad}
+              puedeAjustar={puedeAjustarAntiguedad}
+              alAjustar={alAjustarAntiguedad}
+            />
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="flex-row items-center justify-between pb-2">
             <CardTitle>Situaciones vigentes</CardTitle>
@@ -556,12 +599,27 @@ function FormacionTab({ cursos, puedeEscribir, alAgregar }: { cursos: PersonaCur
   );
 }
 
-function PremiosTab({ premios, puedeEscribir, alAgregar }: { premios: PersonaPremio[]; puedeEscribir: boolean; alAgregar: () => void }) {
+function PremiosTab({
+  premios,
+  puedeEscribir,
+  alAgregar,
+  alAgregarAbono,
+}: {
+  premios: PersonaPremio[];
+  puedeEscribir: boolean;
+  alAgregar: () => void;
+  alAgregarAbono: () => void;
+}) {
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between pb-2">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
         <CardTitle>Premios y distinciones</CardTitle>
-        {puedeEscribir && <Button variant="outline" size="sm" onClick={alAgregar}><Plus /> Registrar premio</Button>}
+        {puedeEscribir && (
+          <div className="flex flex-wrap gap-1">
+            <Button variant="outline" size="sm" onClick={alAgregar}><Plus /> Registrar premio</Button>
+            <Button variant="outline" size="sm" onClick={alAgregarAbono}><Plus /> Abono de antigüedad</Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="space-y-2">
         {premios.length === 0 && <p className="text-sm text-muted-foreground">Sin premios registrados.</p>}

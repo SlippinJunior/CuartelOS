@@ -28,6 +28,9 @@ se conservan intactas en `docs/legado/sql/`.
 | 001800 | `…_tesoreria_cuotas.sql` | Pago de cuotas, anulación y grilla `fn_cuotas_estado` |
 | 001900 | `…_actas_ordenes.sql` | Tipos de documento ACTA y ORDEN_CAPITANIA; seguimiento de correo |
 | 002000 | `…_documentos_publicos.sql` | Lectura de órdenes y actas aprobadas por parte de la compañía |
+| 20261119000100 | `…_antiguedad_charlie.sql` | Antigüedad efectiva, Charlie, exenciones y vista |
+| 20261119000200 | `…_sistema_guardias.sql` | Ciclos, turnos, integrantes, RPC, situaciones y notificaciones |
+| 20261119000300 | `…_guardias_cron_alertas.sql` | P7, R13/R14, panel y parámetros de guardia |
 
 ## Cómo se usa
 ```bash

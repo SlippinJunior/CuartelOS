@@ -60,6 +60,27 @@ El correo usa `SMTP_HOST`/`SMTP_PORT`/`SMTP_USER`/`SMTP_PASSWORD` o
 `RESEND_API_KEY`. En local, `SMTP_HOST=inbucket` y `SMTP_PORT=1025` capturan los
 mensajes en Mailpit (`http://127.0.0.1:54324`).
 
+## `notificar-guardias`
+
+Convocatorias de guardia (correo + WhatsApp) y aviso matinal de llegadas
+tardías. Acepta la sesión de un oficial de Capitanía o un token interno
+(`CRON_SECRET`).
+
+```json
+POST /functions/v1/notificar-guardias
+{ "modo": "convocatoria_semana", "ciclo_id": 1, "semana_num": 1 }
+{ "modo": "llegadas_tardias" }
+```
+
+## `emitir-guardia-pdf`
+
+PDF **P7 · Rol y Libro de Guardia** con folio `ROL_GUARDIA`, hash y QR.
+
+```json
+POST /functions/v1/emitir-guardia-pdf
+{ "ciclo_id": 1, "semana_num": 1 }
+```
+
 ## `emitir-documento`
 
 Cualquier oficial autenticado puede emitir la hoja de vida (P3) de un bombero.
