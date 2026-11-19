@@ -8,6 +8,8 @@ de memoria o de la persona que lo construyó.
 | Archivo | Tema |
 |---|---|
 | `instalacion-local.md` | Docker, Supabase CLI, seed, pruebas y verificación manual |
+| `demo-vercel.md` | Despliegue de la demo en Vercel con Supabase Cloud |
+| `conexion-demo.md` | Estado de la conexión, bloqueo de red y pasos para terminar |
 | `supabase-nube.md` | Crear el proyecto, aplicar migraciones y secrets |
 | `cloudflare-pages.md` | Build y publicación manual |
 | `dominio.md` | Compra, DNS y correo |
