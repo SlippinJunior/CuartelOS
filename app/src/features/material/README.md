@@ -1,23 +1,32 @@
-# features/material/ · Material mayor (esqueleto + mock 2D)
+# features/material/ · Pañol del Teniente 2° y EPP
 
 ## Propósito
-Validar la idea del inventario gráfico: una vista por lado del carro con
-cajoneras tocables y artículos por zona.
+Que los bomberos consulten el pañol del Teniente 2° y soliciten artículos, y
+que el Teniente 2° administre el stock, resuelva pedidos y mantenga el EPP a
+cargo de cada bombero.
 
 ## Contenido
-`MaterialPage.tsx`: camión SVG estático, tres vistas (izquierda, derecha,
-trasera) y panel de inventario. Los datos son ficticios y viven en el
-componente; no se guardan.
+| Archivo | Qué hace |
+|---|---|
+| `MaterialPage.tsx` | Pestañas Pañol, Solicitudes, Bomberos y Unidades |
+| `dialogos.tsx` | Alta/edición de stock, solicitud, resolución y asignación |
+| `logica.ts` | Roles, estados, agrupación y formato de cantidades |
+| `VistaUnidades.tsx` | Maqueta 2D por lado del carro (Etapa 3) |
 
 ## Cómo se usa
-Toca una cajonera en el dibujo o en la lista para ver su contenido. El mock
-sirve para acordar el diseño antes de construir el editor de zonas.
+- **Bombero**: entra a Material, busca el artículo, toca *Solicitar* e indica
+  cantidad y motivo. Sigue el estado en *Solicitudes*.
+- **Teniente 2°**: agrega o edita el stock, resuelve cada pedido y asigna EPP
+  desde *Bomberos*.
+- **Capitanía y oficialidad**: leen el pañol, las solicitudes y el EPP; no
+  modifican nada.
 
 ## Convenciones
-- En la Etapa 3 la imagen será una foto o SVG en Storage y `forma` guardará el
-  polígono normalizado 0–1 en `material.ubicacion`.
-- El inventario real usa `material.item`, `articulo`, `ubicacion` y
-  `revision_detalle`.
+- Toda la seguridad vive en RLS y en `material.resolver_solicitud`. El
+  frontend solo oculta acciones.
+- Los avisos se leen de `material.notificacion`; no se inventan en el cliente.
+- Las cantidades se muestran con `cantidadLegible()` para evitar `2.00`.
 
 ## Relacionado con
-`docs/modulos/material.md`, `docs/datos/er-material.md`.
+`docs/modulos/material.md`, `docs/datos/er-material.md`,
+`supabase/migrations/20261121000100_inventario_teniente.sql`.

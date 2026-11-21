@@ -251,6 +251,68 @@ export interface Asignacion {
   articulo?: Articulo;
 }
 
+export type EstadoSolicitud = "pendiente" | "aprobada" | "entregada" | "rechazada" | "cancelada";
+
+export interface PanolStock {
+  id: number;
+  articulo_id: number;
+  articulo: string;
+  categoria: string | null;
+  talla: string | null;
+  cantidad: number;
+  minimo: number;
+  ubicacion: string;
+  estado: string;
+  observacion: string | null;
+  stock_bajo: boolean;
+  actualizado_en: string;
+}
+
+export interface SolicitudMaterial {
+  id: number;
+  persona_id: string;
+  solicitante: string;
+  registro: number;
+  rango: Rango;
+  stock_id: number | null;
+  articulo_id: number;
+  articulo: string;
+  talla: string | null;
+  cantidad: number;
+  motivo: string | null;
+  estado: EstadoSolicitud;
+  destinatario_persona_id: string | null;
+  respuesta: string | null;
+  asignacion_id: number | null;
+  creado_en: string;
+  resuelto_en: string | null;
+}
+
+export interface AsignacionMaterial {
+  id: number;
+  persona_id: string;
+  registro: number;
+  persona: string;
+  rango: Rango;
+  articulo_id: number;
+  articulo: string;
+  cantidad: number;
+  talla: string | null;
+  fecha_entrega: string | null;
+  fecha_devolucion: string | null;
+  origen: string;
+  observacion: string | null;
+}
+
+export interface NotificacionMaterial {
+  id: number;
+  tipo: "solicitud_nueva" | "solicitud_resuelta" | "stock_bajo";
+  titulo: string;
+  detalle: string | null;
+  creado_en: string;
+  leida_en?: string | null;
+}
+
 export interface Movimiento {
   id: number;
   fecha: string;
@@ -390,6 +452,14 @@ export interface PanelInicio {
     ruta: string;
   }>;
   compromisos_pendientes: number;
+  solicitudes_material_pendientes?: number;
+  notificaciones_material?: Array<{
+    id: number;
+    tipo: string;
+    titulo: string;
+    detalle: string | null;
+    creado_en: string;
+  }>;
   es_oficial: boolean;
   roles: string[];
 }

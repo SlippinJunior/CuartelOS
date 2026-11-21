@@ -20,7 +20,11 @@ const esquema = z.object({
 
 type Formulario = z.infer<typeof esquema>;
 
-const USUARIOS_DEMO = ["director", "secretario", "tesorero", "capitan", "ayudante", "consejo", "bombero", "admin"];
+const USUARIOS_DEMO = [
+  "director", "secretario", "prosecretario", "tesorero", "protesorero",
+  "capitan", "teniente_1", "teniente_2", "teniente_3", "ayudante",
+  "consejo", "bombero", "admin",
+];
 
 export function LoginPage() {
   const { sesion } = useSesion();
