@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowRight, Banknote, CalendarClock, ClipboardCheck, FileText, Plus, ShieldCheck, UserRound } from "lucide-react";
+import { AlertTriangle, ArrowRight, Banknote, CalendarClock, ClipboardCheck, FileText, Package, Plus, ShieldCheck, UserRound } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { usePerfil } from "@/features/auth/sesion";
 import { seccionesDe, SECCIONES } from "@/lib/permisos";
@@ -55,7 +55,7 @@ export function InicioPage() {
             <CardTitle className="text-3xl">{isLoading ? "…" : (panel?.tareas.length ?? 0)}</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Listas por cerrar o enviar según tu cargo.
+            Listas por cerrar y solicitudes de material según tu rol.
           </CardContent>
         </Card>
         <Card>
@@ -132,6 +132,8 @@ export function InicioPage() {
 
       <TarjetasGuardia panel={panel ?? undefined} />
 
+      <TarjetasMaterial panel={panel ?? undefined} />
+
       <section>
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Accesos rápidos</h2>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -184,6 +186,39 @@ function AccesoRapido({
       <Icono className="size-5 text-primary" />
       <span className="text-sm font-medium">{titulo}</span>
     </Link>
+  );
+}
+
+function TarjetasMaterial({ panel }: { panel?: PanelInicio }) {
+  const avisos = panel?.notificaciones_material ?? [];
+  const pendientes = panel?.solicitudes_material_pendientes ?? 0;
+
+  if (avisos.length === 0 && pendientes === 0) return null;
+
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2">
+          <Package className="size-5 text-primary" /> Pañol del Teniente 2°
+        </CardTitle>
+        <CardDescription>
+          {pendientes > 0
+            ? `${pendientes} solicitud${pendientes === 1 ? "" : "es"} por resolver.`
+            : "Avisos del pañol y solicitudes de material."}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {avisos.slice(0, 4).map((n) => (
+          <div key={n.id} className="rounded-md border border-border p-2 text-sm">
+            <p className="font-medium">{n.titulo}</p>
+            {n.detalle && <p className="text-xs text-muted-foreground">{n.detalle}</p>}
+          </div>
+        ))}
+        <Link to="/material" className="inline-flex items-center gap-1 text-sm font-medium text-primary">
+          Ir al pañol <ArrowRight className="size-4" />
+        </Link>
+      </CardContent>
+    </Card>
   );
 }
 

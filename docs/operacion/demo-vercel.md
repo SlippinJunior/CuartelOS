@@ -175,7 +175,10 @@ prueba y vuelve a aplicar migraciones y seed.
 4. En **Asistencia**, abre la lista 40 y marca asistencia.
 5. En **Tesorería**, registra una cuota y verifica que aparece en la cartola.
 6. En **Secretaría**, crea un acta con secciones y emite el PDF.
-7. Entra como **bombero** y comprueba que ve solo lo suyo.
+7. Entra como **teniente_2**, abre **Material** y resuelve una solicitud del
+   pañol (entregar descuenta stock y deja el EPP a cargo del bombero).
+8. Entra como **bombero** y comprueba que ve solo lo suyo; en **Material**
+   puede consultar el pañol y pedir un artículo.
 
 ---
 

@@ -107,6 +107,7 @@ Vercel → **Account Settings → Connect Git Account** y conecta
 | Login `bombero@demo.local` → muro de consentimiento | ✅ (comportamiento esperado) |
 | Edge Function `emitir-acta` → PDF en Storage + folio 2026-0001 | ✅ HTTP 200 |
 | `/verificar/<token>` público y `/verificar/<token-inválido>` | ✅ "Documento válido" / "Documento no válido" |
+| Pañol del Teniente 2°: stock, solicitudes y EPP | ✅ visto como `teniente_2` (resuelve) y como `bombero` (consulta y solicita); la oficialidad solo lee |
 
 > Nota técnica: la CLI de Supabase sólo permite exponer esquemas al vincular el
 > proyecto por Postgres (`:5432`), inaccesible desde esta red. Los esquemas se

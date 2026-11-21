@@ -538,7 +538,7 @@ as $$
         union all
         (select 0 as orden, (s.creado_en + interval '1 day') as vence, jsonb_build_object(
           'tipo', 'material', 'id', s.id,
-          'titulo', format('Solicitud de %s: %s × %s', p.nombres, a.nombre, s.cantidad),
+          'titulo', format('Solicitud de %s: %s × %s', p.nombres, a.nombre, trim_scale(s.cantidad)),
           'vence', (s.creado_en + interval '1 day'),
           'ruta', '/material') as x
          from material.solicitud s
