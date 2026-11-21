@@ -14,6 +14,11 @@ erDiagram
   unidad ||--o{ bitacora_unidad : "km, horas bomba"
   item ||--o{ asignacion : "a cargo de bombero"
   item ||--o{ revision_detalle : "revisión"
+  articulo ||--o{ panol_stock : "existencias del 2°"
+  panol_stock ||--o{ solicitud : "pedido del bombero"
+  solicitud ||--o{ notificacion : "aviso"
+  solicitud ||--o{ asignacion : "entrega"
+  persona ||--o{ solicitud : "solicita"
 
   unidad_vista {
     bigint id PK
@@ -38,6 +43,31 @@ erDiagram
     estado_item estado
     text n_serie
   }
+  panol_stock {
+    bigint id PK
+    bigint articulo_id FK
+    text talla
+    numeric cantidad
+    numeric minimo
+    text ubicacion
+  }
+  solicitud {
+    bigint id PK
+    uuid persona_id FK
+    bigint stock_id FK
+    numeric cantidad
+    text motivo
+    estado_solicitud estado
+    uuid destinatario_persona_id FK "Teniente 2°"
+    bigint asignacion_id FK
+  }
+  notificacion {
+    bigint id PK
+    uuid destinatario_persona_id FK
+    tipo_notificacion_material tipo
+    bigint solicitud_id FK
+    timestamptz leida_en
+  }
 ```
 
 ## Cómo se dibuja la vista 2D
@@ -52,6 +82,15 @@ erDiagram
 - `unidad_id` nulo representa la bodega del cuartel.
 - Un artículo con `requiere_serie` exige cantidad 1.
 - Los documentos de unidad vencen y generan alertas R09.
+
+## Reglas del pañol
+- `panol_stock` es único por `(articulo_id, talla)` (con `talla` nula incluida).
+- La solicitud nace `pendiente`; el trigger completa artículo y talla desde el
+  stock y fija `destinatario_persona_id` en el Teniente 2° de turno.
+- Solo el Teniente 2° (o admin) resuelve. `material.resolver_solicitud`
+  entrega en una transacción: descuenta stock, crea `asignacion` y responde.
+- La solicitud no puede pedir más que el stock disponible.
+- Cada cambio de estado genera una fila en `material.notificacion`.
 
 ## Vistas
 `material.v_inventario` y `material.v_plazos`.

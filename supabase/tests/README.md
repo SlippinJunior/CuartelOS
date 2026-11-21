@@ -21,6 +21,7 @@ con usuarios simulados. Son la red de seguridad de la interfaz.
 | `guardias.test.sql` | 14 turnos, cupo semanal, reemplazo, Charlie Z8 y firma |
 | `autoasignacion_guardias.test.sql` | Cierre semanal, día con menos guardianes, empates y avisos |
 | `secretaria.test.sql` | Permisos, actas aprobadas, compromisos, votación y aspirantes |
+| `inventario_teniente.test.sql` | Pañol del Teniente 2°, solicitudes, entrega con stock y avisos |
 
 ## Cómo se usa
 ```bash

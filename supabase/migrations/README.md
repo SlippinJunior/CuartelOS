@@ -34,6 +34,7 @@ se conservan intactas en `docs/legado/sql/`.
 | 20261119000400 | `…_autoasignacion_guardias.sql` | Cierre semanal y autoasignación al día con menos guardianes |
 | 20261119000500 | `…_guardias_auditoria_fixes.sql` | Exención, obligación por categoría, permisos y bajas |
 | 20261119000600 | `…_secretaria_completa.sql` | Actas con secciones, acuerdos, postulaciones, P1/P2/P4 y R15/R16 |
+| 20261121000100 | `…_inventario_teniente.sql` | Pañol del Teniente 2°, solicitudes de bomberos, entrega con descuento de stock y avisos |
 
 ## Cómo se usa
 ```bash

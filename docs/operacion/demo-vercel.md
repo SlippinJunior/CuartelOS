@@ -46,7 +46,8 @@ ingreso.
 | `director@demo.local` | Director (acceso completo) |
 | `secretario@demo.local` | Secretario (Personal, Asistencia, Secretaría) |
 | `tesorero@demo.local` | Tesorero (cuotas, cartola) |
-| `capitan@demo.local` | Capitán (guardias, órdenes, material) |
+| `capitan@demo.local` | Capitán (guardias, órdenes, lectura del pañol) |
+| `teniente_2@demo.local` | Teniente 2° (administra el pañol y resuelve solicitudes) |
 | `ayudante@demo.local` | Ayudante (pase de lista) |
 | `consejo@demo.local` | Consejo (solo disciplina) |
 | `bombero@demo.local` | Bombero (vista mínima; pide consentimiento) |

@@ -505,6 +505,57 @@ for p in personas[:14]:
         )
 w()
 
+w("-- Pañol del Teniente 2° (stock ficticio)")
+panol = [
+    (1, "M", 4, 2), (1, "L", 6, 2), (1, "XL", 2, 1),
+    (2, "M", 12, 6), (2, "L", 18, 6),
+    (3, "39", 6, 4), (3, "41", 8, 4), (3, "43", 4, 2),
+    (4, "M", 5, 3), (4, "L", 7, 3),
+    (5, None, 2, 1), (6, None, 4, 2), (7, None, 3, 2),
+    (8, None, 5, 2), (9, None, 6, 2), (10, None, 2, 1),
+    (11, None, 8, 4), (12, None, 10, 4),
+    (13, None, 2, 1), (14, None, 3, 1),
+    (15, None, 2, 1), (16, "L", 1, 1),
+]
+for aid, talla, cant, minimo in panol:
+    w(
+        "insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values ("
+        f"{aid}, {q(talla)}, {cant}, {minimo});"
+    )
+w()
+
+w("-- Solicitudes ficticias al pañol (2 pendientes, 1 entregada, 1 rechazada)")
+# El id de la solicitud sigue el orden de inserción: 1..4.
+w(
+    "insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ("
+    f"{q(persona_id(212))}, 5, (select articulo_id from material.panol_stock where id = 5), 2, "
+    "'Reposición de guantes para la guardia');"
+)
+w(
+    "insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ("
+    f"{q(persona_id(214))}, 18, (select articulo_id from material.panol_stock where id = 18), 1, "
+    "'Linterna del casco con batería descargada');"
+)
+w(
+    "insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ("
+    f"{q(persona_id(216))}, 7, (select articulo_id from material.panol_stock where id = 7), 1, "
+    "'Botas de agua rotas en acto de servicio');"
+)
+w(
+    "insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ("
+    f"{q(persona_id(218))}, 17, (select articulo_id from material.panol_stock where id = 17), 1, "
+    "'Radio portátil con falla de recepción');"
+)
+w(
+    "do $$ begin "
+    f"perform set_config('request.jwt.claim.sub', {q(user_id('teniente_2@demo.local'))}, true); "
+    "perform material.resolver_solicitud(2, 'entregada', 'Se entrega en el pañol.'); "
+    "perform material.resolver_solicitud(4, 'rechazada', 'Sin stock hasta la próxima reposición.'); "
+    f"perform set_config('request.jwt.claim.sub', {q(user_id('admin@demo.local'))}, true); "
+    "end $$;"
+)
+w()
+
 w("-- Revisiones y bitácoras")
 for uid in (1, 2, 3):
     w(

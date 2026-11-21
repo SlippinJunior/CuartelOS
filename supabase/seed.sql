@@ -1580,6 +1580,37 @@ insert into material.asignacion (persona_id, articulo_id, cantidad, talla, fecha
 insert into material.asignacion (persona_id, articulo_id, cantidad, talla, fecha_entrega, origen) values ('719c8def-873f-50f2-83c4-7006e03ceb8c', 4, 1, 'M', '2026-03-01', 'compania');
 insert into material.asignacion (persona_id, articulo_id, cantidad, talla, fecha_entrega, origen) values ('719c8def-873f-50f2-83c4-7006e03ceb8c', 2, 1, 'S', '2026-03-01', 'compania');
 
+-- Pañol del Teniente 2° (stock ficticio)
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (1, 'M', 4, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (1, 'L', 6, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (1, 'XL', 2, 1);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (2, 'M', 12, 6);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (2, 'L', 18, 6);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (3, '39', 6, 4);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (3, '41', 8, 4);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (3, '43', 4, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (4, 'M', 5, 3);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (4, 'L', 7, 3);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (5, null, 2, 1);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (6, null, 4, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (7, null, 3, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (8, null, 5, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (9, null, 6, 2);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (10, null, 2, 1);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (11, null, 8, 4);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (12, null, 10, 4);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (13, null, 2, 1);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (14, null, 3, 1);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (15, null, 2, 1);
+insert into material.panol_stock (articulo_id, talla, cantidad, minimo) values (16, 'L', 1, 1);
+
+-- Solicitudes ficticias al pañol (2 pendientes, 1 entregada, 1 rechazada)
+insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ('87585a59-cd24-5815-bbb7-9b7fbbc01c16', 5, (select articulo_id from material.panol_stock where id = 5), 2, 'Reposición de guantes para la guardia');
+insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ('719c8def-873f-50f2-83c4-7006e03ceb8c', 18, (select articulo_id from material.panol_stock where id = 18), 1, 'Linterna del casco con batería descargada');
+insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', 7, (select articulo_id from material.panol_stock where id = 7), 1, 'Botas de agua rotas en acto de servicio');
+insert into material.solicitud (persona_id, stock_id, articulo_id, cantidad, motivo) values ('186fc2b3-89cd-5b37-b106-78d29bc1a104', 17, (select articulo_id from material.panol_stock where id = 17), 1, 'Radio portátil con falla de recepción');
+do $$ begin perform set_config('request.jwt.claim.sub', '3a0bd7bb-741e-5763-8ab7-19c966feb51c', true); perform material.resolver_solicitud(2, 'entregada', 'Se entrega en el pañol.'); perform material.resolver_solicitud(4, 'rechazada', 'Sin stock hasta la próxima reposición.'); perform set_config('request.jwt.claim.sub', '9c9535dc-ee69-50d0-bb82-0ecf838ae964', true); end $$;
+
 -- Revisiones y bitácoras
 insert into material.revision_inventario (unidad_id, fecha, observacion) values (1, '2026-06-15', 'Revisión ficticia');
 insert into material.revision_inventario (unidad_id, fecha, observacion) values (2, '2026-06-15', 'Revisión ficticia');

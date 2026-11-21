@@ -89,7 +89,9 @@ Convenciones · Relacionado con**.
 | Tesorería: cuotas con grilla anual, cartola automática y proyección | ✅ (base) |
 | Administración: usuarios, roles, catálogos y parámetros | ✅ |
 | Guardia: ciclos de 14 días, cupo por semana, Charlie, reporte y firma | ✅ |
-| Material 2D, Tesorería cartola, Secretaría y Disciplina | 🧱 esqueleto con mock y README |
+| Material: pañol del Teniente 2°, solicitudes de bomberos y EPP a cargo | ✅ |
+| Vista 2D de unidades sobre el carro | 🧱 maqueta de validación |
+| Tesorería cartola, Secretaría y Disciplina | 🧱 esqueleto con README |
 | Modelo dimensional e integración VIPER | 📄 documentados |
 
 ---
