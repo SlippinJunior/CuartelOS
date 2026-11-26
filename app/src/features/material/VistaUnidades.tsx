@@ -1,9 +1,15 @@
 import * as React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Truck } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { db } from "@/lib/supabase";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
+import { Select } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatearFecha } from "@/lib/formato";
+import type { Unidad, UnidadDocumento } from "@/types/tipos";
 
 interface Cajonera {
   codigo: string;
@@ -35,19 +41,90 @@ const LADOS: Record<string, Cajonera[]> = {
   ],
 };
 
-/** Vista 2D de demostración: valida el inventario gráfico por lado del carro. */
+/** Vista de Unidades conectada a material.unidad y maqueta 2D de cajoneras. */
 export function VistaUnidades() {
-  const [lado] = React.useState("izquierda");
+  const [seleccionada, setSeleccionada] = React.useState<number | null>(null);
   const [activa, setActiva] = React.useState<Cajonera | null>(null);
-  const cajoneras = LADOS[lado];
+
+  const unidadesQ = useQuery({
+    queryKey: ["material", "unidades"],
+    queryFn: async () => {
+      const { data, error } = await db.material
+        .from("unidad")
+        .select("*, tipo_unidad:tipo_unidad(nombre, codigo)")
+        .order("codigo");
+      if (error) throw error;
+      return (data ?? []) as Unidad[];
+    },
+  });
+
+  const docsQ = useQuery({
+    queryKey: ["material", "unidad-documentos"],
+    queryFn: async () => {
+      const { data, error } = await db.material.from("unidad_documento").select("*");
+      if (error) throw error;
+      return (data ?? []) as UnidadDocumento[];
+    },
+  });
+
+  const unidades = unidadesQ.data ?? [];
+  const unidad = unidades.find((u) => u.id === seleccionada) ?? unidades[0] ?? null;
+  const docsUnidad = (docsQ.data ?? []).filter((d) => d.unidad_id === unidad?.id);
+  const codigoUnidad = unidad?.codigo ?? "M-21";
 
   return (
-    <div>
-      <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border border-aviso/40 bg-aviso/10 p-3 text-sm">
-        <Badge variant="aviso">Demostración</Badge>
+    <div className="space-y-4">
+      {unidadesQ.isLoading ? (
+        <Skeleton className="h-28 w-full" />
+      ) : (
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Truck className="size-5 text-primary" />
+                <CardTitle>{unidad ? `${unidad.codigo} · ${unidad.marca ?? "Unidad"} ${unidad.modelo ?? ""}` : "Sin unidades"}</CardTitle>
+              </div>
+              {unidades.length > 0 && (
+                <Select
+                  aria-label="Seleccionar unidad"
+                  className="w-48"
+                  value={unidad ? String(unidad.id) : ""}
+                  onChange={(e) => setSeleccionada(Number(e.target.value))}
+                >
+                  {unidades.map((u) => (
+                    <option key={u.id} value={u.id}>{u.codigo} · {u.marca ?? "Carro"}</option>
+                  ))}
+                </Select>
+              )}
+            </div>
+            {unidad && (
+              <CardDescription>
+                {unidad.tipo_unidad?.nombre ?? "Unidad"}
+                {unidad.patente ? ` · Patente ${unidad.patente}` : ""}
+                {unidad.anio ? ` · Año ${unidad.anio}` : ""}
+                {unidad.km_actual != null ? ` · ${unidad.km_actual.toLocaleString("es-CL")} km` : ""}
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2 pt-0">
+            {unidad && (
+              <Badge variant={unidad.estado === "operativa" ? "exito" : unidad.estado === "mantencion" ? "aviso" : "peligro"}>
+                Estado: {unidad.estado}
+              </Badge>
+            )}
+            {docsUnidad.map((d) => (
+              <Badge key={d.id} variant="outline">
+                {d.tipo.replace(/_/g, " ")}: {d.vence ? formatearFecha(d.vence) : "sin fecha"}
+              </Badge>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="flex flex-wrap items-center gap-2 rounded-md border border-aviso/40 bg-aviso/10 p-3 text-sm">
+        <Badge variant="aviso">Vista 2D</Badge>
         <span className="text-muted-foreground">
-          Maqueta de la vista por lado del carro. Las zonas reales se editan sobre una foto y se guardan en
-          <code className="mx-1">material.ubicacion.forma</code>.
+          Esquema de referencia de cajoneras para <strong>{codigoUnidad}</strong>. Las unidades se administran desde Administración → Unidades.
         </span>
       </div>
 
@@ -56,26 +133,26 @@ export function VistaUnidades() {
           {
             id: "izquierda",
             etiqueta: "Lado izquierdo",
-            contenido: <VistaUnidad lado="izquierda" cajoneras={LADOS.izquierda} activa={activa} setActiva={setActiva} />,
+            contenido: <VistaUnidad codigo={codigoUnidad} lado="izquierda" cajoneras={LADOS.izquierda} activa={activa} setActiva={setActiva} />,
           },
           {
             id: "derecha",
             etiqueta: "Lado derecho",
-            contenido: <VistaUnidad lado="derecha" cajoneras={LADOS.derecha} activa={activa} setActiva={setActiva} />,
+            contenido: <VistaUnidad codigo={codigoUnidad} lado="derecha" cajoneras={LADOS.derecha} activa={activa} setActiva={setActiva} />,
           },
           {
             id: "trasera",
             etiqueta: "Trasera",
-            contenido: <VistaUnidad lado="trasera" cajoneras={LADOS.trasera} activa={activa} setActiva={setActiva} />,
+            contenido: <VistaUnidad codigo={codigoUnidad} lado="trasera" cajoneras={LADOS.trasera} activa={activa} setActiva={setActiva} />,
           },
         ]}
       />
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader><CardTitle>Inventario por cajonera</CardTitle></CardHeader>
           <CardContent className="space-y-2">
-            {cajoneras.map((c) => (
+            {LADOS.izquierda.map((c) => (
               <button
                 key={c.codigo}
                 type="button"
@@ -97,7 +174,7 @@ export function VistaUnidades() {
           <CardContent>
             {!activa && (
               <p className="text-sm text-muted-foreground">
-                Al tocar una zona del carro se muestran los artículos guardados, su estado y el responsable.
+                Al tocar una zona del carro se muestran los artículos guardados y su estado.
               </p>
             )}
             {activa && (
@@ -113,21 +190,18 @@ export function VistaUnidades() {
           </CardContent>
         </Card>
       </div>
-
-      <p className="mt-4 text-xs text-muted-foreground">
-        <Truck className="mr-1 inline size-4" />
-        Unidad M-21 · Convencional · 48.200 km · Revisión técnica vence 01-03-2027.
-      </p>
     </div>
   );
 }
 
 function VistaUnidad({
+  codigo,
   lado,
   cajoneras,
   activa,
   setActiva,
 }: {
+  codigo: string;
   lado: string;
   cajoneras: Cajonera[];
   activa: Cajonera | null;
@@ -136,7 +210,7 @@ function VistaUnidad({
   return (
     <Card>
       <CardContent className="pt-4">
-        <svg viewBox="0 0 640 320" className="w-full rounded-md bg-[#f6efe6] dark:bg-[#241d19]" role="img" aria-label={`Vista ${lado} de la unidad M-21`}>
+        <svg viewBox="0 0 640 320" className="w-full rounded-md bg-[#f6efe6] dark:bg-[#241d19]" role="img" aria-label={`Vista ${lado} de la unidad ${codigo}`}>
           <rect x="20" y="60" width="600" height="210" rx="14" fill="#b71c1c" />
           <rect x="40" y="90" width="150" height="120" rx="8" fill="#e8dccd" />
           <text x="115" y="155" textAnchor="middle" fontSize="14" fill="#5c2a17">Cabina</text>
@@ -166,18 +240,10 @@ function VistaUnidad({
           <circle cx="80" cy="290" r="18" fill="#2b2522" />
           <circle cx="540" cy="290" r="18" fill="#2b2522" />
           <text x="600" y="300" textAnchor="end" fontSize="12" fill="#7a6b61">
-            M-21
+            {codigo}
           </text>
         </svg>
-        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-          <span>Frente</span>
-          <span>Foto o SVG de ejemplo</span>
-          <span>Fondo</span>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {cajoneras.length} zonas tocables en el lado {lado}. La forma poligonal se normaliza 0–1 y se guarda en la base.
-        </p>
-        <Button variant="outline" className="mt-2 w-full" onClick={() => setActiva(cajoneras[0])}>
+        <Button variant="outline" className="mt-3 w-full" onClick={() => setActiva(cajoneras[0])}>
           Abrir primera cajonera
         </Button>
       </CardContent>

@@ -35,7 +35,7 @@ export function BuscadorGlobal({ compacto = false }: { compacto?: boolean }) {
 
   if (soloCuartel) return null;
 
-  const visibles = seccionesDe(roles);
+  const visibles = seccionesDe(roles, perfil?.modulos);
 
   function ir(ruta: string) {
     setAbierto(false);

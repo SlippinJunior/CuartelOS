@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Save, UserPlus, Users } from "lucide-react";
+import { Plus, Save, SlidersHorizontal, UserPlus, Users } from "lucide-react";
 import { db, supabase } from "@/lib/supabase";
 import { mensajeError } from "@/lib/errores";
 import { usePerfil } from "@/features/auth/sesion";
@@ -15,12 +15,16 @@ import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/common/EmptyState";
-import { ROLES, etiquetaRol } from "@/lib/permisos";
+import { ROLES, etiquetaRol, puedeGestionar, puedeVer } from "@/lib/permisos";
+import { PermisosUsuarioDialog } from "@/features/administracion/PermisosUsuarioDialog";
+import { UnidadesAdminTab } from "@/features/administracion/UnidadesAdminTab";
 import type { Cargo, Parametro, Persona, UsuarioAdmin } from "@/types/tipos";
 
 export function AdministracionPage() {
   const { data: perfil } = usePerfil();
-  const puede = perfil?.roles.some((r) => ["admin", "director"].includes(r)) ?? false;
+  const roles = perfil?.roles ?? [];
+  const puede = puedeVer(roles, "administracion", perfil?.modulos);
+  const puedeEditar = puedeGestionar(roles, "administracion", perfil?.modulos);
 
   if (!puede) {
     return <EmptyState titulo="Sin acceso" descripcion="Solo el Director y el administrador pueden entrar aquí." icono={Users} />;
@@ -28,10 +32,11 @@ export function AdministracionPage() {
 
   return (
     <div>
-      <PageHeader titulo="Administración" descripcion="Usuarios, roles, catálogos y parámetros del sistema." />
+      <PageHeader titulo="Administración" descripcion="Usuarios, permisos por módulo, unidades, catálogos y parámetros." />
       <Tabs
         items={[
-          { id: "usuarios", etiqueta: "Usuarios y roles", contenido: <UsuariosTab /> },
+          { id: "usuarios", etiqueta: "Usuarios y permisos", contenido: <UsuariosTab /> },
+          { id: "unidades", etiqueta: "Unidades", contenido: <UnidadesAdminTab puedeGestionar={puedeEditar} /> },
           { id: "catalogos", etiqueta: "Catálogos", contenido: <CatalogosTab /> },
           { id: "parametros", etiqueta: "Parámetros", contenido: <ParametrosTab /> },
         ]}
@@ -44,6 +49,7 @@ function UsuariosTab() {
   const queryClient = useQueryClient();
   const [invitar, setInvitar] = React.useState(false);
   const [asignar, setAsignar] = React.useState<UsuarioAdmin | null>(null);
+  const [permisosUsuario, setPermisosUsuario] = React.useState<UsuarioAdmin | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["usuarios-admin"],
@@ -92,18 +98,29 @@ function UsuariosTab() {
                     <Badge variant="secondary" className="cursor-pointer hover:bg-peligro/15">{etiquetaRol(r)} ×</Badge>
                   </button>
                 ))}
+                {(u.permisos_modulo?.length ?? 0) > 0 && (
+                  <Badge variant="outline">
+                    {u.permisos_modulo?.length} excepción(es)
+                  </Badge>
+                )}
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setAsignar(u)}><Plus /> Rol</Button>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => setPermisosUsuario(u)}>
+                <SlidersHorizontal /> Permisos
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setAsignar(u)}><Plus /> Rol</Button>
+            </div>
           </div>
         ))}
         <p className="text-xs text-muted-foreground">
-          Los roles son manuales y no dependen del cargo. Haz clic en un rol para revocarlo.
+          Los roles asignan bloques automáticos; usa Permisos para dar o quitar acceso a módulos puntuales.
         </p>
       </CardContent>
 
       <InvitarDialog abierto={invitar} onCambio={setInvitar} />
       <AsignarRolDialog usuario={asignar} onCambio={(v) => !v && setAsignar(null)} />
+      <PermisosUsuarioDialog usuario={permisosUsuario} onCerrar={() => setPermisosUsuario(null)} />
     </Card>
   );
 }

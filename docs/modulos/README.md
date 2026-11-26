@@ -4,7 +4,7 @@
 Un archivo por módulo con alcance, artículos del reglamento, puntos de impresión y estado actual. Es la referencia funcional para construir y reducir consumo de contexto.
 
 ## Contenido
-`inicio`, `tablero`, `personal`, `asistencia`, `guardia`, `material`, `tesoreria`, `secretaria`, `documentos`, `administracion`, `disciplina`.
+`inicio`, `tablero`, `personal`, `asistencia`, `guardia`, `material`, `tesoreria`, `secretaria`, `documentos`, `estadisticas`, `administracion`, `disciplina`.
 
 ## Cómo se usa
 - Antes de modificar un módulo, lee su `.md` aquí y el `README.md` de su carpeta en `app/src/features/`.

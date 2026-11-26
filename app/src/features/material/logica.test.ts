@@ -3,8 +3,11 @@ import {
   agruparAsignaciones,
   cantidadLegible,
   describirArticulo,
+  esGestorMaterial,
   esTenienteSegundo,
   etiquetaEstadoSolicitud,
+  etiquetaTipoBitacora,
+  puedeEditarBitacora,
   puedeResolverSolicitud,
   puedeVerInventarioBomberos,
   solicitudAbierta,
@@ -88,5 +91,22 @@ describe("presentación del pañol", () => {
   it("describe el artículo con talla y cantidad", () => {
     expect(describirArticulo("Guantes de protección", "L", 2)).toBe("Guantes de protección × 2 (talla L)");
     expect(describirArticulo("Linterna de casco", null, 1)).toBe("Linterna de casco × 1");
+  });
+});
+
+describe("bitácora de unidades y gestión por módulo", () => {
+  it("habilita edición de bitácora a oficialidad de material y excepciones de módulo", () => {
+    expect(puedeEditarBitacora(["capitan"])).toBe(true);
+    expect(puedeEditarBitacora(["teniente_3"])).toBe(true);
+    expect(puedeEditarBitacora(["teniente_2"])).toBe(true);
+    expect(puedeEditarBitacora(["bombero"])).toBe(false);
+    expect(puedeEditarBitacora(["bombero"], { material: "gestion" })).toBe(true);
+    expect(esGestorMaterial(["bombero"], { material: "gestion" })).toBe(true);
+  });
+
+  it("etiqueta tipos de bitácora", () => {
+    expect(etiquetaTipoBitacora("mantencion")).toBe("Mantención");
+    expect(etiquetaTipoBitacora("accidente")).toBe("Accidente");
+    expect(etiquetaTipoBitacora("combustible")).toBe("Combustible");
   });
 });

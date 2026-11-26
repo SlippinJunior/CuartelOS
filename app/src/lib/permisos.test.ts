@@ -4,6 +4,8 @@ import {
   esSoloCuartel,
   etiquetaRol,
   GRUPOS_NAVEGACION,
+  nivelPermiso,
+  puedeGestionar,
   puedePublicarTablero,
   puedeVer,
   restantesDeBarra,
@@ -98,5 +100,33 @@ describe("rol cuartel y tablero", () => {
     expect(todas).toContain("inicio");
     expect(todas).toContain("secretaria");
     expect(todas).toContain("administracion");
+    expect(todas).toContain("estadisticas");
+  });
+});
+
+describe("permisos por módulo sobre bloques de rol", () => {
+  it("la oficialidad y el director acceden a estadísticas por defecto, pero el bombero raso no", () => {
+    expect(puedeVer(["capitan"], "estadisticas")).toBe(true);
+    expect(puedeVer(["director"], "estadisticas")).toBe(true);
+    expect(puedeVer(["bombero"], "estadisticas")).toBe(false);
+    expect(nivelPermiso(["bombero"], "estadisticas")).toBe("ninguno");
+  });
+
+  it("una excepción por módulo habilita lectura o gestión a un bombero", () => {
+    expect(puedeVer(["bombero"], "estadisticas", { estadisticas: "lectura" })).toBe(true);
+    expect(puedeGestionar(["bombero"], "estadisticas", { estadisticas: "lectura" })).toBe(false);
+    expect(puedeGestionar(["bombero"], "material", { material: "gestion" })).toBe(true);
+    expect(seccionesDe(["bombero"], { estadisticas: "lectura" })).toContain("estadisticas");
+  });
+
+  it("una excepción 'ninguno' anula el bloque heredado de un oficial", () => {
+    expect(puedeVer(["capitan"], "material", { material: "ninguno" })).toBe(false);
+    expect(puedeGestionar(["teniente_2"], "material", { material: "lectura" })).toBe(false);
+  });
+
+  it("el usuario cuartel nunca sale de inicio aunque tenga excepciones", () => {
+    expect(nivelPermiso(["cuartel"], "estadisticas", { estadisticas: "gestion" })).toBe("ninguno");
+    expect(puedeVer(["cuartel"], "estadisticas", { estadisticas: "gestion" })).toBe(false);
+    expect(seccionesDe(["cuartel"], { material: "gestion" })).toEqual(["inicio"]);
   });
 });

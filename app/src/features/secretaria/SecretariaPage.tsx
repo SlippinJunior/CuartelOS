@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/common/EmptyState";
-import { puedeVer } from "@/lib/permisos";
+import { puedeGestionar as puedeGestionarModulo, puedeVer } from "@/lib/permisos";
 import { BookOpen } from "lucide-react";
 import { Tabs } from "@/components/ui/tabs";
 import { usePerfil } from "@/features/auth/sesion";
@@ -12,11 +12,10 @@ import { PostulacionesSection } from "@/features/secretaria/PostulacionesSection
 export function SecretariaPage() {
   const { data: perfil } = usePerfil();
   const roles = perfil?.roles ?? [];
-  const puedeGestionar = roles.some((r) =>
-    ["secretario", "prosecretario", "director", "capitan", "admin"].includes(r),
-  );
+  const puedeGestionar =
+    puedeGestionarModulo(roles, "secretaria", perfil?.modulos) || roles.includes("capitan");
 
-  if (!puedeVer(roles, "secretaria")) {
+  if (!puedeVer(roles, "secretaria", perfil?.modulos)) {
     return (
       <EmptyState
         titulo="Sin acceso a Secretaría"

@@ -46,7 +46,7 @@ export function DialogoStock({
   const [talla, setTalla] = React.useState("");
   const [cantidad, setCantidad] = React.useState("0");
   const [minimo, setMinimo] = React.useState("0");
-  const [ubicacion, setUbicacion] = React.useState("Pañol Teniente 2°");
+  const [ubicacion, setUbicacion] = React.useState("Inventario Compañía");
   const [estado, setEstado] = React.useState<string>("bueno");
   const [observacion, setObservacion] = React.useState("");
 
@@ -56,7 +56,7 @@ export function DialogoStock({
     setTalla(stock?.talla ?? "");
     setCantidad(stock ? String(stock.cantidad) : "0");
     setMinimo(stock ? String(stock.minimo) : "0");
-    setUbicacion(stock?.ubicacion ?? "Pañol Teniente 2°");
+    setUbicacion(stock?.ubicacion ?? "Inventario Compañía");
     setEstado(stock?.estado ?? "bueno");
     setObservacion(stock?.observacion ?? "");
   }, [abierto, stock]);
@@ -68,7 +68,7 @@ export function DialogoStock({
         talla: talla.trim() || null,
         cantidad: Number(cantidad),
         minimo: Number(minimo),
-        ubicacion: ubicacion.trim() || "Pañol Teniente 2°",
+        ubicacion: ubicacion.trim() || "Inventario Compañía",
         estado,
         observacion: observacion.trim() || null,
       };
@@ -81,7 +81,7 @@ export function DialogoStock({
       }
     },
     onSuccess: async () => {
-      toast.success(stock ? "Stock actualizado" : "Artículo agregado al pañol");
+      toast.success(stock ? "Stock actualizado" : "Artículo agregado a Inventario Compañía");
       onCerrar();
       await onGuardado();
     },
@@ -94,7 +94,7 @@ export function DialogoStock({
     <Dialog
       abierto={abierto}
       onCambio={(v) => !v && onCerrar()}
-      titulo={stock ? "Editar stock del pañol" : "Agregar artículo al pañol"}
+      titulo={stock ? "Editar stock de Inventario Compañía" : "Agregar artículo a Inventario Compañía"}
       descripcion="Solo el Teniente 2° administra estas existencias."
       pie={
         <>
@@ -233,7 +233,7 @@ export function DialogoSolicitud({
     <Dialog
       abierto={Boolean(stock)}
       onCambio={(v) => !v && onCerrar()}
-      titulo="Solicitar al pañol"
+      titulo="Solicitar a Inventario Compañía"
       descripcion={
         stock
           ? `${describirArticulo(stock.articulo, stock.talla, stock.cantidad)} disponibles en ${stock.ubicacion}.`
@@ -359,7 +359,7 @@ export function DialogoResolver({
           </Select>
           {decision === "entregada" && (
             <p className="text-xs text-muted-foreground">
-              Se descuenta del pañol y queda como EPP a cargo del bombero.
+              Se descuenta de Inventario Compañía y queda como EPP a cargo del bombero.
             </p>
           )}
         </div>

@@ -11,8 +11,8 @@ export function BottomNav() {
   const { data: perfil } = usePerfil();
   const location = useLocation();
   const roles = perfil?.roles ?? [];
-  const barra = barraInferior(roles);
-  const restantes = restantesDeBarra(roles);
+  const barra = barraInferior(roles, perfil?.modulos);
+  const restantes = restantesDeBarra(roles, perfil?.modulos);
   const [masAbierto, setMasAbierto] = React.useState(false);
 
   const items = restantes.length > 0 ? barra.slice(0, 3) : barra;

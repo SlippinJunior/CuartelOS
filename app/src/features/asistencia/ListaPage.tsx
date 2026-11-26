@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { EstadoBadge } from "@/components/common/StatusBadge";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,6 +52,8 @@ export function ListaPage() {
   const [busqueda, setBusqueda] = React.useState("");
   const [menuPersona, setMenuPersona] = React.useState<Persona | null>(null);
   const [procesando, setProcesando] = React.useState(false);
+  const [comentarios, setComentarios] = React.useState("");
+  const [guardandoCom, setGuardandoCom] = React.useState(false);
 
   const listaQ = useQuery({
     queryKey: ["lista", id],
@@ -135,6 +138,28 @@ export function ListaPage() {
   React.useEffect(() => {
     if (situacionesQ.data) setSituaciones(situacionesQ.data);
   }, [situacionesQ.data]);
+
+  React.useEffect(() => {
+    if (listaQ.data) setComentarios(listaQ.data.comentarios ?? "");
+  }, [listaQ.data]);
+
+  const guardarComentarios = async () => {
+    if (!enLinea || !lista) return;
+    setGuardandoCom(true);
+    try {
+      const { error } = await db.asistencia
+        .from("lista")
+        .update({ comentarios: comentarios.trim() || null } as never)
+        .eq("id", lista.id);
+      if (error) throw error;
+      toast.success("Comentarios del parte guardados");
+      await queryClient.invalidateQueries({ queryKey: ["lista", id] });
+    } catch (e) {
+      toast.error(mensajeError(e));
+    } finally {
+      setGuardandoCom(false);
+    }
+  };
 
   const hoy = new Date().toISOString().slice(0, 10);
   const vigentes = React.useMemo(
@@ -314,11 +339,35 @@ export function ListaPage() {
   return (
     <div>
       <PageHeader
-        titulo={`Lista N° ${lista.numero} · ${lista.anio}`}
-        descripcion={`${lista.tipo_acto?.descripcion ?? lista.descripcion ?? "Acto"} · ${formatearFecha(lista.fecha)}`}
+        titulo={`Parte N° ${lista.numero} · ${lista.tipo_acto_clave ?? "Acto"}`}
+        descripcion={`${lista.tipo_acto?.descripcion ?? lista.descripcion ?? "Acto"} · ${formatearFecha(lista.fecha)}${lista.direccion ? ` · ${lista.direccion}` : ""}`}
         volverA="/asistencia"
         acciones={<EstadoBadge estado={lista.estado} />}
       />
+
+      <Card className="mb-3">
+        <CardContent className="space-y-2 pt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Comentarios del parte
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Textarea
+              rows={2}
+              value={comentarios}
+              onChange={(e) => setComentarios(e.target.value)}
+              placeholder="Observaciones del Ayudante sobre la citación o emergencia…"
+            />
+            <Button
+              variant="outline"
+              className="sm:self-end"
+              onClick={() => void guardarComentarios()}
+              disabled={guardandoCom || !enLinea}
+            >
+              Guardar nota
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {!enLinea && (
         <div className="mb-3 flex items-center gap-2 rounded-md border border-aviso/40 bg-aviso/10 p-3 text-sm">

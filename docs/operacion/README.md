@@ -12,6 +12,7 @@ de memoria o de la persona que lo construyó.
 | `conexion-demo.md` | Estado de la conexión, bloqueo de red y pasos para terminar |
 | `supabase-nube.md` | Crear el proyecto, aplicar migraciones y secrets |
 | `cloudflare-pages.md` | Build y publicación manual |
+| `plan-despliegue-costos.md` | Plan de despliegue gratuito en Cloudflare Pages, dominio `.cl` y costos mensuales |
 | `dominio.md` | Compra, DNS y correo |
 | `respaldos.md` | Política de respaldo y restauración |
 

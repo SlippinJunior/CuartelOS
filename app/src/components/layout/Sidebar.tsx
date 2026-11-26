@@ -12,7 +12,7 @@ export function Sidebar() {
   const { salir } = useSesion();
   const location = useLocation();
   const roles = perfil?.roles ?? [];
-  const visibles = new Set(seccionesDe(roles));
+  const visibles = new Set(seccionesDe(roles, perfil?.modulos));
 
   return (
     <aside

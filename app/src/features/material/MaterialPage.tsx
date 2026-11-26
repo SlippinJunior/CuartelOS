@@ -22,7 +22,8 @@ import {
   agruparAsignaciones,
   cantidadLegible,
   describirArticulo,
-  esTenienteSegundo,
+  esGestorMaterial,
+  puedeEditarBitacora,
   puedeVerInventarioBomberos,
   solicitudAbierta,
   solicitudCancelable,
@@ -32,6 +33,7 @@ import {
   type PersonaOpcion,
 } from "@/features/material/dialogos";
 import { VistaUnidades } from "@/features/material/VistaUnidades";
+import { BitacoraUnidades } from "@/features/material/BitacoraUnidades";
 import type {
   Articulo, AsignacionMaterial, EstadoSolicitud, PanolStock, SolicitudMaterial,
 } from "@/types/tipos";
@@ -42,8 +44,10 @@ export function MaterialPage() {
   const { data: perfil } = usePerfil();
   const queryClient = useQueryClient();
   const roles = perfil?.roles ?? [];
-  const esT2 = esTenienteSegundo(roles);
-  const esOficial = puedeVerInventarioBomberos(roles);
+  const modulos = perfil?.modulos;
+  const esT2 = esGestorMaterial(roles, modulos);
+  const esOficial = puedeVerInventarioBomberos(roles, modulos);
+  const puedeBitacora = puedeEditarBitacora(roles, modulos);
   const miPersonaId = perfil?.persona?.id ?? null;
 
   const [busqueda, setBusqueda] = React.useState("");
@@ -154,7 +158,7 @@ export function MaterialPage() {
   const tabs = [
     {
       id: "panol",
-      etiqueta: "Pañol del 2°",
+      etiqueta: "Inventario Compañía",
       contenido: (
         <PanolTab
           filas={panolFiltrado}
@@ -206,6 +210,11 @@ export function MaterialPage() {
       ),
     });
     tabs.push({
+      id: "bitacora",
+      etiqueta: "Bitácora de Unidades",
+      contenido: <BitacoraUnidades puedeEditar={puedeBitacora} />,
+    });
+    tabs.push({
       id: "unidades",
       etiqueta: "Unidades",
       contenido: <VistaUnidades />,
@@ -216,11 +225,11 @@ export function MaterialPage() {
     <div>
       <PageHeader
         titulo="Material"
-        descripcion="Pañol del Teniente 2°, solicitudes de los bomberos y EPP a cargo."
+        descripcion="Inventario Compañía, solicitudes de los bomberos, EPP y bitácora de unidades."
         acciones={
           esT2 ? (
             <Button onClick={() => setStockDialogo({ abierto: true, stock: null })}>
-              <PackagePlus /> Agregar al pañol
+              <PackagePlus /> Agregar al inventario
             </Button>
           ) : undefined
         }
@@ -302,8 +311,8 @@ function PanolTab({
   if (filas.length === 0) {
     return (
       <EmptyState
-        titulo="Sin artículos en el pañol"
-        descripcion={esT2 ? "Agrega el primer artículo para que los bomberos puedan solicitarlo." : "El Teniente 2° aún no cargó existencias."}
+        titulo="Sin artículos en Inventario Compañía"
+        descripcion={esT2 ? "Agrega el primer artículo para que los bomberos puedan solicitarlo." : "Aún no se han cargado existencias."}
         icono={Package}
         accion={esT2 ? <Button onClick={onNuevo}><PackagePlus /> Agregar artículo</Button> : undefined}
       />
@@ -369,7 +378,7 @@ function SolicitudesTab({
         <Card className="border-primary/30">
           <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
-              <Bell className="size-4 text-primary" /> Avisos del pañol
+              <Bell className="size-4 text-primary" /> Avisos de Inventario Compañía
             </CardTitle>
             <Button variant="ghost" size="sm" onClick={alMarcarLeidas}>
               <Check /> Marcar leídas
@@ -391,7 +400,7 @@ function SolicitudesTab({
       {!cargando && filas.length === 0 && (
         <EmptyState
           titulo={esT2 ? "Sin solicitudes" : "Aún no has solicitado material"}
-          descripcion={esT2 ? "Cuando un bombero pida algo al pañol aparecerá aquí." : "Abre la pestaña Pañol y pide lo que necesites."}
+          descripcion={esT2 ? "Cuando un bombero pida algo al Inventario Compañía aparecerá aquí." : "Abre la pestaña Inventario Compañía y pide lo que necesites."}
           icono={ClipboardList}
         />
       )}

@@ -66,7 +66,7 @@ ingreso.
 supabase login
 supabase link --project-ref <project-ref>
 
-# 3. Aplicar el esquema (29 migraciones)
+# 3. Aplicar el esquema (30 migraciones)
 supabase db push
 
 # 4. Cargar los datos ficticios
@@ -184,6 +184,8 @@ prueba y vuelve a aplicar migraciones y seed.
 9. Entra como **cuartel** (`cuartel@demo.local`) y comprueba el modo kiosco de
    solo lectura del **Tablero de Cuartel** (reloj, pantalla completa, sin menús
    privados ni acceso a otras rutas).
+10. Revisa **Material → Bitácora de Unidades**, **Asistencia → Libro de Asistencia**,
+    **Administración → Unidades / Permisos** y **Estadísticas**.
 
 ---
 

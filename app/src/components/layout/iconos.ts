@@ -1,5 +1,6 @@
 import {
   Banknote,
+  BarChart3,
   BookOpen,
   ClipboardCheck,
   FileText,
@@ -22,6 +23,7 @@ export const ICONOS: Record<Seccion, LucideIcon> = {
   tesoreria: Banknote,
   secretaria: BookOpen,
   documentos: FileText,
+  estadisticas: BarChart3,
   administracion: Wrench,
   disciplina: Shield,
 };

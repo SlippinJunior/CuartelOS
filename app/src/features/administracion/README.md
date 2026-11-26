@@ -4,10 +4,10 @@
 Gestionar usuarios y roles manuales, catálogos y parámetros del sistema.
 
 ## Contenido
-`AdministracionPage.tsx` con tres pestañas:
-- **Usuarios y roles**: invitar por Edge Function, asignar y revocar roles con
-  fechas y motivo.
-- **Catálogos**: tipos de acto (completar descripciones del legado) y cargos.
+`AdministracionPage.tsx` con cuatro pestañas:
+- **Usuarios y permisos**: invitar por Edge Function, asignar/revocar roles (bloques automáticos por categoría) y definir excepciones puntuales por módulo (`PermisosUsuarioDialog.tsx`).
+- **Unidades**: crear y editar unidades de material mayor (`UnidadesAdminTab.tsx`).
+- **Catálogos**: tipos de acto (claves) y cargos.
 - **Parámetros**: antigüedad mínima, plazo de listas, meses de aviso, etc.
 
 ## Cómo se usa

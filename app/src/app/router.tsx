@@ -21,6 +21,7 @@ import { TesoreriaPage } from "@/features/tesoreria/TesoreriaPage";
 import { MiTesoreriaPage } from "@/features/tesoreria/MiTesoreriaPage";
 import { SecretariaPage } from "@/features/secretaria/SecretariaPage";
 import { DisciplinaPage } from "@/features/disciplina/DisciplinaPage";
+import { EstadisticasPage } from "@/features/estadisticas/EstadisticasPage";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
@@ -154,6 +155,12 @@ const disciplinaRoute = createRoute({
   component: DisciplinaPage,
 });
 
+const estadisticasRoute = createRoute({
+  getParentRoute: () => protegidaRoute,
+  path: "/estadisticas",
+  component: EstadisticasPage,
+});
+
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
@@ -202,6 +209,7 @@ const routeTree = rootRoute.addChildren([
     miTesoreriaRoute,
     secretariaRoute,
     disciplinaRoute,
+    estadisticasRoute,
   ]),
 ]);
 

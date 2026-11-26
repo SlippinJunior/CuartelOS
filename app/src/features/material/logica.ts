@@ -1,6 +1,13 @@
-import type { AsignacionMaterial, EstadoSolicitud } from "@/types/tipos";
+import { puedeGestionar, puedeVer } from "@/lib/permisos";
+import type {
+  AsignacionMaterial,
+  BitacoraUnidad,
+  EstadoSolicitud,
+  PermisosModulo,
+  TipoBitacoraUnidad,
+} from "@/types/tipos";
 
-/** Roles que administran el pañol y resuelven solicitudes. */
+/** Roles que administran el Inventario Compañía y resuelven solicitudes. */
 const ROLES_TENIENTE_2 = ["teniente_2", "admin"];
 
 /** Oficialidad que puede leer el inventario de los bomberos. */
@@ -14,8 +21,49 @@ export function esTenienteSegundo(roles: readonly string[]): boolean {
   return roles.some((r) => ROLES_TENIENTE_2.includes(r));
 }
 
-export function puedeVerInventarioBomberos(roles: readonly string[]): boolean {
-  return roles.some((r) => ROLES_OFICIALES.includes(r));
+export function esGestorMaterial(roles: readonly string[], modulos?: PermisosModulo): boolean {
+  if (esTenienteSegundo(roles)) return true;
+  if (modulos?.material === "gestion") return true;
+  return false;
+}
+
+export function puedeEditarBitacora(roles: readonly string[], modulos?: PermisosModulo): boolean {
+  if (puedeGestionar(roles, "material", modulos)) return true;
+  return roles.some((r) => ["capitan", "teniente_3", "teniente_2", "director", "admin"].includes(r));
+}
+
+export function puedeVerInventarioBomberos(roles: readonly string[], modulos?: PermisosModulo): boolean {
+  if (modulos && !puedeVer(roles, "material", modulos)) return false;
+  return roles.some((r) => ROLES_OFICIALES.includes(r)) || modulos?.material === "gestion";
+}
+
+export const ETIQUETAS_BITACORA: Record<TipoBitacoraUnidad, string> = {
+  mantencion: "Mantención",
+  accidente: "Accidente",
+  revision: "Revisión",
+  combustible: "Combustible",
+  novedad: "Novedad",
+};
+
+export function etiquetaTipoBitacora(tipo: string): string {
+  return ETIQUETAS_BITACORA[tipo as TipoBitacoraUnidad] ?? tipo;
+}
+
+export function resumirBitacora(entradas: readonly BitacoraUnidad[]): {
+  total: number;
+  mantenciones: number;
+  accidentes: number;
+  costoTotal: number;
+} {
+  let mantenciones = 0;
+  let accidentes = 0;
+  let costoTotal = 0;
+  for (const e of entradas) {
+    if (e.tipo === "mantencion") mantenciones++;
+    if (e.tipo === "accidente") accidentes++;
+    if (e.costo) costoTotal += Number(e.costo);
+  }
+  return { total: entradas.length, mantenciones, accidentes, costoTotal };
 }
 
 export function puedeResolverSolicitud(roles: readonly string[]): boolean {

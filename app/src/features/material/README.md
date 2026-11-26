@@ -1,17 +1,16 @@
-# features/material/ · Pañol del Teniente 2° y EPP
+# features/material/ · Inventario Compañía, Unidades y Bitácora
 
 ## Propósito
-Que los bomberos consulten el pañol del Teniente 2° y soliciten artículos, y
-que el Teniente 2° administre el stock, resuelva pedidos y mantenga el EPP a
-cargo de cada bombero.
+Que los bomberos consulten el **Inventario Compañía** y soliciten artículos, que el Teniente 2° (o gestor autorizado) administre existencias/EPP a cargo, y que Capitanía/Tenientes lleven la **Bitácora de Unidades** (mantenciones, accidentes, revisiones, combustible y novedades).
 
 ## Contenido
 | Archivo | Qué hace |
 |---|---|
-| `MaterialPage.tsx` | Pestañas Pañol, Solicitudes, Bomberos y Unidades |
+| `MaterialPage.tsx` | Pestañas Inventario Compañía, Solicitudes, Bomberos, Bitácora de Unidades y Unidades |
 | `dialogos.tsx` | Alta/edición de stock, solicitud, resolución y asignación |
-| `logica.ts` | Roles, estados, agrupación y formato de cantidades |
-| `VistaUnidades.tsx` | Maqueta 2D por lado del carro (Etapa 3) |
+| `BitacoraUnidades.tsx` | Registro y línea de tiempo de mantenciones, accidentes y novedades por unidad |
+| `logica.ts` | Permisos por rol/módulo, bitácora, estados, agrupación y formato |
+| `VistaUnidades.tsx` | Ficha real de carros (`material.unidad`) y esquema 2D de cajoneras |
 
 ## Cómo se usa
 - **Bombero**: entra a Material, busca el artículo, toca *Solicitar* e indica

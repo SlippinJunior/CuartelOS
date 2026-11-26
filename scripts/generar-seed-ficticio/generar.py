@@ -205,6 +205,7 @@ w()
 # Listas y asistencia
 # ---------------------------------------------------------------------------
 w("-- 40 listas de asistencia de 2026")
+CLAVES_SEED = ["15-2", "2", "5", "10-1", "RO", "1", "12-2", "6-4", "10-2", "ACAD", "15-1", "RE"]
 listas = []
 for n in range(1, 41):
     if n == 38:
@@ -215,12 +216,18 @@ for n in range(1, 41):
         fecha = date(2026, 11, 10)
     else:
         fecha = date(2026, 1, 8) + timedelta(days=7 * (n - 1))
-    tipo = "RO" if n % 4 != 0 else "RE"
+    tipo = CLAVES_SEED[(n - 1) % len(CLAVES_SEED)]
     listas.append({"n": n, "fecha": fecha, "tipo": tipo})
+    comentario = (
+        f"Parte de asistencia registrado para clave {tipo}; personal sin novedades relevantes."
+        if n >= 35
+        else None
+    )
+    direccion = "Limache" if tipo in ("10-1", "10-2", "12-2", "6-4", "15-1") else "Cuartel Segunda Compañía"
     w(
-        "insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) "
+        "insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) "
         f"overriding system value values ({n}, {COMPANIA}, {fecha.year}, {n}, {q(fecha)}, {q(tipo)}, "
-        f"'Lista ficticia N° {n}', 'borrador', 'manual');"
+        f"'Parte N° {n} ({tipo})', {q(direccion)}, {q(comentario)}, 'borrador', 'manual');"
     )
 w()
 
@@ -564,10 +571,16 @@ for uid in (1, 2, 3):
         "insert into material.revision_inventario (unidad_id, fecha, observacion) values ("
         f"{uid}, {q(date(2026, 6, 15) if uid != 3 else date(2025, 10, 1))}, 'Revisión ficticia');"
     )
-for uid, km in [(1, 48200), (2, 31500), (3, 22400)]:
+for uid, fecha_b, tipo_b, titulo_b, km, horas_b, costo_b, prox_b, nov_b in [
+    (1, "2026-08-15", "mantencion", "Cambio de aceite y filtros bomba", 47200, 38.5, 285000, "2027-02-15", "Servicio preventivo realizado en taller autorizado."),
+    (1, "2026-10-31", "revision", "Revisión semanal de niveles y bomba", 48200, 42.0, None, None, "Sin novedades; presión de trabajo normal."),
+    (2, "2026-09-10", "accidente", "Roce lateral menor en maniobra de salida", 30900, 12.0, 145000, None, "Sin lesionados; reparación de pintura y foco lateral derecho."),
+    (2, "2026-10-31", "mantencion", "Revisión de equipo hidráulico de rescate", 31500, 15.0, 190000, "2027-04-30", "Mangueras y cilindros verificados."),
+    (3, "2026-10-31", "combustible", "Carga completa de combustible y revisión", 22400, 18.0, 68000, None, "Estanque lleno y motobomba operativa."),
+]:
     w(
-        "insert into material.bitacora_unidad (unidad_id, fecha, km, horas_bomba, novedades) values ("
-        f"{uid}, '2026-10-31', {km}, {random.randint(10, 60)}, 'Sin novedades');"
+        "insert into material.bitacora_unidad (unidad_id, fecha, tipo, titulo, km, horas_bomba, costo, proxima_fecha, novedades) values ("
+        f"{uid}, {q(fecha_b)}, {q(tipo_b)}, {q(titulo_b)}, {km}, {horas_b}, {q(costo_b)}, {q(prox_b)}, {q(nov_b)});"
     )
 w()
 

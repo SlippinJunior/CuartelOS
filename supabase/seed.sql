@@ -126,46 +126,46 @@ insert into asistencia.tipo_acto (clave, descripcion, obligatorio) values ('15-2
 insert into asistencia.tipo_acto (clave, descripcion, obligatorio) values ('F1', 'Formación 1', false) on conflict (clave) do nothing;
 
 -- 40 listas de asistencia de 2026
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (1, 1, 2026, 1, '2026-01-08', 'RO', 'Lista ficticia N° 1', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (2, 1, 2026, 2, '2026-01-15', 'RO', 'Lista ficticia N° 2', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (3, 1, 2026, 3, '2026-01-22', 'RO', 'Lista ficticia N° 3', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (4, 1, 2026, 4, '2026-01-29', 'RE', 'Lista ficticia N° 4', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (5, 1, 2026, 5, '2026-02-05', 'RO', 'Lista ficticia N° 5', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (6, 1, 2026, 6, '2026-02-12', 'RO', 'Lista ficticia N° 6', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (7, 1, 2026, 7, '2026-02-19', 'RO', 'Lista ficticia N° 7', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (8, 1, 2026, 8, '2026-02-26', 'RE', 'Lista ficticia N° 8', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (9, 1, 2026, 9, '2026-03-05', 'RO', 'Lista ficticia N° 9', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (10, 1, 2026, 10, '2026-03-12', 'RO', 'Lista ficticia N° 10', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (11, 1, 2026, 11, '2026-03-19', 'RO', 'Lista ficticia N° 11', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (12, 1, 2026, 12, '2026-03-26', 'RE', 'Lista ficticia N° 12', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (13, 1, 2026, 13, '2026-04-02', 'RO', 'Lista ficticia N° 13', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (14, 1, 2026, 14, '2026-04-09', 'RO', 'Lista ficticia N° 14', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (15, 1, 2026, 15, '2026-04-16', 'RO', 'Lista ficticia N° 15', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (16, 1, 2026, 16, '2026-04-23', 'RE', 'Lista ficticia N° 16', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (17, 1, 2026, 17, '2026-04-30', 'RO', 'Lista ficticia N° 17', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (18, 1, 2026, 18, '2026-05-07', 'RO', 'Lista ficticia N° 18', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (19, 1, 2026, 19, '2026-05-14', 'RO', 'Lista ficticia N° 19', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (20, 1, 2026, 20, '2026-05-21', 'RE', 'Lista ficticia N° 20', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (21, 1, 2026, 21, '2026-05-28', 'RO', 'Lista ficticia N° 21', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (22, 1, 2026, 22, '2026-06-04', 'RO', 'Lista ficticia N° 22', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (23, 1, 2026, 23, '2026-06-11', 'RO', 'Lista ficticia N° 23', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (24, 1, 2026, 24, '2026-06-18', 'RE', 'Lista ficticia N° 24', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (25, 1, 2026, 25, '2026-06-25', 'RO', 'Lista ficticia N° 25', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (26, 1, 2026, 26, '2026-07-02', 'RO', 'Lista ficticia N° 26', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (27, 1, 2026, 27, '2026-07-09', 'RO', 'Lista ficticia N° 27', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (28, 1, 2026, 28, '2026-07-16', 'RE', 'Lista ficticia N° 28', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (29, 1, 2026, 29, '2026-07-23', 'RO', 'Lista ficticia N° 29', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (30, 1, 2026, 30, '2026-07-30', 'RO', 'Lista ficticia N° 30', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (31, 1, 2026, 31, '2026-08-06', 'RO', 'Lista ficticia N° 31', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (32, 1, 2026, 32, '2026-08-13', 'RE', 'Lista ficticia N° 32', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (33, 1, 2026, 33, '2026-08-20', 'RO', 'Lista ficticia N° 33', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (34, 1, 2026, 34, '2026-08-27', 'RO', 'Lista ficticia N° 34', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (35, 1, 2026, 35, '2026-09-03', 'RO', 'Lista ficticia N° 35', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (36, 1, 2026, 36, '2026-09-10', 'RE', 'Lista ficticia N° 36', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (37, 1, 2026, 37, '2026-09-17', 'RO', 'Lista ficticia N° 37', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (38, 1, 2026, 38, '2026-10-29', 'RO', 'Lista ficticia N° 38', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (39, 1, 2026, 39, '2026-11-05', 'RO', 'Lista ficticia N° 39', 'borrador', 'manual');
-insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, origen) overriding system value values (40, 1, 2026, 40, '2026-11-10', 'RE', 'Lista ficticia N° 40', 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (1, 1, 2026, 1, '2026-01-08', '15-2', 'Parte N° 1 (15-2)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (2, 1, 2026, 2, '2026-01-15', '2', 'Parte N° 2 (2)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (3, 1, 2026, 3, '2026-01-22', '5', 'Parte N° 3 (5)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (4, 1, 2026, 4, '2026-01-29', '10-1', 'Parte N° 4 (10-1)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (5, 1, 2026, 5, '2026-02-05', 'RO', 'Parte N° 5 (RO)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (6, 1, 2026, 6, '2026-02-12', '1', 'Parte N° 6 (1)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (7, 1, 2026, 7, '2026-02-19', '12-2', 'Parte N° 7 (12-2)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (8, 1, 2026, 8, '2026-02-26', '6-4', 'Parte N° 8 (6-4)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (9, 1, 2026, 9, '2026-03-05', '10-2', 'Parte N° 9 (10-2)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (10, 1, 2026, 10, '2026-03-12', 'ACAD', 'Parte N° 10 (ACAD)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (11, 1, 2026, 11, '2026-03-19', '15-1', 'Parte N° 11 (15-1)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (12, 1, 2026, 12, '2026-03-26', 'RE', 'Parte N° 12 (RE)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (13, 1, 2026, 13, '2026-04-02', '15-2', 'Parte N° 13 (15-2)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (14, 1, 2026, 14, '2026-04-09', '2', 'Parte N° 14 (2)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (15, 1, 2026, 15, '2026-04-16', '5', 'Parte N° 15 (5)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (16, 1, 2026, 16, '2026-04-23', '10-1', 'Parte N° 16 (10-1)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (17, 1, 2026, 17, '2026-04-30', 'RO', 'Parte N° 17 (RO)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (18, 1, 2026, 18, '2026-05-07', '1', 'Parte N° 18 (1)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (19, 1, 2026, 19, '2026-05-14', '12-2', 'Parte N° 19 (12-2)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (20, 1, 2026, 20, '2026-05-21', '6-4', 'Parte N° 20 (6-4)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (21, 1, 2026, 21, '2026-05-28', '10-2', 'Parte N° 21 (10-2)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (22, 1, 2026, 22, '2026-06-04', 'ACAD', 'Parte N° 22 (ACAD)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (23, 1, 2026, 23, '2026-06-11', '15-1', 'Parte N° 23 (15-1)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (24, 1, 2026, 24, '2026-06-18', 'RE', 'Parte N° 24 (RE)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (25, 1, 2026, 25, '2026-06-25', '15-2', 'Parte N° 25 (15-2)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (26, 1, 2026, 26, '2026-07-02', '2', 'Parte N° 26 (2)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (27, 1, 2026, 27, '2026-07-09', '5', 'Parte N° 27 (5)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (28, 1, 2026, 28, '2026-07-16', '10-1', 'Parte N° 28 (10-1)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (29, 1, 2026, 29, '2026-07-23', 'RO', 'Parte N° 29 (RO)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (30, 1, 2026, 30, '2026-07-30', '1', 'Parte N° 30 (1)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (31, 1, 2026, 31, '2026-08-06', '12-2', 'Parte N° 31 (12-2)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (32, 1, 2026, 32, '2026-08-13', '6-4', 'Parte N° 32 (6-4)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (33, 1, 2026, 33, '2026-08-20', '10-2', 'Parte N° 33 (10-2)', 'Limache', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (34, 1, 2026, 34, '2026-08-27', 'ACAD', 'Parte N° 34 (ACAD)', 'Cuartel Segunda Compañía', null, 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (35, 1, 2026, 35, '2026-09-03', '15-1', 'Parte N° 35 (15-1)', 'Limache', 'Parte de asistencia registrado para clave 15-1; personal sin novedades relevantes.', 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (36, 1, 2026, 36, '2026-09-10', 'RE', 'Parte N° 36 (RE)', 'Cuartel Segunda Compañía', 'Parte de asistencia registrado para clave RE; personal sin novedades relevantes.', 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (37, 1, 2026, 37, '2026-09-17', '15-2', 'Parte N° 37 (15-2)', 'Cuartel Segunda Compañía', 'Parte de asistencia registrado para clave 15-2; personal sin novedades relevantes.', 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (38, 1, 2026, 38, '2026-10-29', '2', 'Parte N° 38 (2)', 'Cuartel Segunda Compañía', 'Parte de asistencia registrado para clave 2; personal sin novedades relevantes.', 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (39, 1, 2026, 39, '2026-11-05', '5', 'Parte N° 39 (5)', 'Cuartel Segunda Compañía', 'Parte de asistencia registrado para clave 5; personal sin novedades relevantes.', 'borrador', 'manual');
+insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, direccion, comentarios, estado, origen) overriding system value values (40, 1, 2026, 40, '2026-11-10', '10-1', 'Parte N° 40 (10-1)', 'Limache', 'Parte de asistencia registrado para clave 10-1; personal sin novedades relevantes.', 'borrador', 'manual');
 
 -- Marcas de asistencia
 insert into asistencia.asistencia (lista_id, persona_id, marca) values (1, 'e58014ec-d954-5bde-8fd9-655529ac50eb', 'A'),
@@ -1619,9 +1619,11 @@ do $$ begin perform set_config('request.jwt.claim.sub', '3a0bd7bb-741e-5763-8ab7
 insert into material.revision_inventario (unidad_id, fecha, observacion) values (1, '2026-06-15', 'Revisión ficticia');
 insert into material.revision_inventario (unidad_id, fecha, observacion) values (2, '2026-06-15', 'Revisión ficticia');
 insert into material.revision_inventario (unidad_id, fecha, observacion) values (3, '2025-10-01', 'Revisión ficticia');
-insert into material.bitacora_unidad (unidad_id, fecha, km, horas_bomba, novedades) values (1, '2026-10-31', 48200, 54, 'Sin novedades');
-insert into material.bitacora_unidad (unidad_id, fecha, km, horas_bomba, novedades) values (2, '2026-10-31', 31500, 21, 'Sin novedades');
-insert into material.bitacora_unidad (unidad_id, fecha, km, horas_bomba, novedades) values (3, '2026-10-31', 22400, 23, 'Sin novedades');
+insert into material.bitacora_unidad (unidad_id, fecha, tipo, titulo, km, horas_bomba, costo, proxima_fecha, novedades) values (1, '2026-08-15', 'mantencion', 'Cambio de aceite y filtros bomba', 47200, 38.5, 285000, '2027-02-15', 'Servicio preventivo realizado en taller autorizado.');
+insert into material.bitacora_unidad (unidad_id, fecha, tipo, titulo, km, horas_bomba, costo, proxima_fecha, novedades) values (1, '2026-10-31', 'revision', 'Revisión semanal de niveles y bomba', 48200, 42.0, null, null, 'Sin novedades; presión de trabajo normal.');
+insert into material.bitacora_unidad (unidad_id, fecha, tipo, titulo, km, horas_bomba, costo, proxima_fecha, novedades) values (2, '2026-09-10', 'accidente', 'Roce lateral menor en maniobra de salida', 30900, 12.0, 145000, null, 'Sin lesionados; reparación de pintura y foco lateral derecho.');
+insert into material.bitacora_unidad (unidad_id, fecha, tipo, titulo, km, horas_bomba, costo, proxima_fecha, novedades) values (2, '2026-10-31', 'mantencion', 'Revisión de equipo hidráulico de rescate', 31500, 15.0, 190000, '2027-04-30', 'Mangueras y cilindros verificados.');
+insert into material.bitacora_unidad (unidad_id, fecha, tipo, titulo, km, horas_bomba, costo, proxima_fecha, novedades) values (3, '2026-10-31', 'combustible', 'Carga completa de combustible y revisión', 22400, 18.0, 68000, null, 'Estanque lleno y motobomba operativa.');
 
 -- Tesorería: cuenta, fondo, categorías
 insert into tesoreria.cuenta (id, nombre, banco, numero, tipo) overriding system value values (1, 'Cuenta corriente compañía', 'Banco Ficticio', '000-123456-7', 'corriente');
@@ -1663,48 +1665,48 @@ insert into tesoreria.compromiso (id, descripcion, monto, fecha_estimada, estado
 select setval(pg_get_serial_sequence('tesoreria.compromiso','id'), 6);
 
 -- Movimientos de 6 meses
-insert into tesoreria.movimiento (id, fecha, tipo, cuenta_id, fondo_id, categoria_id, monto, glosa, medio_pago, anulado) overriding system value values (1, '2026-05-27', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 343558, 'Recaudación de cuotas sociales', 'transferencia', false),
-(2, '2026-05-01', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 96767, 'Venta de talonarios', 'transferencia', false),
-(3, '2026-05-17', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 91245, 'Combustible de unidades', 'transferencia', false),
-(4, '2026-05-13', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 47961, 'Mantención menor', 'transferencia', false),
-(5, '2026-05-23', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 58666, 'Reposición de material menor', 'transferencia', false),
-(6, '2026-05-10', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
-(7, '2026-05-11', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 43477, 'Gastos administrativos', 'transferencia', false),
-(8, '2026-06-21', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 350497, 'Recaudación de cuotas sociales', 'transferencia', false),
-(9, '2026-06-01', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 95374, 'Venta de talonarios', 'transferencia', false),
-(10, '2026-06-22', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 114300, 'Combustible de unidades', 'transferencia', false),
-(11, '2026-06-06', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 61393, 'Mantención menor', 'transferencia', false),
-(12, '2026-06-26', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 41398, 'Reposición de material menor', 'transferencia', false),
-(13, '2026-06-09', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
-(14, '2026-06-16', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 34005, 'Gastos administrativos', 'transferencia', false),
-(15, '2026-07-06', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 367472, 'Recaudación de cuotas sociales', 'transferencia', false),
-(16, '2026-07-24', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 142616, 'Venta de talonarios', 'transferencia', false),
-(17, '2026-07-06', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 84439, 'Combustible de unidades', 'transferencia', false),
-(18, '2026-07-17', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 64885, 'Mantención menor', 'transferencia', false),
-(19, '2026-07-02', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 39479, 'Reposición de material menor', 'transferencia', false),
-(20, '2026-07-15', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
-(21, '2026-07-10', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 26713, 'Gastos administrativos', 'transferencia', false),
-(22, '2026-08-26', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 362444, 'Recaudación de cuotas sociales', 'transferencia', false),
-(23, '2026-08-25', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 158813, 'Venta de talonarios', 'transferencia', false),
-(24, '2026-08-23', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 84565, 'Combustible de unidades', 'transferencia', false),
-(25, '2026-08-08', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 77425, 'Mantención menor', 'transferencia', false),
-(26, '2026-08-16', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 21266, 'Reposición de material menor', 'transferencia', false),
+insert into tesoreria.movimiento (id, fecha, tipo, cuenta_id, fondo_id, categoria_id, monto, glosa, medio_pago, anulado) overriding system value values (1, '2026-05-04', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 376085, 'Recaudación de cuotas sociales', 'transferencia', false),
+(2, '2026-05-19', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 104432, 'Venta de talonarios', 'transferencia', false),
+(3, '2026-05-19', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 94126, 'Combustible de unidades', 'transferencia', false),
+(4, '2026-05-27', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 63558, 'Mantención menor', 'transferencia', false),
+(5, '2026-05-01', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 28383, 'Reposición de material menor', 'transferencia', false),
+(6, '2026-05-17', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
+(7, '2026-05-13', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 30622, 'Gastos administrativos', 'transferencia', false),
+(8, '2026-06-11', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 365521, 'Recaudación de cuotas sociales', 'transferencia', false),
+(9, '2026-06-11', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 119110, 'Venta de talonarios', 'transferencia', false),
+(10, '2026-06-21', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 101271, 'Combustible de unidades', 'transferencia', false),
+(11, '2026-06-26', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 70497, 'Mantención menor', 'transferencia', false),
+(12, '2026-06-09', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 27687, 'Reposición de material menor', 'transferencia', false),
+(13, '2026-06-21', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
+(14, '2026-06-01', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 42150, 'Gastos administrativos', 'transferencia', false),
+(15, '2026-07-13', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 363826, 'Recaudación de cuotas sociales', 'transferencia', false),
+(16, '2026-07-20', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 101553, 'Venta de talonarios', 'transferencia', false),
+(17, '2026-07-26', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 98342, 'Combustible de unidades', 'transferencia', false),
+(18, '2026-07-10', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 71685, 'Mantención menor', 'transferencia', false),
+(19, '2026-07-02', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 51308, 'Reposición de material menor', 'transferencia', false),
+(20, '2026-07-06', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
+(21, '2026-07-24', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 27219, 'Gastos administrativos', 'transferencia', false),
+(22, '2026-08-03', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 331578, 'Recaudación de cuotas sociales', 'transferencia', false),
+(23, '2026-08-19', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 148700, 'Venta de talonarios', 'transferencia', false),
+(24, '2026-08-21', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 82823, 'Combustible de unidades', 'transferencia', false),
+(25, '2026-08-01', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 69062, 'Mantención menor', 'transferencia', false),
+(26, '2026-08-09', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 39774, 'Reposición de material menor', 'transferencia', false),
 (27, '2026-08-26', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
-(28, '2026-08-16', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 33720, 'Gastos administrativos', 'transferencia', false),
-(29, '2026-09-21', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 334236, 'Recaudación de cuotas sociales', 'transferencia', false),
-(30, '2026-09-08', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 115624, 'Venta de talonarios', 'transferencia', false),
-(31, '2026-09-03', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 101906, 'Combustible de unidades', 'transferencia', false),
-(32, '2026-09-11', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 69961, 'Mantención menor', 'transferencia', false),
-(33, '2026-09-15', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 26496, 'Reposición de material menor', 'transferencia', false),
-(34, '2026-09-13', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
-(35, '2026-09-04', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 27505, 'Gastos administrativos', 'transferencia', false),
-(36, '2026-10-18', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 352782, 'Recaudación de cuotas sociales', 'transferencia', false),
-(37, '2026-10-25', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 121162, 'Venta de talonarios', 'transferencia', false),
-(38, '2026-10-18', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 88090, 'Combustible de unidades', 'transferencia', false),
-(39, '2026-10-17', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 72064, 'Mantención menor', 'transferencia', false),
-(40, '2026-10-12', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 31255, 'Reposición de material menor', 'transferencia', false),
-(41, '2026-10-08', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
-(42, '2026-10-18', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 30314, 'Gastos administrativos', 'transferencia', false),
+(28, '2026-08-25', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 44703, 'Gastos administrativos', 'transferencia', false),
+(29, '2026-09-11', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 366452, 'Recaudación de cuotas sociales', 'transferencia', false),
+(30, '2026-09-15', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 109527, 'Venta de talonarios', 'transferencia', false),
+(31, '2026-09-22', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 112156, 'Combustible de unidades', 'transferencia', false),
+(32, '2026-09-26', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 72159, 'Mantención menor', 'transferencia', false),
+(33, '2026-09-04', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 34236, 'Reposición de material menor', 'transferencia', false),
+(34, '2026-09-03', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
+(35, '2026-09-21', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 33906, 'Gastos administrativos', 'transferencia', false),
+(36, '2026-10-17', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 1, 334462, 'Recaudación de cuotas sociales', 'transferencia', false),
+(37, '2026-10-22', 'ingreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 2, 89677, 'Venta de talonarios', 'transferencia', false),
+(38, '2026-10-11', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 5, 101232, 'Combustible de unidades', 'transferencia', false),
+(39, '2026-10-04', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 6, 70218, 'Mantención menor', 'transferencia', false),
+(40, '2026-10-16', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 45318, 'Reposición de material menor', 'transferencia', false),
+(41, '2026-10-06', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 9, 50000, 'Cuota al Cuerpo', 'transferencia', false),
+(42, '2026-10-06', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 28304, 'Gastos administrativos', 'transferencia', false),
 (43, '2026-10-20', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 7, 120000, 'Pago de reparación de material menor', 'transferencia', false),
 (44, '2026-10-25', 'egreso', 1, (select id from tesoreria.fondo where codigo = 'PROPIO'), 10, 30000, 'Insumos de aseo', 'efectivo', false);
 select setval(pg_get_serial_sequence('tesoreria.movimiento','id'), 44);
@@ -1730,10 +1732,10 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('e58014ec-d954-5bde-8fd9-655529ac50eb', '2026-06-01', 3000),
 ('e58014ec-d954-5bde-8fd9-655529ac50eb', '2026-07-01', 3000),
 ('e58014ec-d954-5bde-8fd9-655529ac50eb', '2026-08-01', 3000),
+('e58014ec-d954-5bde-8fd9-655529ac50eb', '2026-09-01', 3000),
 ('e58014ec-d954-5bde-8fd9-655529ac50eb', '2026-10-01', 3000),
 ('20fb4035-3feb-58da-a9ab-77df01ce6a8e', '2026-01-01', 3000),
 ('20fb4035-3feb-58da-a9ab-77df01ce6a8e', '2026-02-01', 3000),
-('20fb4035-3feb-58da-a9ab-77df01ce6a8e', '2026-03-01', 3000),
 ('20fb4035-3feb-58da-a9ab-77df01ce6a8e', '2026-04-01', 3000),
 ('20fb4035-3feb-58da-a9ab-77df01ce6a8e', '2026-05-01', 3000),
 ('20fb4035-3feb-58da-a9ab-77df01ce6a8e', '2026-06-01', 3000),
@@ -1755,16 +1757,17 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-02-01', 3000),
 ('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-03-01', 3000),
 ('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-04-01', 3000),
+('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-05-01', 3000),
+('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-06-01', 3000),
+('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-07-01', 3000),
 ('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-08-01', 3000),
-('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-09-01', 3000),
-('4345e829-8b8a-5149-90b2-810ee247e60a', '2026-10-01', 3000),
-('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-01-01', 3000),
 ('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-02-01', 3000),
 ('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-03-01', 3000),
 ('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-04-01', 3000),
+('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-05-01', 3000),
 ('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-06-01', 3000),
+('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-07-01', 3000),
 ('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-08-01', 3000),
-('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-09-01', 3000),
 ('c1e20062-0df0-528a-85fd-03ac52aa9158', '2026-10-01', 3000),
 ('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-02-01', 3000),
 ('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-03-01', 3000),
@@ -1772,7 +1775,6 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-06-01', 3000),
 ('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-07-01', 3000),
 ('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-08-01', 3000),
-('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-09-01', 3000),
 ('e87444d3-a2a6-5222-af23-a3292cd4842c', '2026-10-01', 3000),
 ('dee56da3-9c6b-5091-9d8e-32e95ca908e3', '2026-01-01', 3000),
 ('dee56da3-9c6b-5091-9d8e-32e95ca908e3', '2026-02-01', 3000),
@@ -1801,10 +1803,10 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-05-01', 3000),
 ('7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-06-01', 3000),
 ('7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-07-01', 3000),
+('7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-08-01', 3000),
 ('7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-09-01', 3000),
 ('7a5efba2-1e47-51a1-bff9-7045345a182d', '2026-10-01', 3000),
 ('87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-01-01', 3000),
-('87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-02-01', 3000),
 ('87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-03-01', 3000),
 ('87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-04-01', 3000),
 ('87585a59-cd24-5815-bbb7-9b7fbbc01c16', '2026-05-01', 3000),
@@ -1819,10 +1821,10 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-04-01', 3000),
 ('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-05-01', 3000),
 ('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-06-01', 3000),
+('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-07-01', 3000),
 ('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-08-01', 3000),
 ('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-09-01', 3000),
 ('a5ac36f5-693c-55b3-81b1-c1535a355af7', '2026-10-01', 3000),
-('719c8def-873f-50f2-83c4-7006e03ceb8c', '2026-01-01', 3000),
 ('719c8def-873f-50f2-83c4-7006e03ceb8c', '2026-02-01', 3000),
 ('719c8def-873f-50f2-83c4-7006e03ceb8c', '2026-03-01', 3000),
 ('719c8def-873f-50f2-83c4-7006e03ceb8c', '2026-04-01', 3000),
@@ -1835,15 +1837,15 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-01-01', 3000),
 ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-02-01', 3000),
 ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-03-01', 3000),
+('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-04-01', 3000),
 ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-05-01', 3000),
+('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-06-01', 3000),
 ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-07-01', 3000),
-('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-08-01', 3000),
 ('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-09-01', 3000),
-('8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', '2026-10-01', 3000),
+('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-01-01', 3000),
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-02-01', 3000),
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-03-01', 3000),
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-04-01', 3000),
-('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-05-01', 3000),
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-06-01', 3000),
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-07-01', 3000),
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-08-01', 3000),
@@ -1851,56 +1853,56 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('d5bb007f-958d-5c73-ac74-2abbcc9606dd', '2026-10-01', 3000),
 ('6a523054-722b-5663-bb5e-7cec43e71400', '2026-01-01', 3000),
 ('6a523054-722b-5663-bb5e-7cec43e71400', '2026-02-01', 3000),
+('6a523054-722b-5663-bb5e-7cec43e71400', '2026-03-01', 3000),
 ('6a523054-722b-5663-bb5e-7cec43e71400', '2026-04-01', 3000),
 ('6a523054-722b-5663-bb5e-7cec43e71400', '2026-05-01', 3000),
-('6a523054-722b-5663-bb5e-7cec43e71400', '2026-07-01', 3000),
+('6a523054-722b-5663-bb5e-7cec43e71400', '2026-06-01', 3000),
 ('6a523054-722b-5663-bb5e-7cec43e71400', '2026-08-01', 3000),
 ('6a523054-722b-5663-bb5e-7cec43e71400', '2026-09-01', 3000),
-('6a523054-722b-5663-bb5e-7cec43e71400', '2026-10-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-01-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-02-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-03-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-04-01', 3000),
+('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-05-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-06-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-07-01', 3000),
 ('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-08-01', 3000),
-('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-09-01', 3000),
+('6961e3db-e3cc-5a18-a7ec-47c623cd734a', '2026-10-01', 3000),
 ('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-01-01', 3000),
-('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-04-01', 3000),
+('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-02-01', 3000),
+('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-03-01', 3000),
 ('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-05-01', 3000),
-('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-06-01', 3000),
-('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-07-01', 3000),
 ('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-08-01', 3000),
 ('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-09-01', 3000),
+('518e32ec-a189-5ace-a6dc-841a2e136245', '2026-10-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-01-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-02-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-03-01', 3000),
-('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-04-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-05-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-06-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-07-01', 3000),
+('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-08-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-09-01', 3000),
 ('b8cd318d-ced4-56d5-ad1d-10ecff64f64b', '2026-10-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-01-01', 3000),
-('6252616f-a023-543e-9845-044ededfea05', '2026-02-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-03-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-04-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-05-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-06-01', 3000),
+('6252616f-a023-543e-9845-044ededfea05', '2026-07-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-08-01', 3000),
+('6252616f-a023-543e-9845-044ededfea05', '2026-09-01', 3000),
 ('6252616f-a023-543e-9845-044ededfea05', '2026-10-01', 3000),
-('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-01-01', 3000),
 ('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-02-01', 3000),
-('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-03-01', 3000),
 ('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-04-01', 3000),
 ('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-05-01', 3000),
 ('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-06-01', 3000),
 ('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-07-01', 3000),
 ('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-08-01', 3000),
+('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-09-01', 3000),
+('0d0f33f5-6711-5d14-abfe-00a32dc594a2', '2026-10-01', 3000),
 ('99e3978a-5008-588d-93a1-e45e28c81702', '2026-01-01', 3000),
 ('99e3978a-5008-588d-93a1-e45e28c81702', '2026-02-01', 3000),
-('99e3978a-5008-588d-93a1-e45e28c81702', '2026-03-01', 3000),
-('99e3978a-5008-588d-93a1-e45e28c81702', '2026-04-01', 3000),
 ('99e3978a-5008-588d-93a1-e45e28c81702', '2026-05-01', 3000),
 ('99e3978a-5008-588d-93a1-e45e28c81702', '2026-06-01', 3000),
 ('99e3978a-5008-588d-93a1-e45e28c81702', '2026-07-01', 3000),
@@ -1910,20 +1912,20 @@ insert into tesoreria.cuota_pago (persona_id, periodo, monto) values ('e58014ec-
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-01-01', 3000),
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-02-01', 3000),
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-03-01', 3000),
+('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-04-01', 3000),
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-05-01', 3000),
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-06-01', 3000),
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-07-01', 3000),
-('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-08-01', 3000),
+('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-09-01', 3000),
 ('cbd0661d-8815-5999-ab79-bd785dcf3f3b', '2026-10-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-01-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-02-01', 3000),
-('5734d562-6470-5225-9137-6c4023409340', '2026-03-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-04-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-05-01', 3000),
+('5734d562-6470-5225-9137-6c4023409340', '2026-06-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-07-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-08-01', 3000),
 ('5734d562-6470-5225-9137-6c4023409340', '2026-09-01', 3000),
-('5734d562-6470-5225-9137-6c4023409340', '2026-10-01', 3000),
 ('344dedc7-32e5-5d5f-a848-7fb592111bf1', '2026-01-01', 3000),
 ('344dedc7-32e5-5d5f-a848-7fb592111bf1', '2026-02-01', 3000),
 ('344dedc7-32e5-5d5f-a848-7fb592111bf1', '2026-03-01', 3000),
@@ -1940,26 +1942,26 @@ insert into tesoreria.cierre_mensual (periodo, cuenta_id, saldo_cartola, saldo_l
 
 -- Campaña 2025
 insert into tesoreria.campana (id, anio, meta, valor_talonario, acta_id) overriding system value values (1, 2025, 2000000, 1000, 2);
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'e58014ec-d954-5bde-8fd9-655529ac50eb', 16000, 14391, 24827, 9939, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '20fb4035-3feb-58da-a9ab-77df01ce6a8e', 31000, 16475, 13778, 6886, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '2c27012d-f957-58be-aa9e-7c4cd2355b18', 9000, 5756, 4208, 7959, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '17f48af4-6fc3-5512-b003-ba76920910ff', 44000, 6167, 26035, 11396, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '4345e829-8b8a-5149-90b2-810ee247e60a', 55000, 19655, 8786, 755, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'c1e20062-0df0-528a-85fd-03ac52aa9158', 8000, 11349, 5588, 1578, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'e87444d3-a2a6-5222-af23-a3292cd4842c', 44000, 2652, 6121, 8000, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', 31000, 10475, 27018, 4999, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', 8000, 14307, 4527, 755, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '7a5efba2-1e47-51a1-bff9-7045345a182d', 38000, 4138, 13660, 9461, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '2b273959-45fa-5c61-b757-359a169f2e1e', 48000, 16638, 5354, 2969, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '87585a59-cd24-5815-bbb7-9b7fbbc01c16', 15000, 8794, 16287, 12538, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'a5ac36f5-693c-55b3-81b1-c1535a355af7', 53000, 8744, 19208, 9050, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '719c8def-873f-50f2-83c4-7006e03ceb8c', 17000, 15645, 7796, 9646, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', 35000, 19750, 27856, 8933, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'd5bb007f-958d-5c73-ac74-2abbcc9606dd', 48000, 10190, 24010, 10735, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '6a523054-722b-5663-bb5e-7cec43e71400', 36000, 10114, 3657, 8144, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '186fc2b3-89cd-5b37-b106-78d29bc1a104', 30000, 18758, 24829, 11131, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '6961e3db-e3cc-5a18-a7ec-47c623cd734a', 50000, 14876, 28492, 10127, 'Dato ficticio');
-insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '518e32ec-a189-5ace-a6dc-841a2e136245', 55000, 12580, 29429, 4645, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'e58014ec-d954-5bde-8fd9-655529ac50eb', 24000, 403, 11260, 1898, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '20fb4035-3feb-58da-a9ab-77df01ce6a8e', 51000, 6640, 9598, 14464, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '2c27012d-f957-58be-aa9e-7c4cd2355b18', 16000, 14391, 24827, 9939, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '17f48af4-6fc3-5512-b003-ba76920910ff', 31000, 16475, 13778, 6886, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '4345e829-8b8a-5149-90b2-810ee247e60a', 9000, 5756, 4208, 7959, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'c1e20062-0df0-528a-85fd-03ac52aa9158', 44000, 6167, 26035, 11396, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'e87444d3-a2a6-5222-af23-a3292cd4842c', 55000, 19655, 8786, 755, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'dee56da3-9c6b-5091-9d8e-32e95ca908e3', 8000, 11349, 5588, 1578, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '8f8831d0-40e9-5d41-ada6-aed4cda2a60f', 44000, 2652, 6121, 8000, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '7a5efba2-1e47-51a1-bff9-7045345a182d', 31000, 10475, 27018, 4999, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '2b273959-45fa-5c61-b757-359a169f2e1e', 8000, 14307, 4527, 755, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '87585a59-cd24-5815-bbb7-9b7fbbc01c16', 38000, 4138, 13660, 9461, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'a5ac36f5-693c-55b3-81b1-c1535a355af7', 48000, 16638, 5354, 2969, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '719c8def-873f-50f2-83c4-7006e03ceb8c', 15000, 8794, 16287, 12538, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '8b8a4e76-f7f1-5fab-af6d-9a13dbe20dd5', 53000, 8744, 19208, 9050, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, 'd5bb007f-958d-5c73-ac74-2abbcc9606dd', 17000, 15645, 7796, 9646, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '6a523054-722b-5663-bb5e-7cec43e71400', 35000, 19750, 27856, 8933, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '186fc2b3-89cd-5b37-b106-78d29bc1a104', 48000, 10190, 24010, 10735, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '6961e3db-e3cc-5a18-a7ec-47c623cd734a', 36000, 10114, 3657, 8144, 'Dato ficticio');
+insert into tesoreria.campana_participacion (campana_id, persona_id, venta_total, aporte_obligatorio, aporte_adicional, saldo_arrastre, observacion) values (1, '518e32ec-a189-5ace-a6dc-841a2e136245', 30000, 18758, 24829, 11131, 'Dato ficticio');
 select setval(pg_get_serial_sequence('tesoreria.campana','id'), 1);
 
 -- Donaciones y beneficios

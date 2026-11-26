@@ -39,7 +39,7 @@ export function InicioPage() {
     return <TableroCuartel modoCuartel />;
   }
 
-  const secciones = seccionesDe(roles);
+  const secciones = seccionesDe(roles, perfil?.modulos);
   const nombre = perfil?.persona?.nombres ?? perfil?.email ?? "";
   const hoy = new Date();
 
@@ -209,12 +209,12 @@ function TarjetasMaterial({ panel }: { panel?: PanelInicio }) {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2">
-          <Package className="size-5 text-primary" /> Pañol del Teniente 2°
+          <Package className="size-5 text-primary" /> Inventario Compañía
         </CardTitle>
         <CardDescription>
           {pendientes > 0
             ? `${pendientes} solicitud${pendientes === 1 ? "" : "es"} por resolver.`
-            : "Avisos del pañol y solicitudes de material."}
+            : "Avisos de Inventario Compañía y solicitudes de material."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
@@ -225,7 +225,7 @@ function TarjetasMaterial({ panel }: { panel?: PanelInicio }) {
           </div>
         ))}
         <Link to="/material" className="inline-flex items-center gap-1 text-sm font-medium text-primary">
-          Ir al pañol <ArrowRight className="size-4" />
+          Ir al inventario <ArrowRight className="size-4" />
         </Link>
       </CardContent>
     </Card>

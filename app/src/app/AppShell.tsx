@@ -124,6 +124,7 @@ export function AppShell() {
   }
 
   const roles = perfil.data?.roles ?? [];
+  const modulos = perfil.data?.modulos;
   const modoCuartel = Boolean(perfil.data?.es_cuartel) || esSoloCuartel(roles);
 
   if (modoCuartel) {
@@ -140,7 +141,7 @@ export function AppShell() {
   }
 
   const seccionActual = seccionDeRuta(location.pathname);
-  const sinPermiso = Boolean(seccionActual && !puedeVer(roles, seccionActual));
+  const sinPermiso = Boolean(seccionActual && !puedeVer(roles, seccionActual, modulos));
 
   return (
     <div className="min-h-dvh bg-background">

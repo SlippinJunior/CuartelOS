@@ -132,6 +132,7 @@ export interface DatoSensible {
 export interface TipoActo {
   clave: string;
   descripcion: string;
+  categoria?: "emergencia" | "reunion" | "academia" | "citacion" | "otro";
   obligatorio: boolean;
   cuenta_para_premio: boolean;
   activo: boolean;
@@ -146,6 +147,10 @@ export interface Lista {
   tipo_acto_clave: string | null;
   descripcion: string | null;
   direccion: string | null;
+  citacion_id?: number | null;
+  comentarios?: string | null;
+  hora_inicio?: string | null;
+  hora_termino?: string | null;
   estado: EstadoLista;
   es_abono: boolean;
   abono_justificacion: string | null;
@@ -188,9 +193,41 @@ export interface Unidad {
   marca: string | null;
   modelo: string | null;
   anio: number | null;
+  transmision?: string | null;
+  n_motor?: string | null;
+  n_chasis?: string | null;
+  responsable_persona_id?: string | null;
   km_actual: number | null;
   estado: string;
   tipo_unidad?: { nombre: string; codigo: string } | null;
+}
+
+export type TipoBitacoraUnidad = "mantencion" | "accidente" | "revision" | "combustible" | "novedad";
+
+export interface BitacoraUnidad {
+  id: number;
+  unidad_id: number;
+  fecha: string;
+  tipo: TipoBitacoraUnidad;
+  titulo: string | null;
+  km: number | null;
+  horas_bomba: number | null;
+  costo: number | null;
+  proxima_fecha: string | null;
+  estado_unidad_post: string | null;
+  novedades: string | null;
+  responsable_persona_id: string | null;
+  creado_en: string;
+  unidad?: { codigo: string; marca: string | null; modelo: string | null } | null;
+  responsable?: { nombres: string; apellido_paterno: string; registro: number } | null;
+}
+
+export interface UnidadDocumento {
+  id: number;
+  unidad_id: number;
+  tipo: string;
+  vence: string | null;
+  notas: string | null;
 }
 
 export interface UnidadVista {
@@ -407,6 +444,9 @@ export interface ConsumidorConsentimiento {
   aceptado: boolean;
 }
 
+export type NivelPermiso = "ninguno" | "lectura" | "gestion";
+export type PermisosModulo = Record<string, NivelPermiso>;
+
 export interface Perfil {
   usuario_id: string;
   email: string | null;
@@ -423,6 +463,7 @@ export interface Perfil {
     email: string | null;
   } | null;
   roles: string[];
+  modulos?: PermisosModulo;
   es_oficial: boolean;
   es_admin: boolean;
   es_cuartel?: boolean;
@@ -494,6 +535,7 @@ export interface UsuarioAdmin {
   registro: number | null;
   activo: boolean;
   roles: string[];
+  permisos_modulo?: Array<{ modulo: string; nivel: NivelPermiso }>;
 }
 
 export interface Contraparte {
@@ -829,4 +871,147 @@ export interface DespachoDetalle {
   proveedor_id: string | null;
   error: string | null;
   intentado_en: string;
+}
+
+export interface LibroAnualLista {
+  id: number;
+  numero: number;
+  fecha: string;
+  clave: string;
+  descripcion: string;
+  categoria: string;
+  estado: EstadoLista;
+  comentarios: string | null;
+}
+
+export interface LibroAnualPersona {
+  persona_id: string;
+  registro: number;
+  nombre: string;
+  fecha_ingreso: string | null;
+  cargo_grado: string;
+  estado: EstadoPersona;
+  marcas: Record<string, Marca>;
+}
+
+export interface LibroAnualData {
+  anio: number;
+  listas: LibroAnualLista[];
+  personas: LibroAnualPersona[];
+}
+
+export interface ParteDetalleData {
+  lista: {
+    id: number;
+    anio: number;
+    numero: number;
+    fecha: string;
+    clave: string | null;
+    tipo_descripcion: string | null;
+    categoria: string;
+    descripcion: string | null;
+    direccion: string | null;
+    hora_inicio: string | null;
+    hora_termino: string | null;
+    comentarios: string | null;
+    estado: EstadoLista;
+    citacion_id: number | null;
+    citacion_titulo: string | null;
+  };
+  resumen: {
+    A: number;
+    F: number;
+    P: number;
+    R: number;
+    S: number;
+    L: number;
+    total: number;
+  };
+  asistencias: Array<{
+    persona_id: string;
+    registro: number;
+    nombre: string;
+    marca: Marca;
+    observacion: string | null;
+  }>;
+}
+
+export interface EstadisticasCompania {
+  anio: number;
+  resumen: {
+    total_actos: number;
+    total_emergencias: number;
+    asistencia_promedio_pct: number;
+    bomberos_activos: number;
+    total_asignaciones_activas: number;
+    stock_bajo_count: number;
+    eventos_bitacora: number;
+    costo_mantenciones: number;
+  };
+  actos_por_mes: Array<{
+    mes: number;
+    etiqueta: string;
+    emergencias: number;
+    otros: number;
+    total: number;
+  }>;
+  actos_por_clave: Array<{
+    clave: string;
+    descripcion: string;
+    categoria: string;
+    cantidad: number;
+  }>;
+  distribucion_marcas: Array<{ marca: Marca; cantidad: number }>;
+  top_asistencia: Array<{
+    registro: number;
+    nombre: string;
+    asistencias: number;
+    faltas: number;
+    pct: number;
+  }>;
+  menor_asistencia: Array<{
+    registro: number;
+    nombre: string;
+    asistencias: number;
+    faltas: number;
+    pct: number;
+  }>;
+  material_mas_asignado: Array<{
+    articulo: string;
+    categoria: string;
+    asignados: number;
+    stock_disponible: number;
+  }>;
+  material_menos_asignado: Array<{
+    articulo: string;
+    categoria: string;
+    asignados: number;
+    stock_disponible: number;
+  }>;
+  stock_bajo: Array<{
+    articulo: string;
+    talla: string | null;
+    cantidad: number;
+    minimo: number;
+    ubicacion: string;
+  }>;
+  solicitudes_estado: Array<{ estado: string; cantidad: number }>;
+  unidades_resumen: Array<{
+    id: number;
+    codigo: string;
+    marca: string | null;
+    modelo: string | null;
+    estado: string;
+    km_actual: number | null;
+    mantenciones: number;
+    accidentes: number;
+    total_eventos: number;
+    costo_total: number;
+  }>;
+  guardias_resumen: {
+    ciclo_nombre: string | null;
+    turnos_totales: number;
+    turnos_cubiertos: number;
+    pct_cobertura: number;
+  };
 }

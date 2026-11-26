@@ -8,9 +8,12 @@ personal.
 ## Contenido
 | Archivo | Rol |
 |---|---|
-| `AsistenciaPage.tsx` | Listado por año/estado y creación de listas |
-| `ListaPage.tsx` | Pase de lista con cola offline y conflictos |
-| `MiAsistenciaPage.tsx` | Resumen anual y detalle por acto |
+| `AsistenciaPage.tsx` | Partes del Ayudante (con clave, citación y comentarios) y pestaña Libro de Asistencia |
+| `ListaPage.tsx` | Pase de lista con cola offline, notas del parte y conflictos |
+| `LibroAsistenciaTab.tsx` | Matriz anual estilo Libro 2026 con acumulados, colores y exportación CSV |
+| `ParteDetalleDialog.tsx` | Consulta de un parte completo (clave, comentarios y nómina) para toda la compañía |
+| `MiAsistenciaPage.tsx` | Resumen anual, detalle por clave y catálogo buscable de claves |
+| `logica.ts` | Cálculo de acumulados `1, 2, 3…`, `N/A` por fecha de ingreso y CSV |
 
 ## Cómo se usa
 - `ListaPage` cachea lista, personas y marcas en IndexedDB.
