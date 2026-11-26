@@ -50,7 +50,13 @@ export function Sheet({ abierto, onCambio, titulo, children, lado = "inferior" }
 
   const posicion: React.CSSProperties =
     lado === "inferior"
-      ? { margin: "auto 0 0 0", inset: "auto 0 0 0", maxHeight: "85dvh", width: "100%" }
+      ? {
+          margin: "auto 0 0 0",
+          inset: "auto 0 0 0",
+          width: "100%",
+          maxWidth: "100%",
+          maxHeight: "92dvh",
+        }
       : { margin: "0 0 0 auto", inset: "0 0 0 auto", height: "100dvh", width: "min(88vw, 24rem)" };
 
   return (
@@ -77,7 +83,7 @@ export function Sheet({ abierto, onCambio, titulo, children, lado = "inferior" }
           <X />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">{children}</div>
+      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">{children}</div>
     </dialog>
   );
 }
