@@ -1,27 +1,15 @@
-# Módulo · Inicio
+# Módulo · Inicio y Tablero
 
 **Estado:** ✅ funcional
 
 ## Alcance
-- Pantalla distinta según el rol.
-- Tarjetas: tareas pendientes, alertas abiertas y compromisos.
-- Accesos rápidos: pasar lista, mi hoja de vida, mis cuotas, registrar
-  movimiento, emitir documento.
-- El bombero sin cargo ve una versión mínima: su hoja de vida, asistencia,
-  material a cargo, cuotas y documentos.
-
-## Reglas
-- Las alertas solo se muestran a la oficialidad.
-- Las tareas de lista se calculan con el plazo de 48 h.
-- Un consejero no ve asuntos financieros ni personales completos.
+- **Rol `cuartel`**: ve exclusivamente el **Tablero de Cuartel** a pantalla completa con reloj en vivo, botón de tamaño de texto (`A / A+`), modo oscuro, pantalla completa y auto-refresco cada 5 minutos.
+- **Bomberos y Oficiales**: ven un resumen personal compacto arriba (estado de guardia, tareas pendientes con plazo, avisos del pañol y alertas `R01–R16` para oficiales), el **Tablero de Cuartel** completo en el centro, y los accesos rápidos según rol.
 
 ## Implementación
-`nucleo.panel_inicio()` arma el JSON; `features/inicio/InicioPage.tsx` lo pinta.
-El menú se deriva de `lib/permisos.ts`.
-
-## Pendiente
-- Notificaciones push de plazos (Etapa 2+).
-- Preferencias de accesos rápidos por usuario.
+- `nucleo.panel_inicio()` (resumen por rol) + `nucleo.tablero_cuartel()` (5 fuentes del tablero + guardia de hoy).
+- `features/inicio/InicioPage.tsx` + `features/tablero/TableroCuartel.tsx`.
+- Guards de ruta y menú en `lib/permisos.ts` y `app/AppShell.tsx`.
 
 ## Relacionado con
-`docs/ux/guia-de-diseno.md`, `app/src/features/inicio/README.md`.
+`docs/modulos/tablero.md`, `docs/ux/guia-de-diseno.md`, `app/src/features/inicio/README.md`.

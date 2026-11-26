@@ -1,8 +1,10 @@
 /**
- * Roles manuales y mapa rol → secciones.
+ * Roles manuales, grupos de navegación y mapa rol → secciones.
  * Es la única fuente para el menú y los guards de la interfaz.
  * La seguridad real la impone RLS en PostgreSQL.
  */
+
+import type { TipoPublicacionTablero } from "@/types/tipos";
 
 export const ROLES = [
   "admin",
@@ -18,6 +20,7 @@ export const ROLES = [
   "ayudante",
   "consejo",
   "bombero",
+  "cuartel",
 ] as const;
 
 export type Rol = (typeof ROLES)[number];
@@ -42,17 +45,28 @@ export interface DefinicionSeccion {
 }
 
 export const SECCIONES: Record<Seccion, DefinicionSeccion> = {
-  inicio: { id: "inicio", titulo: "Inicio", ruta: "/", descripcion: "Tareas, alertas y accesos rápidos" },
+  inicio: { id: "inicio", titulo: "Tablero e Inicio", ruta: "/", descripcion: "Órdenes, circulares, citaciones y tareas" },
   personal: { id: "personal", titulo: "Personal", ruta: "/personal", descripcion: "Hoja de vida y antecedentes" },
   asistencia: { id: "asistencia", titulo: "Asistencia", ruta: "/asistencia", descripcion: "Listas y pase de lista" },
-  guardia: { id: "guardia", titulo: "Guardia", ruta: "/guardia", descripcion: "Turnos, órdenes y accidentes" },
-  material: { id: "material", titulo: "Material", ruta: "/material", descripcion: "Unidades e inventario" },
-  tesoreria: { id: "tesoreria", titulo: "Tesorería", ruta: "/tesoreria", descripcion: "Cartola, presupuesto y proyecciones" },
+  guardia: { id: "guardia", titulo: "Guardia", ruta: "/guardia", descripcion: "Turnos, inscripciones y reportes" },
+  material: { id: "material", titulo: "Material", ruta: "/material", descripcion: "Unidades, pañol e inventario" },
+  tesoreria: { id: "tesoreria", titulo: "Tesorería", ruta: "/tesoreria", descripcion: "Cartola, cuotas y proyecciones" },
   secretaria: { id: "secretaria", titulo: "Secretaría", ruta: "/secretaria", descripcion: "Actas, acuerdos y correspondencia" },
   documentos: { id: "documentos", titulo: "Documentos", ruta: "/documentos", descripcion: "Emisión y verificación de PDF" },
   administracion: { id: "administracion", titulo: "Administración", ruta: "/administracion", descripcion: "Usuarios, roles y parámetros" },
   disciplina: { id: "disciplina", titulo: "Disciplina", ruta: "/disciplina", descripcion: "Expedientes reservados del Consejo" },
 };
+
+export interface GrupoNavegacion {
+  titulo: string;
+  secciones: Seccion[];
+}
+
+export const GRUPOS_NAVEGACION: GrupoNavegacion[] = [
+  { titulo: "Diario", secciones: ["inicio", "guardia", "asistencia"] },
+  { titulo: "Compañía", secciones: ["personal", "material", "secretaria", "tesoreria", "documentos"] },
+  { titulo: "Sistema", secciones: ["disciplina", "administracion"] },
+];
 
 const TODAS: Seccion[] = Object.keys(SECCIONES) as Seccion[];
 
@@ -75,7 +89,14 @@ export const SECCIONES_POR_ROL: Record<Rol, Seccion[]> = {
   ayudante: ["inicio", "personal", "asistencia", "documentos", "guardia", "secretaria"],
   consejo: ["inicio", "disciplina", "personal", "guardia"],
   bombero: BASE_BOMBERO,
+  cuartel: ["inicio"],
 };
+
+/** Verdadero si el usuario solo cumple rol de pantalla de cuartel. */
+export function esSoloCuartel(roles: readonly string[]): boolean {
+  if (!roles || roles.length === 0) return false;
+  return roles.includes("cuartel") && roles.every((r) => r === "cuartel");
+}
 
 /** Secciones visibles para un conjunto de roles (unión). */
 export function seccionesDe(roles: readonly string[]): Seccion[] {
@@ -90,6 +111,16 @@ export function seccionesDe(roles: readonly string[]): Seccion[] {
 
 export function puedeVer(roles: readonly string[], seccion: Seccion): boolean {
   return seccionesDe(roles).includes(seccion);
+}
+
+/** Determina la sección correspondiente a una ruta del router. */
+export function seccionDeRuta(pathname: string): Seccion | null {
+  if (pathname === "/" || pathname.startsWith("/consentimiento")) return "inicio";
+  if (pathname.startsWith("/mis-cuotas")) return "inicio";
+  const encontrada = (Object.values(SECCIONES) as DefinicionSeccion[])
+    .filter((s) => s.id !== "inicio")
+    .find((s) => pathname === s.ruta || pathname.startsWith(`${s.ruta}/`));
+  return encontrada?.id ?? null;
 }
 
 /** Orden preferente de la barra inferior en el celular. */
@@ -118,6 +149,25 @@ export function puedeGestionarGuardias(roles: readonly string[]): boolean {
   );
 }
 
+/** Tipos de publicación del Tablero que puede emitir el conjunto de roles. */
+export function tiposPublicablesPor(roles: readonly string[]): TipoPublicacionTablero[] {
+  const tipos: TipoPublicacionTablero[] = [];
+  if (roles.some((r) => ["capitan", "teniente_1", "ayudante", "director", "admin"].includes(r))) {
+    tipos.push("orden_dia", "orden_capitania");
+  }
+  if (roles.some((r) => ["secretario", "prosecretario", "director", "admin"].includes(r))) {
+    tipos.push("circular_compania", "circular_cbl");
+  }
+  if (roles.some((r) => ["secretario", "prosecretario", "capitan", "ayudante", "director", "admin"].includes(r))) {
+    tipos.push("citacion");
+  }
+  return tipos;
+}
+
+export function puedePublicarTablero(roles: readonly string[]): boolean {
+  return tiposPublicablesPor(roles).length > 0;
+}
+
 /** Etiqueta legible de un rol. */
 export function etiquetaRol(rol: string): string {
   const etiquetas: Record<string, string> = {
@@ -134,6 +184,7 @@ export function etiquetaRol(rol: string): string {
     ayudante: "Ayudante",
     consejo: "Consejo de Disciplina",
     bombero: "Bombero",
+    cuartel: "Pantalla de Cuartel",
   };
   return etiquetas[rol] ?? rol;
 }

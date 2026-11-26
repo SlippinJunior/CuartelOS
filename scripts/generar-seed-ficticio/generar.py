@@ -143,6 +143,7 @@ ROLES = [
     ("tesorero", 204), ("protesorero", 205), ("capitan", 206),
     ("teniente_1", 207), ("teniente_2", 208), ("teniente_3", 209),
     ("ayudante", 210), ("consejo", 211), ("bombero", 212), ("admin", 213),
+    ("cuartel", None),
 ]
 
 w("-- Usuarios demo de Supabase Auth (contraseña: demo1234)")
@@ -168,16 +169,17 @@ w()
 w("-- Vínculo con la persona y rol manual")
 for rol, reg in ROLES:
     uid = user_id(f"{rol}@demo.local")
+    pid = q(persona_id(reg)) if reg is not None else "null"
     w(
         "insert into seguridad.usuario (user_id, persona_id, email, activo) values ("
-        f"{q(uid)}, {q(persona_id(reg))}, {q(f'{rol}@demo.local')}, true);"
+        f"{q(uid)}, {pid}, {q(f'{rol}@demo.local')}, true);"
     )
     w(
         "insert into seguridad.usuario_rol (user_id, rol, desde, motivo) values ("
         f"{q(uid)}, {q(rol)}, '2026-01-01', 'Semilla de desarrollo');"
     )
-    # Todos aceptan el consentimiento menos el bombero, para probar el flujo.
-    if rol != "bombero":
+    # Todos aceptan el consentimiento menos el bombero y cuartel (pantalla).
+    if rol not in ("bombero", "cuartel"):
         w(
             "insert into seguridad.consentimiento (usuario_id, texto_id) "
             f"select {q(uid)}, id from seguridad.consentimiento_texto where vigente;"
@@ -865,6 +867,42 @@ w(
     "2, 'Informe del instructor', '2026-12-15');"
 )
 w("select setval(pg_get_serial_sequence('disciplina.expediente','id'), 2);")
+w()
+
+# ---------------------------------------------------------------------------
+# Tablero de Cuartel: órdenes del día, circulares y citaciones
+# ---------------------------------------------------------------------------
+w("-- Tablero de Cuartel (órdenes del día, circulares CBL/compañía y citaciones)")
+w(
+    "insert into operaciones.orden_dia (numero, anio, fecha, vigente_hasta, titulo, texto, despacho_resumen) values "
+    f"(41, {hoy.year}, {q(hoy - timedelta(days=2))}, {q(hoy - timedelta(days=1))}, 'Revisión semanal de material menor y nivel de combustible', 'Se recuerda a la guardia nocturna verificar niveles de aceite, combustible y presión de aire en M-21 y M-22 antes de informar a Central.', 'Portal · Correo 28/28'),"
+    f"(42, {hoy.year}, {q(hoy)}, {q(hoy + timedelta(days=1))}, 'Mantención preventiva unidad M-21 y orden de sala de máquinas', 'Durante la jornada de hoy la unidad M-21 permanecerá en revisión de bomba centrífuga. Mantener despejado el sector poniente de la sala de máquinas y verificar carga de equipos radiales portátiles.', 'Portal · Correo 28/28 · WhatsApp pendiente config.');"
+)
+w(
+    "insert into secretaria.circular (origen, numero, anio, fecha, titulo, resumen, texto, despacho_resumen) values "
+    f"('cbl', '08', {hoy.year}, {q(hoy - timedelta(days=3))}, 'Circular CBL N° 08: Normativa de despacho y comunicaciones radiales', 'Actualización de claves radiales y protocolo de respuesta en emergencias forestales.', 'La Comandancia del Cuerpo de Bomberos de Limache informa a todas las compañías la actualización de claves radiales para temporada estival y el uso obligatorio de equipo de protección completo en incendios de interfaz.', 'Portal · Correo 28/28'),"
+    f"('cbl', '09', {hoy.year}, {q(hoy - timedelta(days=1))}, 'Circular CBL N° 09: Calendario de academias generales', 'Fechas oficiales de academias de Cuerpo para el cierre del semestre.', 'Se comunica a los señores Directores y Capitanes las fechas de academias generales obligatorias y requisitos de inscripción de aspirantes en curso ANB.', 'Portal · Correo 28/28'),"
+    f"('compania', '05', {hoy.year}, {q(hoy - timedelta(days=4))}, 'Circular Compañía N° 05: Actualización de datos de contacto y tallas EPP', 'Se solicita a los voluntarios revisar su ficha personal y tallas de vestuario.', 'Estimados voluntarios: con motivo de la renovación programada de uniformes de trabajo, se solicita verificar sus tallas de calzado y chaqueta en la pestaña Personal o con Teniente 2°.', 'Portal · Correo 28/28'),"
+    f"('compania', '06', {hoy.year}, {q(hoy)}, 'Circular Compañía N° 06: Reunión de coordinación de aniversario', 'Convocatoria a comisiones de trabajo para definir programa anual.', 'Se cita a los integrantes de las comisiones de celebración y archivo histórico a presentar sus propuestas antes del próximo viernes en Secretaría.', 'Portal · Correo 28/28');"
+)
+w(
+    "insert into secretaria.citacion (numero, anio, fecha_emision, fecha_evento, hora_evento, lugar, tenida, obligatoria, tipo_acto_clave, titulo, detalle, despacho_resumen) values "
+    f"(12, {hoy.year}, {q(hoy - timedelta(days=10))}, {q(hoy - timedelta(days=5))}, '20:00', 'Cuartel Segunda Compañía', 'Tenida de trabajo', true, 'RO', 'Reunión Ordinaria de Compañía', 'Tabla ordinaria, lectura de correspondencia y cuenta de tesorería.', 'Portal · Correo 28/28'),"
+    f"(13, {hoy.year}, {q(hoy)}, {q(hoy + timedelta(days=2))}, '19:30', 'Cuartel Segunda Compañía', 'Tenida de trabajo / EPP', true, '2', 'Academia Práctica de Rescate Vehicular y Extricación', 'Instrucción obligatoria con despliegue completo de herramientas hidráulicas de la unidad M-22. Puntualidad 19:15 horas.', 'Portal · Correo 28/28 · WhatsApp pendiente config.'),"
+    f"(14, {hoy.year}, {q(hoy)}, {q(hoy + timedelta(days=6))}, '20:30', 'Salón de Sesiones', 'Civil formal / Tenida de salida', true, 'RO', 'Reunión Ordinaria Mensual de Compañía', 'Revisión de presupuesto, acuerdos pendientes y rol de guardias del próximo ciclo.', 'Portal · Correo 28/28');"
+)
+w(
+    "insert into nucleo.despacho (id, origen_tipo, origen_id, titulo, resumen, correo_enviados, correo_total, whatsapp_enviados, whatsapp_total, whatsapp_error, whatsapp_plantilla) overriding system value values "
+    "(1, 'citacion', 2, 'Citación N° 13: Academia Práctica de Rescate Vehicular', 'Citación obligatoria · Tenida de trabajo / EPP', 28, 28, 0, 28, 'Meta WhatsApp Cloud API no configurado en entorno demo.', 'citacion_compania');"
+)
+w("select setval(pg_get_serial_sequence('nucleo.despacho','id'), 1);")
+w(
+    "insert into nucleo.despacho_detalle (despacho_id, persona_id, nombre, canal, destino, estado) values "
+    f"(1, {q(persona_id(201))}, 'Alejandra Rojas', 'correo', 'persona201@demo.local', 'enviado'),"
+    f"(1, {q(persona_id(201))}, 'Alejandra Rojas', 'whatsapp', '56910000201', 'no_configurado'),"
+    f"(1, {q(persona_id(206))}, 'Felipe Morales', 'correo', 'persona206@demo.local', 'enviado'),"
+    f"(1, {q(persona_id(206))}, 'Felipe Morales', 'whatsapp', '56910000206', 'no_configurado');"
+)
 w()
 
 # ---------------------------------------------------------------------------

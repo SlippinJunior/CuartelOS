@@ -1,7 +1,8 @@
 import { corsHeaders, json } from "../_shared/cors.ts";
 import { actualizar, autenticar, esLlamadaServicio, insertar, rpc, rpcFilas, seleccionar } from "../_shared/clientes.ts";
-import { enviarCorreos } from "../_shared/correo.ts";
-import { enviarWhatsApp, textoParaGrupo } from "../_shared/whatsapp.ts";
+import { enviarCorreosDetallado } from "../_shared/correo.ts";
+import { enviarPlantillaWhatsApp, textoParaGrupo } from "../_shared/whatsapp.ts";
+import { registrarDespacho } from "../_shared/despacho.ts";
 
 /**
  * Avisos de guardia.
@@ -20,11 +21,13 @@ Deno.serve(async (req) => {
     const modo = String(cuerpo.modo ?? "llegadas_tardias");
     const servicio = esLlamadaServicio(req);
     let authorization = "";
+    let userId: string | null = null;
 
     if (!servicio) {
       const { user, authorization: auth, error } = await autenticar(req);
       if (!user) return json({ error: "Sesión no válida", detalle: error }, 401);
       authorization = auth;
+      userId = user.id;
       const { data: perfil } = await rpc("nucleo", "mi_perfil", {}, { authorization });
       const roles = (perfil as { roles?: string[] } | null)?.roles ?? [];
       if (!roles.some((r) => ["capitan", "teniente_1", "ayudante", "director", "admin"].includes(r))) {
@@ -54,11 +57,13 @@ Deno.serve(async (req) => {
       );
 
       const destinatarios = ((personas ?? []) as Array<Record<string, any>>).map((p) => ({
+        persona_id: p.persona_id ? String(p.persona_id) : null,
         nombre: String(p.nombre ?? ""),
         email: p.email ?? null,
         telefono: p.telefono ?? null,
       }));
 
+      const siteUrl = Deno.env.get("SITE_URL") ?? "http://localhost:5173";
       const titulo = `Guardia Semana ${semana} · ${grilla.ciclo.nombre}`;
       const lineas = [
         `Días con cupo disponible: ${conCupo.length ? conCupo.map((d) => String(d.fecha)).join(", ") : "todos cubiertos"}`,
@@ -66,12 +71,30 @@ Deno.serve(async (req) => {
         "Ingresa a la app → Guardia para inscribirte.",
       ];
 
-      const correo = await enviarCorreos(
-        destinatarios.map((d) => d.email ?? "").filter(Boolean),
+      const correo = await enviarCorreosDetallado(
+        destinatarios,
         titulo,
-        [titulo, "", ...lineas, "", "Segunda Compañía · Cuerpo de Bomberos de Limache"].join("\n"),
+        [titulo, "", ...lineas, "", `Portal: ${siteUrl}`, "Segunda Compañía · Cuerpo de Bomberos de Limache"].join("\n"),
       );
-      const whatsapp = await enviarWhatsApp(destinatarios, titulo, lineas);
+      const whatsapp = await enviarPlantillaWhatsApp(
+        destinatarios,
+        {
+          plantilla: Deno.env.get("WHATSAPP_TEMPLATE_GUARDIA") || "guardia_aviso",
+          parametrosBody: [titulo, lineas.join(" · "), `${siteUrl}/guardia`],
+        },
+        textoParaGrupo(titulo, lineas),
+      );
+
+      await registrarDespacho({
+        origen_tipo: "guardia",
+        origen_id: cicloId,
+        titulo,
+        resumen: `Convocatoria Semana ${semana}`,
+        url_portal: `${siteUrl}/guardia`,
+        creado_por: userId,
+        correo,
+        whatsapp,
+      });
 
       const marca = semana === 1 ? "notificado_s1_en" : "notificado_s2_en";
       await actualizar("operaciones", "guardia_ciclo", `id=eq.${cicloId}`, { [marca]: new Date().toISOString() }, { authorization: "", servicio: true });
@@ -145,9 +168,22 @@ Deno.serve(async (req) => {
       const titulo = `Llegadas tardías · Guardia del ${String(turno.fecha).slice(8, 10)}-${String(turno.fecha).slice(5, 7)}-${String(turno.fecha).slice(0, 4)}`;
       const lineas = nombres.length ? nombres : ["Llegadas registradas en el turno."];
       const correo = jefe?.email
-        ? await enviarCorreos([jefe.email], titulo, [titulo, "", ...lineas].join("\n"))
+        ? await enviarCorreosDetallado(
+            [{ persona_id: jefe.id, nombre: `${jefe.nombres} ${jefe.apellido_paterno}`, email: jefe.email }],
+            titulo,
+            [titulo, "", ...lineas].join("\n"),
+          )
         : { enviados: 0, total: 0, error: null };
-      const whatsapp = jefe ? await enviarWhatsApp([{ nombre: jefe.nombres, telefono: jefe.telefono }], titulo, lineas) : null;
+      const whatsapp = jefe
+        ? await enviarPlantillaWhatsApp(
+            [{ persona_id: jefe.id, nombre: jefe.nombres, telefono: jefe.telefono }],
+            {
+              plantilla: Deno.env.get("WHATSAPP_TEMPLATE_LLEGADA_TARDIA") || "guardia_llegada_tardia",
+              parametrosBody: [titulo, lineas.join(" · ")],
+            },
+            textoParaGrupo(titulo, lineas),
+          )
+        : null;
 
       await actualizar(
         "operaciones",

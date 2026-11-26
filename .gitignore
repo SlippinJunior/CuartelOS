@@ -40,3 +40,7 @@ app/test-results/
 app/playwright-report/
 app/blob-report/
 app/.playwright/
+
+# Skills locales de agente (no subir al repo ni al build de Vercel)
+.agents/
+skills-lock.json

@@ -134,6 +134,7 @@ function NuevaOrdenDialog({
   const [materia, setMateria] = React.useState("");
   const [texto, setTexto] = React.useState("");
   const [enviar, setEnviar] = React.useState(true);
+  const [enviarWa, setEnviarWa] = React.useState(true);
 
   const anioOrden = Number(fecha.slice(0, 4)) || new Date().getFullYear();
 
@@ -166,14 +167,21 @@ function NuevaOrdenDialog({
           materia,
           texto,
           enviar_correo: enviar,
+          enviar_whatsapp: enviarWa,
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      return data as { orden_id: number; correo?: { enviados: number; total: number; error: string | null } };
+      return data as {
+        orden_id: number;
+        despacho_resumen?: string;
+        correo?: { enviados: number; total: number; error: string | null };
+      };
     },
     onSuccess: async (data) => {
-      if (data.correo) {
+      if (data.despacho_resumen) {
+        toast.success(`Orden creada · ${data.despacho_resumen}`);
+      } else if (data.correo) {
         if (data.correo.error) {
           toast.warning(`Orden creada. ${data.correo.enviados}/${data.correo.total} correos enviados: ${data.correo.error}`);
         } else if (data.correo.total > 0) {
@@ -229,6 +237,10 @@ function NuevaOrdenDialog({
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" className="size-5 accent-[var(--primario)]" checked={enviar} onChange={(e) => setEnviar(e.target.checked)} />
           Enviar por correo a todos los bomberos activos
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" className="size-5 accent-[var(--primario)]" checked={enviarWa} onChange={(e) => setEnviarWa(e.target.checked)} />
+          Enviar por WhatsApp (Meta 1-a-1)
         </label>
       </div>
     </Dialog>

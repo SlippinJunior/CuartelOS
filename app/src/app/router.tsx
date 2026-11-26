@@ -24,6 +24,7 @@ import { DisciplinaPage } from "@/features/disciplina/DisciplinaPage";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
+// eslint-disable-next-line react-refresh/only-export-components
 function NoEncontrado() {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-3 p-6 text-center">

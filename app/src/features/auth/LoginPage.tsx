@@ -23,7 +23,7 @@ type Formulario = z.infer<typeof esquema>;
 const USUARIOS_DEMO = [
   "director", "secretario", "prosecretario", "tesorero", "protesorero",
   "capitan", "teniente_1", "teniente_2", "teniente_3", "ayudante",
-  "consejo", "bombero", "admin",
+  "consejo", "bombero", "cuartel", "admin",
 ];
 
 export function LoginPage() {

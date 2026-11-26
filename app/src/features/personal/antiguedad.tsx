@@ -14,6 +14,7 @@ import { formatearFecha } from "@/lib/formato";
 import { etiquetaCategoria, periodoCategoria } from "@/features/guardia/logica";
 import type { AntiguedadPersona } from "@/types/tipos";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAntiguedad(personaId: string | undefined) {
   return useQuery({
     queryKey: ["antiguedad", personaId],

@@ -35,6 +35,8 @@ se conservan intactas en `docs/legado/sql/`.
 | 20261119000500 | `…_guardias_auditoria_fixes.sql` | Exención, obligación por categoría, permisos y bajas |
 | 20261119000600 | `…_secretaria_completa.sql` | Actas con secciones, acuerdos, postulaciones, P1/P2/P4 y R15/R16 |
 | 20261121000100 | `…_inventario_teniente.sql` | Pañol del Teniente 2°, solicitudes de bomberos, entrega con descuento de stock y avisos |
+| 20261126000100 | `…_rol_cuartel_enum.sql` | Agrega `'cuartel'` al enum `seguridad.rol` en transacción aislada (requisito de PostgreSQL para usar el valor inmediatamente después) |
+| 20261126000200 | `…_tablero_cuartel_despacho.sql` | Tablas `orden_dia`, `circular`, `citacion`, vista/RPC `tablero_cuartel`, `despacho`/`despacho_detalle`, aislamiento RLS para `cuartel` y `GRANT`s a `service_role` |
 
 ## Cómo se usa
 ```bash

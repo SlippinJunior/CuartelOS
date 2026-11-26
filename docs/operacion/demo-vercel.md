@@ -15,7 +15,7 @@ sin exponer datos reales. Todo lo que hay aquí es **ficticio**.
 | Frontend | **Vercel** | SPA estática generada desde `app/` |
 | Base de datos | **Supabase Cloud** (us-east-2) | Migraciones + `supabase/seed.sql` ficticio |
 | Storage | Supabase | Buckets privados `documentos`, `sensibles`, `material` |
-| Edge Functions | Supabase | `invitar-usuario`, `emitir-documento`, `emitir-acta`, `orden-capitania`, `notificar-guardias`, `emitir-guardia-pdf`, `emitir-secretaria-pdf` |
+| Edge Functions | Supabase | `invitar-usuario`, `emitir-documento`, `emitir-acta`, `orden-capitania`, `notificar-guardias`, `emitir-guardia-pdf`, `emitir-secretaria-pdf`, `despachar-comunicado` |
 
 La app se conecta al Supabase de la demo mediante dos variables de entorno en
 Vercel:
@@ -51,6 +51,7 @@ ingreso.
 | `ayudante@demo.local` | Ayudante (pase de lista) |
 | `consejo@demo.local` | Consejo (solo disciplina) |
 | `bombero@demo.local` | Bombero (vista mínima; pide consentimiento) |
+| `cuartel@demo.local` | Cuartel (pantalla solo lectura del Tablero de Cuartel) |
 | `admin@demo.local` | Administrador |
 
 ---
@@ -65,7 +66,7 @@ ingreso.
 supabase login
 supabase link --project-ref <project-ref>
 
-# 3. Aplicar el esquema (27 migraciones)
+# 3. Aplicar el esquema (29 migraciones)
 supabase db push
 
 # 4. Cargar los datos ficticios
@@ -75,7 +76,8 @@ psql "postgresql://postgres:<password>@db.<project-ref>.supabase.co:5432/postgre
 # 5. Desplegar las Edge Functions
 supabase secrets set SITE_URL="https://<tu-dominio-vercel>"
 for f in invitar-usuario emitir-documento emitir-acta orden-capitania \
-         notificar-guardias emitir-guardia-pdf emitir-secretaria-pdf; do
+         notificar-guardias emitir-guardia-pdf emitir-secretaria-pdf \
+         despachar-comunicado; do
   supabase functions deploy "$f"
 done
 ```
@@ -179,6 +181,9 @@ prueba y vuelve a aplicar migraciones y seed.
    pañol (entregar descuenta stock y deja el EPP a cargo del bombero).
 8. Entra como **bombero** y comprueba que ve solo lo suyo; en **Material**
    puede consultar el pañol y pedir un artículo.
+9. Entra como **cuartel** (`cuartel@demo.local`) y comprueba el modo kiosco de
+   solo lectura del **Tablero de Cuartel** (reloj, pantalla completa, sin menús
+   privados ni acceso a otras rutas).
 
 ---
 

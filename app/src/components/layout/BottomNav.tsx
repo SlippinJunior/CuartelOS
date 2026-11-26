@@ -28,17 +28,25 @@ export function BottomNav() {
             const seccion = SECCIONES[id];
             const Icono = ICONOS[id];
             const activa = id === "inicio" ? location.pathname === "/" : location.pathname.startsWith(seccion.ruta);
+            const etiqueta = id === "inicio" ? "Tablero" : seccion.titulo;
             return (
               <Link
                 key={id}
                 to={seccion.ruta}
                 className={cn(
-                  "flex min-h-[var(--alto-barra-inferior)] flex-col items-center justify-center gap-1 px-1 text-[11px] font-medium",
+                  "flex min-h-[var(--alto-barra-inferior)] flex-col items-center justify-center gap-1 px-1 text-xs font-semibold transition-colors",
                   activa ? "text-primary" : "text-muted-foreground",
                 )}
               >
-                <Icono className="size-5" aria-hidden />
-                <span className="truncate">{seccion.titulo}</span>
+                <span
+                  className={cn(
+                    "flex h-7 w-12 items-center justify-center rounded-full",
+                    activa && "bg-primary/12",
+                  )}
+                >
+                  <Icono className="size-5" aria-hidden />
+                </span>
+                <span className="truncate">{etiqueta}</span>
               </Link>
             );
           })}
@@ -46,9 +54,11 @@ export function BottomNav() {
             <button
               type="button"
               onClick={() => setMasAbierto(true)}
-              className="flex min-h-[var(--alto-barra-inferior)] flex-col items-center justify-center gap-1 px-1 text-[11px] font-medium text-muted-foreground"
+              className="flex min-h-[var(--alto-barra-inferior)] flex-col items-center justify-center gap-1 px-1 text-xs font-semibold text-muted-foreground"
             >
-              <Menu className="size-5" aria-hidden />
+              <span className="flex h-7 w-12 items-center justify-center rounded-full">
+                <Menu className="size-5" aria-hidden />
+              </span>
               <span>Más</span>
             </button>
           )}

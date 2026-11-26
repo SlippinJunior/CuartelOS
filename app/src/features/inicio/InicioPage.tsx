@@ -4,7 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { AlertTriangle, ArrowRight, Banknote, CalendarClock, ClipboardCheck, FileText, Package, Plus, ShieldCheck, UserRound } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { usePerfil } from "@/features/auth/sesion";
-import { seccionesDe, SECCIONES } from "@/lib/permisos";
+import { esSoloCuartel, seccionesDe, SECCIONES } from "@/lib/permisos";
+import { TableroCuartel } from "@/features/tablero/TableroCuartel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,9 @@ const MESES = [
 
 export function InicioPage() {
   const { data: perfil } = usePerfil();
+  const roles = perfil?.roles ?? [];
+  const modoCuartel = Boolean(perfil?.es_cuartel) || esSoloCuartel(roles);
+
   const { data: panel, isLoading } = useQuery({
     queryKey: ["panel-inicio"],
     queryFn: async () => {
@@ -28,9 +32,13 @@ export function InicioPage() {
       if (error) throw error;
       return data as unknown as PanelInicio;
     },
+    enabled: !modoCuartel,
   });
 
-  const roles = perfil?.roles ?? [];
+  if (modoCuartel) {
+    return <TableroCuartel modoCuartel />;
+  }
+
   const secciones = seccionesDe(roles);
   const nombre = perfil?.persona?.nombres ?? perfil?.email ?? "";
   const hoy = new Date();
@@ -64,7 +72,7 @@ export function InicioPage() {
             <CardTitle className="text-3xl">{isLoading ? "…" : (panel?.alertas.length ?? 0)}</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Reglas R01–R12 de los cruces automáticos.
+            Reglas R01–R16 de los cruces automáticos.
           </CardContent>
         </Card>
         <Card>
@@ -90,9 +98,9 @@ export function InicioPage() {
               <p className="text-sm text-muted-foreground">No hay tareas pendientes. 🟢</p>
             )}
             {panel?.tareas.map((t) => (
-              <a
+              <Link
                 key={`${t.tipo}-${t.id}`}
-                href={t.ruta}
+                to={t.ruta}
                 className="flex items-center justify-between gap-3 rounded-md border border-border p-3 hover:bg-accent"
               >
                 <div className="min-w-0">
@@ -100,7 +108,7 @@ export function InicioPage() {
                   <p className="text-xs text-muted-foreground">Vence {formatearFechaHora(t.vence)}</p>
                 </div>
                 <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
-              </a>
+              </Link>
             ))}
           </CardContent>
         </Card>
@@ -133,6 +141,8 @@ export function InicioPage() {
       <TarjetasGuardia panel={panel ?? undefined} />
 
       <TarjetasMaterial panel={panel ?? undefined} />
+
+      <TableroCuartel />
 
       <section>
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Accesos rápidos</h2>

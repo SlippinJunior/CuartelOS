@@ -50,12 +50,14 @@ export function SesionProvider({ children }: { children: React.ReactNode }) {
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useSesion() {
   const ctx = React.useContext(Contexto);
   if (!ctx) throw new Error("useSesion debe usarse dentro de SesionProvider");
   return ctx;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function usePerfil() {
   const { sesion } = useSesion();
   return useQuery({
@@ -70,6 +72,7 @@ export function usePerfil() {
   });
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useRoles(): string[] {
   const { data } = usePerfil();
   return data?.roles ?? [];

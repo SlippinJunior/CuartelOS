@@ -1,9 +1,11 @@
 import { DocumentoPdf, textoFecha } from "../_shared/pdf-simple.ts";
 import { corsHeaders, json } from "../_shared/cors.ts";
 import { actualizar, autenticar, insertar, rpc, seleccionar, subirArchivo } from "../_shared/clientes.ts";
-import { enviarCorreos } from "../_shared/correo.ts";
+import { construirHtmlComunicado, enviarCorreosDetallado } from "../_shared/correo.ts";
+import { enviarPlantillaWhatsApp } from "../_shared/whatsapp.ts";
+import { registrarDespacho, resumirDespacho } from "../_shared/despacho.ts";
 
-/** Crea una orden de capitanía, emite su PDF y la envía por correo. */
+/** Crea una orden de capitanía, emite su PDF y despacha a Portal, Correo y Meta WhatsApp. */
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
@@ -107,46 +109,95 @@ Deno.serve(async (req) => {
     );
     if (registroError) return json({ error: registroError }, 500);
     const documento = doc as { id?: string; pdf_archivo_id?: string } | null;
-    if (documento?.pdf_archivo_id) {
-      await actualizar("operaciones", "orden_capitania", `id=eq.${orden.id}`, { archivo_id: documento.pdf_archivo_id }, { authorization: "", servicio: true });
-    }
 
-    let correo = { enviados: 0, total: 0, error: null as string | null };
-    if (body.enviar_correo !== false) {
-      const { data: personas } = await seleccionar(
-        "personal",
-        "persona",
-        "select=email,nombres,apellido_paterno&estado=eq.activo&email=not.is.null",
-        { authorization: "", servicio: true },
-      );
-      const destinatarios = ((personas ?? []) as Array<{ email: string | null }>)
-        .map((p) => p.email ?? "")
-        .filter(Boolean);
-      const cuerpo = [
-        `ORDEN DE CAPITANÍA N° ${numero}/${anio}`,
-        "",
-        `Fecha: ${textoFecha(fecha)}`,
-        `Materia: ${materia}`,
-        "",
-        texto,
-        "",
-        `Verifique el documento en: ${urlVerificacion}`,
-        "",
-        "Segunda Compañía de Bomberos de Limache",
-      ].join("\n");
-      correo = await enviarCorreos(destinatarios, `Orden de capitanía N° ${numero}/${anio}`, cuerpo);
-      await actualizar(
-        "operaciones",
-        "orden_capitania",
-        `id=eq.${orden.id}`,
-        {
+    const { data: personas } = await seleccionar(
+      "personal",
+      "persona",
+      "select=id,email,telefono,nombres,apellido_paterno&estado=eq.activo",
+      { authorization: "", servicio: true },
+    );
+    const destinatarios = ((personas ?? []) as Array<Record<string, any>>).map((p) => ({
+      persona_id: String(p.id),
+      nombre: `${p.nombres} ${p.apellido_paterno}`,
+      email: (p.email as string | null) ?? null,
+      telefono: (p.telefono as string | null) ?? null,
+    }));
+
+    const asunto = `Orden de capitanía N° ${numero}/${anio} · ${materia}`;
+    const cuerpo = [
+      `ORDEN DE CAPITANÍA N° ${numero}/${anio}`,
+      "",
+      `Fecha: ${textoFecha(fecha)}`,
+      `Materia: ${materia}`,
+      "",
+      texto,
+      "",
+      `Portal: ${siteUrl}`,
+      `Verifique el documento en: ${urlVerificacion}`,
+      "",
+      "Segunda Compañía de Bomberos de Limache",
+    ].join("\n");
+
+    const correo = body.enviar_correo !== false
+      ? await enviarCorreosDetallado(
+          destinatarios,
+          asunto,
+          cuerpo,
+          construirHtmlComunicado({
+            categoria: "Orden de Capitanía",
+            titulo: `N° ${numero}/${anio} · ${materia}`,
+            subtitulo: `Emitida el ${textoFecha(fecha)}`,
+            cuerpo: texto,
+            urlPortal: siteUrl,
+          }),
+        )
+      : null;
+
+    const whatsapp = body.enviar_whatsapp !== false
+      ? await enviarPlantillaWhatsApp(
+          destinatarios,
+          {
+            plantilla: Deno.env.get("WHATSAPP_TEMPLATE_COMUNICADO") || "comunicado_compania",
+            parametrosBody: [`Orden de Capitanía N° ${numero}/${anio}`, materia, texto.slice(0, 180), siteUrl],
+          },
+          `Orden de Capitanía N° ${numero}/${anio}: ${materia}`,
+        )
+      : null;
+
+    const despachoResumen = resumirDespacho(correo, whatsapp);
+    const whatsappEstado = whatsapp
+      ? whatsapp.configurado
+        ? `${whatsapp.enviados}/${whatsapp.total} enviados${whatsapp.error ? ` · ${whatsapp.error}` : ""}`
+        : "Pendiente configuración Meta"
+      : "No enviado";
+
+    await actualizar(
+      "operaciones",
+      "orden_capitania",
+      `id=eq.${orden.id}`,
+      {
+        ...(documento?.pdf_archivo_id ? { archivo_id: documento.pdf_archivo_id } : {}),
+        ...(correo ? {
           enviada_en: correo.enviados > 0 ? new Date().toISOString() : null,
           correo_estado: `${correo.enviados}/${correo.total} enviados${correo.error ? ` · ${correo.error}` : ""}`,
           correo_destinatarios: correo.total,
-        },
-        { authorization: "", servicio: true },
-      );
-    }
+        } : {}),
+        whatsapp_estado: whatsappEstado,
+        despacho_resumen: despachoResumen,
+      },
+      { authorization: "", servicio: true },
+    );
+
+    const despachoId = await registrarDespacho({
+      origen_tipo: "orden_capitania",
+      origen_id: Number(orden.id),
+      titulo: asunto,
+      resumen: materia,
+      url_portal: siteUrl,
+      creado_por: user.id,
+      correo,
+      whatsapp,
+    });
 
     return json({
       orden_id: orden.id,
@@ -159,7 +210,10 @@ Deno.serve(async (req) => {
       hash_sha256: hash,
       pdf_bucket: "documentos",
       pdf_path: ruta,
+      despacho_id: despachoId,
+      despacho_resumen: despachoResumen,
       correo,
+      whatsapp,
     });
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : "Error inesperado" }, 500);

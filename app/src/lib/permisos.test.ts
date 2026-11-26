@@ -1,5 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { barraInferior, etiquetaRol, puedeVer, restantesDeBarra, seccionesDe } from "@/lib/permisos";
+import {
+  barraInferior,
+  esSoloCuartel,
+  etiquetaRol,
+  GRUPOS_NAVEGACION,
+  puedePublicarTablero,
+  puedeVer,
+  restantesDeBarra,
+  seccionesDe,
+  tiposPublicablesPor,
+} from "@/lib/permisos";
 
 describe("permisos por rol", () => {
   it("el admin ve todas las secciones", () => {
@@ -63,5 +73,30 @@ describe("secretaría para la oficialidad", () => {
   it("el bombero y el consejo no ven Secretaría en el menú", () => {
     expect(puedeVer(["bombero"], "secretaria")).toBe(false);
     expect(puedeVer(["consejo"], "secretaria")).toBe(false);
+  });
+});
+
+describe("rol cuartel y tablero", () => {
+  it("el usuario cuartel solo ve inicio (Tablero) y se identifica como solo-cuartel", () => {
+    expect(esSoloCuartel(["cuartel"])).toBe(true);
+    expect(esSoloCuartel(["cuartel", "bombero"])).toBe(false);
+    expect(seccionesDe(["cuartel"])).toEqual(["inicio"]);
+    expect(puedeVer(["cuartel"], "personal")).toBe(false);
+    expect(puedeVer(["cuartel"], "guardia")).toBe(false);
+    expect(puedePublicarTablero(["cuartel"])).toBe(false);
+    expect(etiquetaRol("cuartel")).toBe("Pantalla de Cuartel");
+  });
+
+  it("los permisos de publicación por tipo corresponden al rol", () => {
+    expect(tiposPublicablesPor(["teniente_1"])).toEqual(["orden_dia", "orden_capitania"]);
+    expect(tiposPublicablesPor(["secretario"])).toEqual(["circular_compania", "circular_cbl", "citacion"]);
+    expect(tiposPublicablesPor(["bombero"])).toEqual([]);
+  });
+
+  it("los grupos de navegación cubren las secciones principales", () => {
+    const todas = GRUPOS_NAVEGACION.flatMap((g) => g.secciones);
+    expect(todas).toContain("inicio");
+    expect(todas).toContain("secretaria");
+    expect(todas).toContain("administracion");
   });
 });

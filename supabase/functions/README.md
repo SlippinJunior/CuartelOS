@@ -1,7 +1,12 @@
 # Edge Functions
 
-Cuatro funciones Deno. Se ejecutan en Supabase y nunca en el navegador. Usan
+Ocho funciones Deno. Se ejecutan en Supabase y nunca en el navegador. Usan
 la clave de servicio solo del lado servidor.
+
+Incluyen módulos compartidos en `_shared/`:
+- `whatsapp.ts`: envío 1-a-1 oficial por **Meta WhatsApp Cloud API v21.0** (`type: "template"`, lotes de 8, normalización `569XXXXXXXX`) con respaldo `no_configurado` si faltan credenciales.
+- `correo.ts`: envío por Resend/SMTP (`enviarCorreos` y `enviarCorreosDetallado` con estado por destinatario).
+- `despacho.ts`: registro unificado de trazabilidad en `nucleo.despacho` y `nucleo.despacho_detalle`.
 
 ## Variables de entorno
 
@@ -42,8 +47,9 @@ actualiza `secretaria.acta.archivo_id`.
 
 ## `orden-capitania`
 
-Crea una orden de capitanía, emite su PDF y la envía por correo a todos los
-bomberos activos. Solo Capitán, Ayudante, Teniente 1°, Director o admin.
+Crea una orden de capitanía, emite su PDF y la despacha por correo y WhatsApp
+(plantilla Meta Cloud API) a todos los bomberos activos, registrando el resultado
+en `nucleo.despacho`. Solo Capitán, Ayudante, Teniente 1°, Director o admin.
 
 ```json
 POST /functions/v1/orden-capitania
@@ -52,7 +58,8 @@ POST /functions/v1/orden-capitania
   "fecha": "2026-11-12",
   "materia": "Guardia nocturna",
   "texto": "Se cita al personal...",
-  "enviar_correo": true
+  "enviar_correo": true,
+  "enviar_whatsapp": true
 }
 ```
 
@@ -60,11 +67,35 @@ El correo usa `SMTP_HOST`/`SMTP_PORT`/`SMTP_USER`/`SMTP_PASSWORD` o
 `RESEND_API_KEY`. En local, `SMTP_HOST=inbucket` y `SMTP_PORT=1025` capturan los
 mensajes en Mailpit (`http://127.0.0.1:54324`).
 
+## `despachar-comunicado`
+
+Publica comunicados del Tablero (`orden_dia`, `circular_cbl`, `circular_compania`,
+`citacion`) con PDF adjunto o generado automáticamente (folio + QR), y los
+despacha en paralelo al **Portal**, **Correo** y **WhatsApp** (Meta Cloud API
+`type: "template"`). También soporta `accion: "reintentar"` para reenviar a
+destinatarios `fallido` o `no_configurado` de un despacho previo.
+
+```json
+POST /functions/v1/despachar-comunicado
+{
+  "tipo": "citacion",
+  "numero": 12,
+  "fecha": "2026-11-26",
+  "titulo": "Citación a Academia",
+  "texto": "Se cita al personal...",
+  "fecha_evento": "2026-11-29",
+  "hora_evento": "20:00",
+  "lugar": "Cuartel",
+  "enviar_correo": true,
+  "enviar_whatsapp": true
+}
+```
+
 ## `notificar-guardias`
 
-Convocatorias de guardia (correo + WhatsApp) y aviso matinal de llegadas
-tardías. Acepta la sesión de un oficial de Capitanía o un token interno
-(`CRON_SECRET`).
+Convocatorias de guardia (correo + WhatsApp por Meta Cloud API) y aviso matinal
+de llegadas tardías. Acepta la sesión de un oficial de Capitanía o un token
+interno (`CRON_SECRET`).
 
 ```json
 POST /functions/v1/notificar-guardias

@@ -425,8 +425,9 @@ export interface Perfil {
   roles: string[];
   es_oficial: boolean;
   es_admin: boolean;
+  es_cuartel?: boolean;
   compania: { id: number; nombre: string; cuerpo: string; lema: string | null } | null;
-  consentimiento: ConsumidorConsentimiento | null;
+  consentimiento: (ConsumidorConsentimiento & { requerido?: boolean }) | null;
 }
 
 export interface PanelInicio {
@@ -565,7 +566,8 @@ export interface OrdenCapitania {
   creado_en: string;
   enviada_en: string | null;
   correo_estado: string | null;
-  correo_destinatarios: number | null;
+  whatsapp_estado?: string | null;
+  despacho_resumen?: string | null;
 }
 
 export interface ActaListado {
@@ -742,4 +744,89 @@ export interface GuardiaSituacion {
   estado: "pendiente" | "aprobada" | "rechazada";
   respuesta: string | null;
   creado_en: string;
+}
+
+// ---------------------------------------------------------------------------
+// Tablero de Cuartel y Despachos
+// ---------------------------------------------------------------------------
+
+export type TipoPublicacionTablero =
+  | "orden_dia"
+  | "orden_capitania"
+  | "circular_cbl"
+  | "circular_compania"
+  | "citacion";
+
+export interface PublicacionTablero {
+  tipo: TipoPublicacionTablero;
+  id: number;
+  numero: string;
+  anio: number;
+  fecha: string;
+  fecha_evento: string | null;
+  hora_evento: string | null;
+  vigente_hasta: string | null;
+  titulo: string;
+  resumen: string | null;
+  texto: string;
+  lugar: string | null;
+  tenida: string | null;
+  obligatoria: boolean | null;
+  archivo_id: string | null;
+  archivo_bucket: string | null;
+  archivo_path: string | null;
+  archivo_nombre: string | null;
+  token_verificacion: string | null;
+  despacho_resumen: string | null;
+  creado_en: string;
+}
+
+export interface GuardiaHoyTablero {
+  fecha: string;
+  estado: EstadoTurnoGuardia;
+  hora_aviso_central: string | null;
+  charlie_modalidad: CharlieModalidad | null;
+  dotacion: Array<{
+    registro: number;
+    nombre: string;
+    es_jefe: boolean;
+  }>;
+}
+
+export interface TableroCuartelData {
+  hoy: string;
+  actualizado_en: string;
+  feriado_hoy: string | null;
+  publicaciones: PublicacionTablero[];
+  guardia_hoy: GuardiaHoyTablero | null;
+}
+
+export interface Despacho {
+  id: number;
+  origen_tipo: string;
+  origen_id: number;
+  titulo: string;
+  resumen: string | null;
+  url_portal: string | null;
+  correo_enviados: number;
+  correo_total: number;
+  correo_error: string | null;
+  whatsapp_enviados: number;
+  whatsapp_total: number;
+  whatsapp_error: string | null;
+  whatsapp_plantilla: string | null;
+  creado_en: string;
+}
+
+export interface DespachoDetalle {
+  id: number;
+  despacho_id: number;
+  persona_id: string | null;
+  nombre: string | null;
+  canal: "correo" | "whatsapp";
+  destino: string | null;
+  estado: "enviado" | "fallido" | "omitido" | "no_configurado";
+  proveedor_id: string | null;
+  error: string | null;
+  intentado_en: string;
 }

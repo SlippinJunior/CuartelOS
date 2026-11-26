@@ -1,8 +1,9 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { LogOut } from "lucide-react";
 import { useSesion, usePerfil } from "@/features/auth/sesion";
-import { seccionesDe, SECCIONES, etiquetaRol } from "@/lib/permisos";
+import { GRUPOS_NAVEGACION, seccionesDe, SECCIONES, etiquetaRol } from "@/lib/permisos";
 import { ICONOS } from "@/components/layout/iconos";
+import { BuscadorGlobal } from "@/components/layout/BuscadorGlobal";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +12,7 @@ export function Sidebar() {
   const { salir } = useSesion();
   const location = useLocation();
   const roles = perfil?.roles ?? [];
-  const secciones = seccionesDe(roles);
+  const visibles = new Set(seccionesDe(roles));
 
   return (
     <aside
@@ -26,23 +27,40 @@ export function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {secciones.map((id) => {
-          const seccion = SECCIONES[id];
-          const Icono = ICONOS[id];
-          const activa = id === "inicio" ? location.pathname === "/" : location.pathname.startsWith(seccion.ruta);
+      <div className="border-b border-border p-3">
+        <BuscadorGlobal />
+      </div>
+
+      <nav className="flex-1 space-y-4 overflow-y-auto p-3">
+        {GRUPOS_NAVEGACION.map((grupo) => {
+          const items = grupo.secciones.filter((s) => visibles.has(s));
+          if (items.length === 0) return null;
           return (
-            <Link
-              key={id}
-              to={seccion.ruta}
-              className={cn(
-                "flex min-h-11 items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                activa ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-accent hover:text-foreground",
-              )}
-            >
-              <Icono className="size-5 shrink-0" aria-hidden />
-              <span className="truncate">{seccion.titulo}</span>
-            </Link>
+            <div key={grupo.titulo} className="space-y-1">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {grupo.titulo}
+              </p>
+              {items.map((id) => {
+                const seccion = SECCIONES[id];
+                const Icono = ICONOS[id];
+                const activa = id === "inicio" ? location.pathname === "/" : location.pathname.startsWith(seccion.ruta);
+                return (
+                  <Link
+                    key={id}
+                    to={seccion.ruta}
+                    className={cn(
+                      "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors",
+                      activa
+                        ? "bg-primary/12 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                    )}
+                  >
+                    <Icono className="size-5 shrink-0" aria-hidden />
+                    <span className="truncate">{seccion.titulo}</span>
+                  </Link>
+                );
+              })}
+            </div>
           );
         })}
       </nav>
