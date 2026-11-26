@@ -2,7 +2,7 @@ import * as React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
-  Bell, Check, ClipboardList, Package, PackagePlus, Search, Users, X,
+  Bell, Check, ClipboardList, Package, PackagePlus, Users, X,
 } from "lucide-react";
 import { db } from "@/lib/supabase";
 import { mensajeError } from "@/lib/errores";
@@ -10,7 +10,7 @@ import { usePerfil } from "@/features/auth/sesion";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs } from "@/components/ui/tabs";
@@ -236,24 +236,22 @@ export function MaterialPage() {
       />
 
       <Card className="mb-4">
-        <CardContent className="flex flex-wrap gap-2 pt-4">
-          <div className="relative min-w-0 flex-1 sm:max-w-sm">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar artículo, persona o motivo"
-              className="pl-9"
-              aria-label="Buscar"
-            />
-          </div>
-          <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-44">
+        <CardContent className="grid gap-2.5 sm:flex sm:flex-wrap sm:items-center">
+          <SearchInput
+            containerClassName="min-w-0 flex-1 sm:max-w-sm"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            onLimpiar={() => setBusqueda("")}
+            placeholder="Buscar artículo, persona o motivo"
+            aria-label="Buscar"
+          />
+          <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-full sm:w-44">
             <option value="">Todos los estados</option>
             {ESTADOS.map((e) => (
               <option key={e} value={e} className="capitalize">{e}</option>
             ))}
           </Select>
-          <span className="ml-auto self-center text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground sm:ml-auto">
             {esT2 ? `${abiertas} solicitudes por resolver` : `${solicitudesFiltradas.length} solicitudes`}
           </span>
         </CardContent>
@@ -376,7 +374,7 @@ function SolicitudesTab({
     <div className="space-y-4">
       {notificaciones.length > 0 && (
         <Card className="border-primary/30">
-          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <Bell className="size-4 text-primary" /> Avisos de Inventario Compañía
             </CardTitle>

@@ -172,7 +172,7 @@ export function GestionGuardia() {
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-start justify-between gap-2 pb-2">
+        <CardHeader className="flex-row flex-wrap items-start justify-between gap-2 pb-2">
           <div>
             <CardTitle>Ciclo de guardias</CardTitle>
             <CardDescription>
@@ -392,7 +392,7 @@ function NuevoCicloDialog({
           <Label htmlFor="ciclo-nombre">Nombre</Label>
           <Input id="ciclo-nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="ciclo-inicio">Inicio</Label>
             <Input id="ciclo-inicio" type="date" value={inicio} onChange={(e) => setInicio(e.target.value)} />

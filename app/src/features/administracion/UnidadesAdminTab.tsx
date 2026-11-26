@@ -72,7 +72,7 @@ export function UnidadesAdminTab({ puedeGestionar }: { puedeGestionar: boolean }
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between gap-2">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2">
         <CardTitle className="flex items-center gap-2">
           <Truck className="size-5 text-primary" /> Unidades de Material Mayor
         </CardTitle>
@@ -220,7 +220,7 @@ function UnidadDialog({
       }
     >
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="un-codigo">Código *</Label>
             <Input id="un-codigo" placeholder="M-21, B-2, R-22" value={codigo} onChange={(e) => setCodigo(e.target.value)} />
@@ -235,7 +235,7 @@ function UnidadDialog({
             </Select>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="un-patente">Patente</Label>
             <Input id="un-patente" value={patente} onChange={(e) => setPatente(e.target.value)} />
@@ -249,7 +249,7 @@ function UnidadDialog({
             </Select>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid gap-2 sm:grid-cols-3">
           <div className="space-y-1">
             <Label htmlFor="un-marca">Marca</Label>
             <Input id="un-marca" value={marca} onChange={(e) => setMarca(e.target.value)} />
@@ -263,7 +263,7 @@ function UnidadDialog({
             <Input id="un-anio" type="number" value={anio} onChange={(e) => setAnio(e.target.value)} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="un-km">Kilometraje actual</Label>
             <Input id="un-km" type="number" value={kmActual} onChange={(e) => setKmActual(e.target.value)} />

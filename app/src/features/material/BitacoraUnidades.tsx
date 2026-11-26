@@ -96,21 +96,21 @@ export function BitacoraUnidades({ puedeEditar }: { puedeEditar: boolean }) {
       </div>
 
       <Card>
-        <CardContent className="flex flex-wrap items-center gap-2 pt-4">
-          <Select value={unidadFiltro} onChange={(e) => setUnidadFiltro(e.target.value)} aria-label="Filtrar por unidad" className="w-44">
+        <CardContent className="grid gap-2.5 sm:flex sm:flex-wrap sm:items-center">
+          <Select value={unidadFiltro} onChange={(e) => setUnidadFiltro(e.target.value)} aria-label="Filtrar por unidad" className="w-full sm:w-44">
             <option value="">Todas las unidades</option>
             {(unidadesQ.data ?? []).map((u) => (
               <option key={u.id} value={u.id}>{u.codigo} · {u.marca ?? "Unidad"}</option>
             ))}
           </Select>
-          <Select value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)} aria-label="Filtrar por tipo" className="w-44">
+          <Select value={tipoFiltro} onChange={(e) => setTipoFiltro(e.target.value)} aria-label="Filtrar por tipo" className="w-full sm:w-44">
             <option value="">Todos los tipos</option>
             {TIPOS.map((t) => (
               <option key={t} value={t}>{ETIQUETAS_BITACORA[t]}</option>
             ))}
           </Select>
           {puedeEditar && (
-            <Button className="ml-auto" onClick={() => setAbierto(true)}>
+            <Button className="w-full sm:ml-auto sm:w-auto" onClick={() => setAbierto(true)}>
               <Plus /> Registrar evento
             </Button>
           )}
@@ -266,7 +266,7 @@ function DialogoBitacora({
       }
     >
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="bit-unidad">Unidad *</Label>
             <Select id="bit-unidad" value={unidadId} onChange={(e) => setUnidadId(e.target.value)}>
@@ -284,7 +284,7 @@ function DialogoBitacora({
             </Select>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="bit-fecha">Fecha</Label>
             <Input id="bit-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
@@ -294,7 +294,7 @@ function DialogoBitacora({
             <Input id="bit-titulo" placeholder="Ej.: Cambio de frenos o choque menor" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid gap-2 sm:grid-cols-3">
           <div className="space-y-1">
             <Label htmlFor="bit-km">Kilometraje</Label>
             <Input id="bit-km" type="number" value={km} onChange={(e) => setKm(e.target.value)} />
@@ -308,7 +308,7 @@ function DialogoBitacora({
             <Input id="bit-costo" type="number" value={costo} onChange={(e) => setCosto(e.target.value)} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="bit-prox">Próxima mantención</Label>
             <Input id="bit-prox" type="date" value={proximaFecha} onChange={(e) => setProximaFecha(e.target.value)} />

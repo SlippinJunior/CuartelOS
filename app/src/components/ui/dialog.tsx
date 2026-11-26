@@ -14,6 +14,7 @@ interface DialogProps {
   pie?: React.ReactNode;
   className?: string;
   tamano?: TamanoDialogo;
+  sinPaddingCuerpo?: boolean;
 }
 
 const ANCHO: Record<TamanoDialogo, string> = {
@@ -55,8 +56,10 @@ export function Dialog({
   pie,
   className,
   tamano = "md",
+  sinPaddingCuerpo = false,
 }: DialogProps) {
   const ref = React.useRef<HTMLDialogElement>(null);
+  const tituloId = React.useId();
   const cerrar = React.useCallback(() => onCambio(false), [onCambio]);
 
   useEscapeCompartido(abierto, cerrar);
@@ -89,20 +92,20 @@ export function Dialog({
         className,
       )}
       style={{ margin: "auto", width: ANCHO[tamano], maxWidth: ANCHO[tamano] }}
-      aria-labelledby="dialog-titulo"
+      aria-labelledby={tituloId}
     >
       <div className="flex items-start justify-between gap-4 border-b border-border p-4">
-        <div>
-          <h2 id="dialog-titulo" className="text-lg font-semibold">{titulo}</h2>
+        <div className="min-w-0 flex-1">
+          <h2 id={tituloId} className="text-lg font-semibold leading-snug">{titulo}</h2>
           {descripcion && <p className="mt-1 text-sm text-muted-foreground">{descripcion}</p>}
         </div>
-        <Button variant="ghost" size="icon" aria-label="Cerrar" onClick={cerrar}>
+        <Button variant="ghost" size="icon" className="shrink-0" aria-label="Cerrar" onClick={cerrar}>
           <X />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
+      <div className={cn("min-h-0 flex-1 overflow-y-auto", sinPaddingCuerpo ? "p-0" : "p-4")}>{children}</div>
       {pie && (
-        <div className="flex flex-col-reverse gap-2 border-t border-border p-4 sm:flex-row sm:justify-end">
+        <div className="flex flex-col-reverse gap-2 border-t border-border p-4 sm:flex-row sm:flex-wrap sm:justify-end [&>a]:w-full sm:[&>a]:w-auto [&>a>button]:w-full sm:[&>a>button]:w-auto">
           {pie}
         </div>
       )}

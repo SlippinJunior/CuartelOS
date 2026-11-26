@@ -26,7 +26,7 @@ function Cargando() {
 function RelojCuartel() {
   const [ahora, setAhora] = React.useState(() => new Date());
   React.useEffect(() => {
-    const id = window.setInterval(() => setAhora(new Date()), 30_000);
+    const id = window.setInterval(() => setAhora(new Date()), 15_000);
     return () => window.clearInterval(id);
   }, []);
 
@@ -39,14 +39,23 @@ function RelojCuartel() {
   const hora = ahora.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <p className="truncate text-sm text-muted-foreground capitalize">
-      {fecha} · <span className="font-semibold text-foreground">{hora}</span>
-    </p>
+    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+      <span className="truncate text-xs text-muted-foreground capitalize sm:text-sm">{fecha}</span>
+      <span className="tabular-nums text-[clamp(1.1rem,1.5vw,1.75rem)] font-bold leading-none text-primary">
+        {hora}
+      </span>
+    </div>
   );
 }
 
 function ShellCuartel({ salir, compania }: { salir: () => Promise<void>; compania?: string }) {
-  const [completa, setCompleta] = React.useState(false);
+  const [completa, setCompleta] = React.useState(() => Boolean(document.fullscreenElement));
+
+  React.useEffect(() => {
+    const alCambiar = () => setCompleta(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", alCambiar);
+    return () => document.removeEventListener("fullscreenchange", alCambiar);
+  }, []);
 
   async function alternarPantalla() {
     try {
@@ -63,20 +72,28 @@ function ShellCuartel({ salir, compania }: { salir: () => Promise<void>; compani
   }
 
   return (
-    <div className="min-h-dvh bg-background">
-      <header className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
+    <div className="flex min-h-dvh flex-col bg-background lg:h-dvh lg:overflow-hidden">
+      <header className="sticky top-0 z-20 flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border bg-card/95 px-3 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] backdrop-blur sm:px-5 lg:flex-nowrap">
         <div className="flex min-w-0 items-center gap-3">
-          <img src="/escudo.png" alt="Escudo Segunda Compañía" className="size-10 shrink-0 object-contain" />
+          <img
+            src="/escudo.png"
+            alt="Escudo Segunda Compañía"
+            width={40}
+            height={40}
+            className="size-9 shrink-0 object-contain lg:size-10"
+          />
           <div className="min-w-0">
-            <p className="truncate text-base font-bold leading-tight">
+            <p className="truncate text-[clamp(1rem,1.25vw,1.45rem)] font-bold leading-tight">
               Tablero de Cuartel · {compania ?? "Segunda Compañía"}
             </p>
             <RelojCuartel />
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1">
           <ConnectionIndicator />
-          <TextoToggle />
+          <span className="hidden sm:inline-flex">
+            <TextoToggle />
+          </span>
           <ThemeToggle />
           <Button
             variant="ghost"
@@ -88,11 +105,11 @@ function ShellCuartel({ salir, compania }: { salir: () => Promise<void>; compani
             {completa ? <Minimize2 /> : <Maximize2 />}
           </Button>
           <Button variant="outline" size="sm" onClick={() => void salir()}>
-            <LogOut /> Salir
+            <LogOut /> <span className="hidden sm:inline">Salir</span>
           </Button>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-7xl p-4 sm:p-6">
+      <main className="min-h-0 w-full flex-1 p-3 sm:p-4 lg:overflow-hidden lg:p-4 xl:p-5">
         <Outlet />
       </main>
     </div>
@@ -147,9 +164,9 @@ export function AppShell() {
     <div className="min-h-dvh bg-background">
       <Sidebar />
       <div className="lg:pl-[var(--ancho-sidebar)]">
-        <header className="sticky top-0 z-20 flex min-h-14 items-center justify-between gap-2 border-b border-border bg-background/90 px-3 backdrop-blur sm:px-4">
-          <div className="flex min-w-0 items-center gap-2 lg:hidden">
-            <img src="/escudo.png" alt="" className="size-8 object-contain" />
+        <header className="sticky top-0 z-20 flex min-h-14 items-center justify-between gap-2 border-b border-border bg-background/90 px-3 pt-[env(safe-area-inset-top)] backdrop-blur sm:px-4">
+          <div className="flex min-w-0 flex-1 items-center gap-2 lg:hidden">
+            <img src="/escudo.png" alt="" width={32} height={32} className="size-8 shrink-0 object-contain" />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">Segunda Compañía</p>
               <p className="truncate text-xs text-muted-foreground">
@@ -157,7 +174,7 @@ export function AppShell() {
               </p>
             </div>
           </div>
-          <div className="hidden min-w-0 lg:block">
+          <div className="hidden min-w-0 flex-1 lg:block">
             <p className="truncate text-sm font-medium">
               {perfil.data?.persona?.nombre ?? perfil.data?.email ?? "Sesión"}
             </p>
@@ -165,10 +182,12 @@ export function AppShell() {
               {roles.map(etiquetaRol).join(" · ")}
             </p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
             <BuscadorGlobal compacto />
             <ConnectionIndicator />
-            <TextoToggle />
+            <span className="hidden sm:inline-flex">
+              <TextoToggle />
+            </span>
             <ThemeToggle />
             <Button
               variant="ghost"

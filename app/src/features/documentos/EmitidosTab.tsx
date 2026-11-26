@@ -96,6 +96,22 @@ export function EmitidosTab() {
       titulo: "Estado",
       render: (d) => <Badge variant={d.anulado ? "peligro" : "exito"}>{d.anulado ? "Anulado" : "Válido"}</Badge>,
     },
+    {
+      clave: "acciones",
+      titulo: "",
+      render: (d) => (
+        <div className="flex items-center justify-end gap-2">
+          <Link to="/verificar/$token" params={{ token: d.token_verificacion }} className="text-sm font-medium text-primary hover:underline">
+            Verificar
+          </Link>
+          {esOficial && !d.anulado && (
+            <Button variant="ghost" size="sm" className="text-peligro" onClick={() => setAnular(d)}>
+              Anular
+            </Button>
+          )}
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -116,13 +132,28 @@ export function EmitidosTab() {
         claveFila={(d) => d.id}
         cargando={isLoading}
         renderTarjeta={(d) => (
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="font-medium">{d.tipo_documento_codigo} · {d.anio}-{String(d.folio).padStart(4, "0")}</p>
-              <p className="text-sm text-muted-foreground">{nombrePersona(d.persona_id)}</p>
-              <p className="text-xs text-muted-foreground">{formatearFechaHora(d.emitido_en)}</p>
+          <div className="space-y-2">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-medium">{d.tipo_documento_codigo} · {d.anio}-{String(d.folio).padStart(4, "0")}</p>
+                <p className="truncate text-sm text-muted-foreground">{nombrePersona(d.persona_id)}</p>
+                <p className="text-xs text-muted-foreground">{formatearFechaHora(d.emitido_en)}</p>
+                {d.anulado && d.motivo_anulacion && (
+                  <p className="text-xs text-peligro">Anulado: {d.motivo_anulacion}</p>
+                )}
+              </div>
+              <Badge className="shrink-0" variant={d.anulado ? "peligro" : "exito"}>{d.anulado ? "Anulado" : "Válido"}</Badge>
             </div>
-            <Badge variant={d.anulado ? "peligro" : "exito"}>{d.anulado ? "Anulado" : "Válido"}</Badge>
+            <div className="flex items-center justify-end gap-3 border-t border-border pt-2 text-sm">
+              <Link to="/verificar/$token" params={{ token: d.token_verificacion }} className="font-medium text-primary hover:underline">
+                Verificar
+              </Link>
+              {esOficial && !d.anulado && (
+                <Button variant="ghost" size="sm" className="text-peligro" onClick={() => setAnular(d)}>
+                  Anular
+                </Button>
+              )}
+            </div>
           </div>
         )}
         vacio={
@@ -138,29 +169,6 @@ export function EmitidosTab() {
           />
         }
       />
-
-      {(data ?? []).length > 0 && (
-        <div className="space-y-2">
-          {(data ?? []).map((d) => (
-            <div key={d.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-3 text-sm">
-              <div>
-                <span className="font-medium">{d.tipo_documento_codigo} {d.anio}-{String(d.folio).padStart(4, "0")}</span>
-                <span className="ml-2 text-muted-foreground">{d.anulado ? `Anulado: ${d.motivo_anulacion}` : nombrePersona(d.persona_id)}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Link to="/verificar/$token" params={{ token: d.token_verificacion }} className="text-primary hover:underline">
-                  Verificar
-                </Link>
-                {esOficial && !d.anulado && (
-                  <Button variant="ghost" size="sm" className="text-peligro" onClick={() => setAnular(d)}>
-                    Anular
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       <ConfirmDialog
         abierto={Boolean(anular)}

@@ -409,7 +409,7 @@ function PagoCuotaDialog({
         <div className="rounded-md border border-border bg-muted/40 p-3 text-sm">
           <p className="text-muted-foreground">Al registrar el pago se creará automáticamente un ingreso en la cartola.</p>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="cuota-monto">Monto</Label>
             <Input id="cuota-monto" type="number" min={1} value={monto} onChange={(e) => setMonto(e.target.value)} />
@@ -419,7 +419,7 @@ function PagoCuotaDialog({
             <Input id="cuota-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="cuota-medio">Medio de pago</Label>
             <Select id="cuota-medio" value={medio} onChange={(e) => setMedio(e.target.value)}>

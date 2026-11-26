@@ -78,7 +78,7 @@ function UsuariosTab() {
 
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2">
         <CardTitle>Usuarios del sistema</CardTitle>
         <Button onClick={() => setInvitar(true)}><UserPlus /> Invitar</Button>
       </CardHeader>
@@ -86,9 +86,9 @@ function UsuariosTab() {
         {isLoading && <p className="text-sm text-muted-foreground">Cargando…</p>}
         {(data ?? []).map((u) => (
           <div key={u.user_id} className="flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-medium">{u.nombre ?? u.email ?? "Sin nombre"}</p>
-              <p className="text-xs text-muted-foreground">
+            <div className="min-w-0">
+              <p className="truncate font-medium">{u.nombre ?? u.email ?? "Sin nombre"}</p>
+              <p className="truncate text-xs text-muted-foreground">
                 {u.email} {u.registro ? `· Registro ${u.registro}` : ""} {u.activo ? "" : "· Inactivo"}
               </p>
               <div className="mt-1 flex flex-wrap gap-1">
@@ -249,7 +249,7 @@ function AsignarRolDialog({ usuario, onCambio }: { usuario: UsuarioAdmin | null;
             {ROLES.map((r) => <option key={r} value={r}>{etiquetaRol(r)}</option>)}
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="ar-desde">Desde</Label>
             <Input id="ar-desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} />
@@ -310,7 +310,7 @@ function CatalogosTab() {
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader className="flex-row items-center justify-between">
+        <CardHeader className="flex-row flex-wrap items-center justify-between gap-2">
           <CardTitle>Tipos de acto</CardTitle>
           <Button variant="outline" onClick={() => setNuevoAbierto(true)}><Plus /> Nuevo</Button>
         </CardHeader>

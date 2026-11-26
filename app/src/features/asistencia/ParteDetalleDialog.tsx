@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Clock, Edit3, MapPin, MessageSquareText, Search } from "lucide-react";
+import { Calendar, Clock, Edit3, MapPin, MessageSquareText } from "lucide-react";
 import { db } from "@/lib/supabase";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EstadoBadge } from "@/components/common/StatusBadge";
@@ -132,19 +132,18 @@ export function ParteDetalleDialog({
             <Badge variant="apagado">L {parte.resumen.L}</Badge>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <div className="relative min-w-0 flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                className="pl-9"
-                placeholder="Filtrar por bombero o registro"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
-            </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <SearchInput
+              containerClassName="min-w-0 flex-1"
+              placeholder="Filtrar por bombero o registro"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              onLimpiar={() => setBusqueda("")}
+              aria-label="Filtrar por bombero o registro"
+            />
             <Select
               aria-label="Filtrar por marca"
-              className="w-32"
+              className="w-full sm:w-32"
               value={filtroMarca}
               onChange={(e) => setFiltroMarca(e.target.value)}
             >

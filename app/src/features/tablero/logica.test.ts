@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   citacionProxima,
+  combinarCirculares,
   contarPorTipo,
   filtrarPublicaciones,
   ordenDiaVigente,
+  paginarPublicaciones,
 } from "./logica";
 import type { PublicacionTablero } from "@/types/tipos";
 
@@ -100,5 +102,30 @@ describe("logica del Tablero de Cuartel", () => {
     expect(c.citacion).toBe(1);
     expect(c.circular_cbl).toBe(1);
     expect(c.orden_capitania).toBe(0);
+  });
+
+  it("combina circulares de compañía y CBL ordenadas por fecha descendente", () => {
+    const lista: PublicacionTablero[] = [
+      ...BASE,
+      {
+        ...BASE[2],
+        tipo: "circular_compania",
+        id: 9,
+        numero: "14",
+        fecha: "2026-11-25",
+        titulo: "Circular interna",
+      },
+    ];
+    const circulares = combinarCirculares(lista);
+    expect(circulares).toHaveLength(2);
+    expect(circulares[0].id).toBe(9);
+    expect(circulares[1].id).toBe(3);
+  });
+
+  it("pagina publicaciones sin desbordar el rango", () => {
+    const p1 = paginarPublicaciones([1, 2, 3, 4, 5], 0, 3);
+    expect(p1).toEqual({ visibles: [1, 2, 3], totalPaginas: 2, paginaActual: 0 });
+    const p2 = paginarPublicaciones([1, 2, 3, 4, 5], 10, 3);
+    expect(p2).toEqual({ visibles: [4, 5], totalPaginas: 2, paginaActual: 1 });
   });
 });

@@ -56,7 +56,8 @@ export function EstadisticasGuardiaPanel() {
           <CardDescription>Orden 01/2026 §3</CardDescription>
         </CardHeader>
         <CardContent>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto" role="region" aria-label="Cumplimiento por categoría" tabIndex={0}>
+            <table className="w-full min-w-[420px] text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
                 <th className="px-2 py-2">Categoría</th>
@@ -79,7 +80,8 @@ export function EstadisticasGuardiaPanel() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         </CardContent>
       </Card>
 

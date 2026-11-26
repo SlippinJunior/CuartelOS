@@ -82,7 +82,7 @@ export function DialogoEvento({ personaId, abierto, onCambio }: BaseProps) {
             <option value="otro">Otro</option>
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="ev-rango">Nuevo rango</Label>
             <Select id="ev-rango" value={rango} onChange={(e) => setRango(e.target.value)}>
@@ -167,7 +167,7 @@ export function DialogoCargo({ personaId, abierto, onCambio }: BaseProps) {
             ))}
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="cg-desde">Desde</Label>
             <Input id="cg-desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} />
@@ -290,7 +290,7 @@ export function DialogoPremio({ personaId, abierto, onCambio }: BaseProps) {
             ))}
           </Select>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="pr-anios">Años</Label>
             <Input id="pr-anios" type="number" min={0} value={anios} onChange={(e) => setAnios(e.target.value)} />

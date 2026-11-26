@@ -11,6 +11,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
+import { SearchInput } from "@/components/ui/search-input";
 import { Textarea } from "@/components/ui/textarea";
 import { ResponsiveList, type Columna } from "@/components/common/ResponsiveList";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -106,22 +107,23 @@ export function CorrespondenciaSection() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Input
-          className="max-w-xs"
+      <div className="grid gap-2.5 sm:flex sm:flex-wrap sm:items-center">
+        <SearchInput
+          containerClassName="w-full sm:max-w-xs"
           placeholder="Buscar por número, materia o contraparte"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
+          onLimpiar={() => setBusqueda("")}
           aria-label="Buscar correspondencia"
         />
-        <Select value={sentido} onChange={(e) => setSentido(e.target.value)} aria-label="Sentido" className="w-40">
+        <Select value={sentido} onChange={(e) => setSentido(e.target.value)} aria-label="Sentido" className="w-full sm:w-44">
           <option value="">Todas</option>
           <option value="recibida">Recibidas</option>
           <option value="despachada">Despachadas</option>
         </Select>
-        <Badge variant="outline" className="self-center">{filas.length} cartas</Badge>
+        <Badge variant="outline" className="w-fit self-center">{filas.length} cartas</Badge>
         {puedeEditar && (
-          <Button className="ml-auto" onClick={() => setEditor("nuevo")}><Plus /> Registrar carta</Button>
+          <Button className="w-full sm:ml-auto sm:w-auto" onClick={() => setEditor("nuevo")}><Plus /> Registrar carta</Button>
         )}
       </div>
 
@@ -359,7 +361,7 @@ function EditorCorrespondencia({
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="cor-fecha">Fecha</Label>
             <Input id="cor-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} disabled={!puedeEditar} />

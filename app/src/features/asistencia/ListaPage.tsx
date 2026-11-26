@@ -2,13 +2,13 @@ import * as React from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { CheckCircle2, CloudOff, MoreHorizontal, RefreshCw, Search, Send, XCircle } from "lucide-react";
+import { CheckCircle2, CloudOff, MoreHorizontal, RefreshCw, Send, XCircle } from "lucide-react";
 import { db, supabase } from "@/lib/supabase";
 import { mensajeError } from "@/lib/errores";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -346,7 +346,7 @@ export function ListaPage() {
       />
 
       <Card className="mb-3">
-        <CardContent className="space-y-2 pt-4">
+        <CardContent className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Comentarios del parte
           </p>
@@ -390,16 +390,15 @@ export function ListaPage() {
       </div>
 
       <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3 top-3.5 size-4 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            placeholder="Buscar bombero por nombre o registro"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-2">
+        <SearchInput
+          containerClassName="flex-1"
+          placeholder="Buscar bombero por nombre o registro"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          onLimpiar={() => setBusqueda("")}
+          aria-label="Buscar bombero"
+        />
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => void marcarRestoFalta()}>
             <CheckCircle2 /> Marcar resto Falta
           </Button>

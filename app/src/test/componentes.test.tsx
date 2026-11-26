@@ -1,6 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SearchInput } from "@/components/ui/search-input";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EstadoBadge, SemaforoBadge } from "@/components/common/StatusBadge";
 
@@ -26,5 +28,38 @@ describe("componentes base", () => {
   it("muestra el semáforo de vencimiento", () => {
     render(<SemaforoBadge vence="2020-01-01" />);
     expect(screen.getByText("Vencido")).toBeInTheDocument();
+  });
+
+  it("renderiza SearchInput centrado y permite limpiar la búsqueda", () => {
+    const limpiar = vi.fn();
+    render(
+      <SearchInput
+        value="bombero"
+        onChange={() => {}}
+        onLimpiar={limpiar}
+        placeholder="Buscar"
+      />,
+    );
+    const input = screen.getByPlaceholderText("Buscar");
+    expect(input.className).toContain("pl-10");
+    const btnLimpiar = screen.getByRole("button", { name: "Limpiar búsqueda" });
+    fireEvent.click(btnLimpiar);
+    expect(limpiar).toHaveBeenCalledTimes(1);
+  });
+
+  it("mantiene padding simétrico en CardContent independiente y data-slot con CardHeader", () => {
+    const { container } = render(
+      <Card>
+        <CardHeader>
+          <CardTitle>Título</CardTitle>
+        </CardHeader>
+        <CardContent>Cuerpo</CardContent>
+      </Card>,
+    );
+    const header = container.querySelector('[data-slot="card-header"]');
+    const content = container.querySelector('[data-slot="card-content"]');
+    expect(header).not.toBeNull();
+    expect(content).not.toBeNull();
+    expect(content?.className).not.toContain("sm:pt-0");
   });
 });

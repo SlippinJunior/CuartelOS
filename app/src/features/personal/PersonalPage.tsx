@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, UserRound } from "lucide-react";
+import { Plus, UserRound } from "lucide-react";
 import { db } from "@/lib/supabase";
 import { usePerfil } from "@/features/auth/sesion";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { ResponsiveList, type Columna } from "@/components/common/ResponsiveList";
@@ -91,17 +91,14 @@ export function PersonalPage() {
       />
 
       <Card className="mb-4">
-        <CardContent className="grid gap-2 pt-4 sm:grid-cols-[1fr_10rem_10rem]">
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-3.5 size-4 text-muted-foreground" />
-            <Input
-              className="pl-9"
-              placeholder="Buscar por nombre, registro o RUT"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              aria-label="Buscar persona"
-            />
-          </div>
+        <CardContent className="grid items-center gap-2.5 sm:grid-cols-[1fr_10.5rem_10.5rem]">
+          <SearchInput
+            placeholder="Buscar por nombre, registro o RUT"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            onLimpiar={() => setBusqueda("")}
+            aria-label="Buscar persona"
+          />
           <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Filtrar por estado">
             <option value="">Todos los estados</option>
             {ESTADOS.map((e) => (

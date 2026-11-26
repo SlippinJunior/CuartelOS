@@ -1,13 +1,14 @@
 import * as React from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { PenLine, Search, Timer, UserPlus } from "lucide-react";
+import { PenLine, Timer, UserPlus } from "lucide-react";
 import { db } from "@/lib/supabase";
 import { mensajeError } from "@/lib/errores";
 import { usePerfil } from "@/features/auth/sesion";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -84,16 +85,13 @@ export function DialogoReemplazo({
       <div className="space-y-3">
         <div className="space-y-1">
           <Label htmlFor="reemplazo-buscar">Buscar reemplazante</Label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-3.5 size-4 text-muted-foreground" />
-            <Input
-              id="reemplazo-buscar"
-              className="pl-9"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Nombre o número de registro"
-            />
-          </div>
+          <SearchInput
+            id="reemplazo-buscar"
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            onLimpiar={() => setBusqueda("")}
+            placeholder="Nombre o número de registro"
+          />
         </div>
         <div className="max-h-56 space-y-1 overflow-y-auto">
           {filtradas.length === 0 && <p className="text-sm text-muted-foreground">Sin bomberos disponibles.</p>}
@@ -307,12 +305,12 @@ export function DialogoReporteGuardia({
             {(turno?.integrantes ?? [])
               .filter((i) => i.estado === "inscrito" || i.estado === "cumplida")
               .map((i) => (
-                <div key={i.persona_id} className="flex items-center justify-between gap-2 p-2 text-sm">
-                  <span>
+                <div key={i.persona_id} className="flex flex-col gap-2 p-2.5 text-sm sm:flex-row sm:items-center sm:justify-between">
+                  <span className="min-w-0 truncate">
                     <span className="mr-2 font-mono text-xs text-muted-foreground">{i.registro}</span>
                     {i.nombre}
                   </span>
-                  <div className="flex gap-1">
+                  <div className="flex shrink-0 gap-1">
                     <Button
                       size="sm"
                       variant={presencia[i.persona_id] ? "default" : "outline"}

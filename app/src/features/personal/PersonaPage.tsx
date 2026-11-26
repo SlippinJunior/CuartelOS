@@ -447,7 +447,7 @@ function Resumen({
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
+          <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
             <CardTitle>Situaciones vigentes</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -464,7 +464,7 @@ function Resumen({
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
+          <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
             <CardTitle>Licencias de conducir</CardTitle>
             {puedeEscribir && (
               <Button variant="ghost" size="sm" onClick={alAgregarLicencia}><Plus /> Agregar</Button>
@@ -483,7 +483,7 @@ function Resumen({
       </div>
 
       <Card className="lg:col-span-3">
-        <CardHeader className="flex-row items-center justify-between pb-2">
+        <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
           <CardTitle>Historial de eventos</CardTitle>
           {puedeEscribir && (
             <Button variant="outline" size="sm" onClick={alAgregarEvento}><Plus /> Registrar evento</Button>
@@ -556,7 +556,7 @@ function AsistenciaTab({ actual }: { actual?: AsistenciaPersona }) {
 function CargosTab({ cargos, puedeEscribir, alAgregar }: { cargos: CargoPeriodo[]; puedeEscribir: boolean; alAgregar: () => void }) {
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between pb-2">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
         <CardTitle>Cargos y nombramientos</CardTitle>
         {puedeEscribir && <Button variant="outline" size="sm" onClick={alAgregar}><Plus /> Asignar cargo</Button>}
       </CardHeader>
@@ -579,7 +579,7 @@ function CargosTab({ cargos, puedeEscribir, alAgregar }: { cargos: CargoPeriodo[
 function FormacionTab({ cursos, puedeEscribir, alAgregar }: { cursos: PersonaCurso[]; puedeEscribir: boolean; alAgregar: () => void }) {
   return (
     <Card>
-      <CardHeader className="flex-row items-center justify-between pb-2">
+      <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
         <CardTitle>Formación ANB y otros cursos</CardTitle>
         {puedeEscribir && <Button variant="outline" size="sm" onClick={alAgregar}><Plus /> Registrar curso</Button>}
       </CardHeader>
@@ -728,7 +728,7 @@ function SensibleTab({
         />
       ) : (
         <Card>
-          <CardHeader className="flex-row items-center justify-between pb-2">
+          <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
             <CardTitle>Ficha de salud</CardTitle>
             {puedeEditar && <Button variant="outline" size="sm" onClick={alEditar}>Editar</Button>}
           </CardHeader>

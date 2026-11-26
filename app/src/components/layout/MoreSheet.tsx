@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Sheet } from "@/components/ui/sheet";
+import { TextoToggle } from "@/components/layout/TextoToggle";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { SECCIONES, type Seccion } from "@/lib/permisos";
 import { ICONOS } from "@/components/layout/iconos";
 
@@ -35,6 +37,13 @@ export function MoreSheet({
             </Link>
           );
         })}
+      </div>
+      <div className="mt-4 flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 p-3 sm:hidden">
+        <span className="text-sm font-medium text-muted-foreground">Tamaño de texto y tema</span>
+        <div className="flex items-center gap-1">
+          <TextoToggle />
+          <ThemeToggle />
+        </div>
       </div>
     </Sheet>
   );

@@ -269,7 +269,7 @@ function NuevaActaDialog({
       }
     >
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="acta-tipo">Tipo de sesión</Label>
             <Select id="acta-tipo" value={tipo} onChange={(e) => setTipo(e.target.value)}>
@@ -281,7 +281,7 @@ function NuevaActaDialog({
             <Input id="acta-numero" type="number" value={numero} onChange={(e) => setNumero(e.target.value)} />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="acta-fecha">Fecha</Label>
             <Input id="acta-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />

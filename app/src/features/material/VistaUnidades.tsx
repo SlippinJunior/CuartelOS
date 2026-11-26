@@ -87,7 +87,7 @@ export function VistaUnidades() {
               {unidades.length > 0 && (
                 <Select
                   aria-label="Seleccionar unidad"
-                  className="w-48"
+                  className="w-full sm:w-52"
                   value={unidad ? String(unidad.id) : ""}
                   onChange={(e) => setSeleccionada(Number(e.target.value))}
                 >

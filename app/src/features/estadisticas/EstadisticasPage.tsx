@@ -237,10 +237,16 @@ export function EstadisticasPage() {
               </CardHeader>
               <CardContent className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={datos.material_mas_asignado} layout="vertical" margin={{ left: 20, right: 20 }}>
+                  <BarChart data={datos.material_mas_asignado} layout="vertical" margin={{ left: 4, right: 16 }}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
                     <XAxis type="number" allowDecimals={false} fontSize={12} />
-                    <YAxis dataKey="articulo" type="category" width={145} fontSize={11} />
+                    <YAxis
+                      dataKey="articulo"
+                      type="category"
+                      width={112}
+                      fontSize={11}
+                      tickFormatter={(v: string) => (v.length > 16 ? `${v.slice(0, 15)}…` : v)}
+                    />
                     <Tooltip />
                     <Bar dataKey="asignados" name="Asignados" fill="#15803d" radius={[0, 4, 4, 0]} />
                   </BarChart>
@@ -255,10 +261,16 @@ export function EstadisticasPage() {
               </CardHeader>
               <CardContent className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={datos.material_menos_asignado} layout="vertical" margin={{ left: 20, right: 20 }}>
+                  <BarChart data={datos.material_menos_asignado} layout="vertical" margin={{ left: 4, right: 16 }}>
                     <CartesianGrid strokeDasharray="3 3" opacity={0.25} />
                     <XAxis type="number" allowDecimals={false} fontSize={12} />
-                    <YAxis dataKey="articulo" type="category" width={145} fontSize={11} />
+                    <YAxis
+                      dataKey="articulo"
+                      type="category"
+                      width={112}
+                      fontSize={11}
+                      tickFormatter={(v: string) => (v.length > 16 ? `${v.slice(0, 15)}…` : v)}
+                    />
                     <Tooltip />
                     <Bar dataKey="asignados" name="Asignados" fill="#d97706" radius={[0, 4, 4, 0]} />
                   </BarChart>
@@ -300,9 +312,9 @@ export function EstadisticasPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="flex items-center justify-between rounded-md border border-border p-2.5 text-sm">
+                <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2.5 text-sm">
                   <span className="flex items-center gap-2 font-medium">
-                    <ShieldCheck className="size-4 text-primary" />
+                    <ShieldCheck className="size-4 shrink-0 text-primary" />
                     Guardia ({datos.guardias_resumen.ciclo_nombre ?? "Sin ciclo activo"})
                   </span>
                   <Badge variant="outline">
@@ -315,9 +327,9 @@ export function EstadisticasPage() {
                 ) : (
                   <div className="space-y-1.5">
                     {datos.stock_bajo.map((s, i) => (
-                      <div key={`${s.articulo}-${i}`} className="flex items-center justify-between rounded-md border border-aviso/40 bg-aviso/10 px-3 py-2 text-sm">
-                        <span>{s.articulo}{s.talla ? ` (${s.talla})` : ""}</span>
-                        <Badge variant="aviso">{s.cantidad} / mín. {s.minimo}</Badge>
+                      <div key={`${s.articulo}-${i}`} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-aviso/40 bg-aviso/10 px-3 py-2 text-sm">
+                        <span className="min-w-0">{s.articulo}{s.talla ? ` (${s.talla})` : ""}</span>
+                        <Badge variant="aviso" className="shrink-0">{s.cantidad} / mín. {s.minimo}</Badge>
                       </div>
                     ))}
                   </div>

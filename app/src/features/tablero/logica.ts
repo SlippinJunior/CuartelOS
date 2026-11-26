@@ -103,3 +103,32 @@ export function contarPorTipo(lista: PublicacionTablero[]): Record<TipoPublicaci
   }
   return conteo;
 }
+
+/** Combina circulares de compañía y del Cuerpo ordenadas de más reciente a más antigua. */
+export function combinarCirculares(lista: PublicacionTablero[]): PublicacionTablero[] {
+  return lista
+    .filter((p) => p.tipo === "circular_compania" || p.tipo === "circular_cbl")
+    .slice()
+    .sort((a, b) => {
+      const porFecha = (b.fecha ?? "").localeCompare(a.fecha ?? "");
+      if (porFecha !== 0) return porFecha;
+      return (b.creado_en ?? "").localeCompare(a.creado_en ?? "");
+    });
+}
+
+/** Pagina una lista de elementos acotando la página actual al rango válido. */
+export function paginarPublicaciones<T>(
+  items: T[],
+  pagina: number,
+  porPagina: number,
+): { visibles: T[]; totalPaginas: number; paginaActual: number } {
+  const tamano = Math.max(1, porPagina);
+  const totalPaginas = Math.max(1, Math.ceil(items.length / tamano));
+  const paginaActual = Math.min(Math.max(0, pagina), totalPaginas - 1);
+  const inicio = paginaActual * tamano;
+  return {
+    visibles: items.slice(inicio, inicio + tamano),
+    totalPaginas,
+    paginaActual,
+  };
+}

@@ -103,19 +103,19 @@ export function AsistenciaPage() {
   const tabPartes = (
     <>
       <Card className="mb-4">
-        <CardContent className="flex flex-wrap gap-2 pt-4">
-          <Select value={anio} onChange={(e) => setAnio(e.target.value)} aria-label="Año" className="w-28">
+        <CardContent className="grid grid-cols-2 items-center gap-2.5 sm:flex sm:flex-wrap">
+          <Select value={anio} onChange={(e) => setAnio(e.target.value)} aria-label="Año" className="w-full sm:w-28">
             {Array.from({ length: 5 }, (_, i) => anioActual + 1 - i).map((a) => (
               <option key={a} value={a}>{a}</option>
             ))}
           </Select>
-          <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-44">
+          <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-full sm:w-44">
             <option value="">Todos los estados</option>
             {ESTADOS.map((e) => (
               <option key={e} value={e} className="capitalize">{e}</option>
             ))}
           </Select>
-          <span className="ml-auto self-center text-sm text-muted-foreground">{filas.length} partes</span>
+          <span className="col-span-2 text-sm text-muted-foreground sm:col-span-1 sm:ml-auto">{filas.length} partes</span>
         </CardContent>
       </Card>
 
@@ -370,7 +370,7 @@ function NuevaListaDialog({
             </Select>
           </div>
         )}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="nl-numero">N° de lista</Label>
             <Input id="nl-numero" type="number" value={numero} onChange={(e) => setNumero(e.target.value)} />
@@ -388,16 +388,16 @@ function NuevaListaDialog({
             ))}
           </Select>
         </div>
-        <div className="grid grid-cols-3 gap-2">
-          <div className="col-span-1 space-y-1">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="space-y-1">
             <Label htmlFor="nl-hi">Inicio</Label>
             <Input id="nl-hi" type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} />
           </div>
-          <div className="col-span-1 space-y-1">
+          <div className="space-y-1">
             <Label htmlFor="nl-ht">Término</Label>
             <Input id="nl-ht" type="time" value={horaTermino} onChange={(e) => setHoraTermino(e.target.value)} />
           </div>
-          <div className="col-span-1 space-y-1">
+          <div className="col-span-2 space-y-1 sm:col-span-1">
             <Label htmlFor="nl-dir">Lugar</Label>
             <Input id="nl-dir" placeholder="Dirección / Cuartel" value={direccion} onChange={(e) => setDireccion(e.target.value)} />
           </div>

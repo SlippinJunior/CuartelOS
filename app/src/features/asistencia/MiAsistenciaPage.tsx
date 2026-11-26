@@ -1,12 +1,11 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
 import { usePerfil } from "@/features/auth/sesion";
 import { db } from "@/lib/supabase";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -172,9 +171,9 @@ export function MiAsistenciaPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
+            <CardHeader className="flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle>Detalle de actos</CardTitle>
-              <Select aria-label="Filtrar actos por clave" className="w-52" value={claveFiltro} onChange={(e) => setClaveFiltro(e.target.value)}>
+              <Select aria-label="Filtrar actos por clave" className="w-full sm:w-56" value={claveFiltro} onChange={(e) => setClaveFiltro(e.target.value)}>
                 <option value="">Todas las claves</option>
                 {(clavesQ.data ?? []).map((c) => (
                   <option key={c.clave} value={c.clave}>{c.clave} · {c.descripcion}</option>
@@ -188,7 +187,7 @@ export function MiAsistenciaPage() {
                 .reverse()
                 .map((f, i) => (
                   <div key={`${f.lista?.numero}-${i}`} className="flex items-center justify-between gap-3 rounded-md border border-border p-2 text-sm">
-                    <div>
+                    <div className="min-w-0">
                       <p className="font-medium">
                         Lista N° {f.lista?.numero} ·{" "}
                         {f.lista?.tipo_acto_clave && (
@@ -199,6 +198,7 @@ export function MiAsistenciaPage() {
                       <p className="text-xs text-muted-foreground">{formatearFecha(f.lista?.fecha)}</p>
                     </div>
                     <Badge
+                      className="shrink-0"
                       variant={
                         f.marca === "A" ? "exito" : f.marca === "F" ? "peligro" : f.marca === "P" ? "aviso" : "apagado"
                       }
@@ -211,17 +211,16 @@ export function MiAsistenciaPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex-row flex-wrap items-center justify-between gap-2 pb-2">
+            <CardHeader className="flex-col gap-2 pb-2 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle>Consulta de claves de asistencia</CardTitle>
-              <div className="relative w-full sm:w-64">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  className="pl-9"
-                  placeholder="Buscar clave (ej. 10-1, RO)"
-                  value={busquedaClave}
-                  onChange={(e) => setBusquedaClave(e.target.value)}
-                />
-              </div>
+              <SearchInput
+                containerClassName="w-full sm:w-64"
+                placeholder="Buscar clave (ej. 10-1, RO)"
+                value={busquedaClave}
+                onChange={(e) => setBusquedaClave(e.target.value)}
+                onLimpiar={() => setBusquedaClave("")}
+                aria-label="Buscar clave de asistencia"
+              />
             </CardHeader>
             <CardContent className="grid gap-2 sm:grid-cols-2">
               {catalogoClaves.map((c) => (

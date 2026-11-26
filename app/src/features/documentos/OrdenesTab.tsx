@@ -216,7 +216,7 @@ function NuevaOrdenDialog({
       }
     >
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="orden-numero">Número</Label>
             <Input id="orden-numero" type="number" value={numero} onChange={(e) => setNumero(e.target.value)} />

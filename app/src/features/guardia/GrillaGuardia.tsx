@@ -206,9 +206,9 @@ export function GrillaGuardia({ gestiona }: { gestiona: boolean }) {
           </CardHeader>
           <CardContent className="space-y-2">
             {sinLeer.map((n) => (
-              <div key={n.id} className="flex items-start justify-between gap-3 rounded-md border border-border bg-card p-2 text-sm">
-                <span>{n.mensaje}</span>
-                <Button variant="ghost" size="sm" onClick={() => marcarLeida.mutate(n.id)}>
+              <div key={n.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-card p-2 text-sm">
+                <span className="min-w-0 flex-1">{n.mensaje}</span>
+                <Button variant="ghost" size="sm" className="shrink-0" onClick={() => marcarLeida.mutate(n.id)}>
                   <CheckCircle2 /> Entendido
                 </Button>
               </div>
@@ -266,7 +266,7 @@ export function GrillaGuardia({ gestiona }: { gestiona: boolean }) {
           value={cicloId ?? ""}
           onChange={(e) => setCicloId(e.target.value ? Number(e.target.value) : null)}
           aria-label="Ciclo"
-          className="w-auto min-w-56"
+          className="w-full sm:w-auto sm:min-w-56"
         >
           <option value="">Ciclo vigente</option>
           {(ciclosQ.data ?? []).map((c) => (

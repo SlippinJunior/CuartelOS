@@ -99,7 +99,7 @@ function ListaPostulaciones() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
           Alta de postulantes con checklist del art. 7 y votación sin conteo de votos.
         </p>
@@ -232,7 +232,7 @@ function NuevaPostulacion({
       }
     >
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label htmlFor="post-nombres">Nombres</Label>
             <Input id="post-nombres" value={form.nombres} onChange={(e) => setForm({ ...form, nombres: e.target.value })} />

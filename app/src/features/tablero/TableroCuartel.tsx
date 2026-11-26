@@ -2,11 +2,12 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   FileText,
   Megaphone,
   Plus,
   RefreshCw,
-  Search,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -16,17 +17,19 @@ import { puedePublicarTablero, tiposPublicablesPor } from "@/lib/permisos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { formatearFecha } from "@/lib/formato";
 import {
   citacionProxima,
+  combinarCirculares,
   contarPorTipo,
   filtrarPublicaciones,
   META_TIPO_TABLERO,
   ORDEN_FILTROS_TABLERO,
   ordenDiaVigente,
+  paginarPublicaciones,
 } from "@/features/tablero/logica";
 import { DialogoPublicar } from "@/features/tablero/DialogoPublicar";
 import { DialogoDetalleComunicado } from "@/features/tablero/DialogoDetalleComunicado";
@@ -75,6 +78,31 @@ export function TableroCuartel({ modoCuartel = false }: { modoCuartel?: boolean 
   const circularesCia = filtradas.filter((p) => p.tipo === "circular_compania");
   const circularesCbl = filtradas.filter((p) => p.tipo === "circular_cbl");
   const ordenesDiaPasadas = filtradas.filter((p) => p.tipo === "orden_dia" && p.id !== ordenHoy?.id);
+
+  if (modoCuartel) {
+    return (
+      <>
+        <VistaKioscoCuartel
+          data={data}
+          cargando={tableroQ.isLoading}
+          actualizando={tableroQ.isFetching}
+          hoy={hoy}
+          ordenHoy={ordenHoy}
+          citaciones={citaciones}
+          capitanias={capitanias}
+          circulares={combinarCirculares(publicaciones)}
+          modalAbierto={Boolean(seleccionada)}
+          alActualizar={() => void tableroQ.refetch()}
+          alAbrir={setSeleccionada}
+        />
+        <DialogoDetalleComunicado
+          publicacion={seleccionada}
+          onCambio={(v) => !v && setSeleccionada(null)}
+          esOficial={esOficial}
+        />
+      </>
+    );
+  }
 
   return (
     <section className="space-y-5" aria-label="Tablero de Cuartel">
@@ -193,7 +221,11 @@ export function TableroCuartel({ modoCuartel = false }: { modoCuartel?: boolean 
 
       {/* Filtros grandes y búsqueda */}
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 sm:p-4">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Categorías del tablero">
+        <div
+          className="flex gap-1.5 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
+          role="tablist"
+          aria-label="Categorías del tablero"
+        >
           {ORDEN_FILTROS_TABLERO.map((f) => {
             const activo = filtro === f;
             const label = f === "todas" ? "Todas" : META_TIPO_TABLERO[f].etiquetaCorta;
@@ -203,7 +235,7 @@ export function TableroCuartel({ modoCuartel = false }: { modoCuartel?: boolean 
                 variant={activo ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFiltro(f)}
-                className="min-h-11 px-3 text-sm"
+                className="min-h-11 shrink-0 px-3 text-sm"
               >
                 {label}
                 <span className="ml-1 rounded-full bg-background/20 px-1.5 text-xs">
@@ -213,16 +245,14 @@ export function TableroCuartel({ modoCuartel = false }: { modoCuartel?: boolean 
             );
           })}
         </div>
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-3.5 size-4 text-muted-foreground" />
-          <Input
-            className="pl-9 text-base"
-            placeholder="Buscar por título, número, lugar o tenida…"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            aria-label="Buscar en el tablero"
-          />
-        </div>
+        <SearchInput
+          className="text-base"
+          placeholder="Buscar por título, número, lugar o tenida…"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          onLimpiar={() => setBusqueda("")}
+          aria-label="Buscar en el tablero"
+        />
       </div>
 
       {/* Cuerpo del Tablero */}
@@ -422,5 +452,334 @@ function TarjetaPublicacion({
         <span className="text-xs font-semibold text-primary">Ver detalle →</span>
       </div>
     </button>
+  );
+}
+
+/**
+ * Vista de pantalla de cuartel diseñada para monitores y televisores:
+ * en pantallas >= 1024px ajusta todo el contenido al viewport sin scroll.
+ */
+function VistaKioscoCuartel({
+  data,
+  cargando,
+  actualizando,
+  hoy,
+  ordenHoy,
+  citaciones,
+  capitanias,
+  circulares,
+  modalAbierto,
+  alActualizar,
+  alAbrir,
+}: {
+  data?: TableroCuartelData;
+  cargando: boolean;
+  actualizando: boolean;
+  hoy: string;
+  ordenHoy: PublicacionTablero | null;
+  citaciones: PublicacionTablero[];
+  capitanias: PublicacionTablero[];
+  circulares: PublicacionTablero[];
+  modalAbierto: boolean;
+  alActualizar: () => void;
+  alAbrir: (p: PublicacionTablero) => void;
+}) {
+  if (cargando) {
+    return (
+      <div className="grid gap-3 lg:h-full lg:grid-rows-[0.4fr_0.6fr]">
+        <Skeleton className="h-44 w-full lg:h-full" />
+        <div className="grid gap-3 lg:grid-cols-3">
+          <Skeleton className="h-56 w-full lg:h-full" />
+          <Skeleton className="h-56 w-full lg:h-full" />
+          <Skeleton className="h-56 w-full lg:h-full" />
+        </div>
+      </div>
+    );
+  }
+
+  const dotacion = data?.guardia_hoy?.dotacion ?? [];
+
+  return (
+    <section
+      aria-label="Tablero de Cuartel en pantalla completa"
+      className="flex flex-col gap-3 [container-type:inline-size] lg:h-full lg:min-h-0 lg:overflow-hidden"
+    >
+      {/* Barra sutil de estado / feriado y actualización manual */}
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-medium text-foreground">
+            Resumen operativo en tiempo real
+          </span>
+          {data?.feriado_hoy && (
+            <Badge variant="aviso">Feriado: {data.feriado_hoy}</Badge>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 min-h-8 px-2.5 text-xs"
+          onClick={alActualizar}
+          disabled={actualizando}
+        >
+          <RefreshCw className={actualizando ? "animate-spin" : ""} />
+          Actualizar
+        </Button>
+      </div>
+
+      {/* Grilla 2 franjas proporcionales (40% superior / 60% inferior en monitor/TV) */}
+      <div className="grid min-h-0 flex-1 gap-3 lg:grid-rows-[minmax(0,0.40fr)_minmax(0,0.60fr)]">
+        {/* Franja superior: Orden del día vigente + Guardia nocturna */}
+        <div className="grid min-h-0 gap-3 lg:grid-cols-12">
+          <Card className="flex min-h-0 flex-col overflow-hidden border-primary/40 bg-primary/5 lg:col-span-8">
+            <CardHeader className="shrink-0 pb-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Badge variant="default">
+                  <Sparkles className="size-3.5" aria-hidden="true" /> Orden del día vigente
+                </Badge>
+                {ordenHoy && (
+                  <span className="text-xs font-medium text-muted-foreground sm:text-sm">
+                    N° {ordenHoy.numero}/{ordenHoy.anio} · {formatearFecha(ordenHoy.fecha)}
+                    {ordenHoy.vigente_hasta ? ` · Hasta ${formatearFecha(ordenHoy.vigente_hasta)}` : ""}
+                  </span>
+                )}
+              </div>
+              <CardTitle className="line-clamp-2 pt-1 text-[clamp(1.05rem,1.4cqi,1.65rem)] font-bold leading-snug">
+                {ordenHoy ? ordenHoy.titulo : "Sin orden del día activa para hoy"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex min-h-0 flex-1 flex-col justify-between gap-2 overflow-hidden">
+              {ordenHoy ? (
+                <>
+                  <p className="line-clamp-4 text-[clamp(0.9rem,1.05cqi,1.25rem)] leading-relaxed text-foreground/90 xl:line-clamp-5">
+                    {ordenHoy.texto}
+                  </p>
+                  <div className="shrink-0">
+                    <Button variant="outline" size="sm" onClick={() => alAbrir(ordenHoy)}>
+                      <FileText /> Leer completa
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Cuando Capitanía o Teniente 1° publique una orden del día aparecerá destacada aquí.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="flex min-h-0 flex-col overflow-hidden lg:col-span-4">
+            <CardHeader className="shrink-0 pb-2">
+              <div className="flex items-center justify-between gap-2">
+                <CardTitle className="flex items-center gap-2 text-[clamp(1rem,1.15cqi,1.35rem)]">
+                  <ShieldCheck className="size-5 shrink-0 text-primary" aria-hidden="true" />
+                  Guardia nocturna de hoy
+                </CardTitle>
+                <Badge variant={dotacion.length > 0 ? "exito" : "outline"}>
+                  {dotacion.length}
+                </Badge>
+              </div>
+              <CardDescription>
+                {data?.guardia_hoy
+                  ? `${formatearFecha(data.guardia_hoy.fecha)} · ${data.guardia_hoy.estado}`
+                  : "Sin turno nocturno programado"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="min-h-0 flex-1 overflow-hidden">
+              {dotacion.length > 0 ? (
+                <ul
+                  className={
+                    dotacion.length > 6
+                      ? "grid grid-cols-1 gap-x-3 gap-y-1 text-[clamp(0.8rem,0.9cqi,1.05rem)] xl:grid-cols-2"
+                      : "space-y-1.5 text-[clamp(0.85rem,0.95cqi,1.1rem)]"
+                  }
+                >
+                  {dotacion.slice(0, 12).map((g) => (
+                    <li key={g.registro} className="flex items-center justify-between gap-2">
+                      <span className="truncate font-medium">
+                        <span className="mr-1.5 font-mono text-xs text-muted-foreground">{g.registro}</span>
+                        {g.nombre}
+                      </span>
+                      {g.es_jefe && <Badge variant="secondary" className="shrink-0">Jefe</Badge>}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Sin dotación asignada todavía para esta noche.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Franja inferior: 3 columnas con paginación automática */}
+        <div className="grid min-h-0 gap-3 lg:grid-cols-3">
+          <ColumnaKiosco
+            titulo="Próximas citaciones"
+            items={citaciones}
+            hoy={hoy}
+            modalAbierto={modalAbierto}
+            vacio="Sin citaciones registradas."
+            alAbrir={alAbrir}
+          />
+          <ColumnaKiosco
+            titulo="Órdenes de capitanía"
+            items={capitanias}
+            hoy={hoy}
+            modalAbierto={modalAbierto}
+            vacio="Sin órdenes de capitanía."
+            alAbrir={alAbrir}
+          />
+          <ColumnaKiosco
+            titulo="Circulares (Compañía y CBL)"
+            items={circulares}
+            hoy={hoy}
+            modalAbierto={modalAbierto}
+            vacio="Sin circulares vigentes."
+            mostrarTipo
+            alAbrir={alAbrir}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ColumnaKiosco({
+  titulo,
+  items,
+  hoy,
+  modalAbierto,
+  vacio,
+  mostrarTipo = false,
+  alAbrir,
+}: {
+  titulo: string;
+  items: PublicacionTablero[];
+  hoy: string;
+  modalAbierto: boolean;
+  vacio: string;
+  mostrarTipo?: boolean;
+  alAbrir: (p: PublicacionTablero) => void;
+}) {
+  const [pagina, setPagina] = React.useState(0);
+  const [enPausa, setEnPausa] = React.useState(false);
+
+  const { visibles, totalPaginas, paginaActual } = React.useMemo(
+    () => paginarPublicaciones(items, pagina, 3),
+    [items, pagina],
+  );
+
+  React.useEffect(() => {
+    if (totalPaginas <= 1 || enPausa || modalAbierto) return;
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const id = window.setInterval(() => {
+      setPagina((p) => (p + 1) % totalPaginas);
+    }, 15_000);
+    return () => window.clearInterval(id);
+  }, [totalPaginas, enPausa, modalAbierto]);
+
+  return (
+    <Card
+      className="flex min-h-0 flex-col overflow-hidden"
+      onMouseEnter={() => setEnPausa(true)}
+      onMouseLeave={() => setEnPausa(false)}
+    >
+      <CardHeader className="shrink-0 pb-2">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="truncate text-[clamp(0.95rem,1.1cqi,1.25rem)]">{titulo}</CardTitle>
+          <div className="flex shrink-0 items-center gap-1">
+            {totalPaginas > 1 && (
+              <div className="flex items-center gap-0.5 text-xs text-muted-foreground">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 min-h-7"
+                  aria-label={`Página anterior de ${titulo}`}
+                  onClick={() => setPagina((p) => (p - 1 + totalPaginas) % totalPaginas)}
+                >
+                  <ChevronLeft className="size-3.5" />
+                </Button>
+                <span className="tabular-nums px-1 font-medium">
+                  {paginaActual + 1}/{totalPaginas}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 min-h-7"
+                  aria-label={`Siguiente página de ${titulo}`}
+                  onClick={() => setPagina((p) => (p + 1) % totalPaginas)}
+                >
+                  <ChevronRight className="size-3.5" />
+                </Button>
+              </div>
+            )}
+            <Badge variant="outline">{items.length}</Badge>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="min-h-0 flex-1 overflow-hidden">
+        {items.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{vacio}</p>
+        ) : (
+          <div className="grid h-full min-h-0 gap-2 lg:grid-rows-3">
+            {visibles.map((p) => {
+              const esProxima = citacionProxima(p, hoy);
+              return (
+                <button
+                  key={`${p.tipo}-${p.id}`}
+                  type="button"
+                  onClick={() => alAbrir(p)}
+                  className="flex min-h-0 w-full flex-col justify-between gap-1 overflow-hidden rounded-lg border border-border bg-card p-2.5 text-left transition-colors hover:bg-accent xl:p-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex min-w-0 flex-wrap items-center gap-1">
+                      {mostrarTipo && (
+                        <Badge variant={p.tipo === "circular_cbl" ? "secondary" : "outline"} className="text-[10px]">
+                          {p.tipo === "circular_cbl" ? "CBL" : "Compañía"}
+                        </Badge>
+                      )}
+                      <span className="text-[11px] font-semibold text-muted-foreground">
+                        N° {p.numero}/{p.anio}
+                      </span>
+                      {p.tipo === "citacion" && esProxima && (
+                        <Badge variant={p.obligatoria ? "peligro" : "exito"} className="text-[10px]">
+                          {p.obligatoria ? "Obligatoria" : "Próxima"}
+                        </Badge>
+                      )}
+                    </div>
+                    <span className="shrink-0 text-[11px] text-muted-foreground">
+                      {formatearFecha(p.fecha)}
+                    </span>
+                  </div>
+
+                  <p className="line-clamp-1 text-[clamp(0.85rem,0.95cqi,1.05rem)] font-semibold leading-snug xl:line-clamp-2">
+                    {p.titulo}
+                  </p>
+
+                  {p.tipo === "citacion" && p.fecha_evento ? (
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1 font-medium text-foreground">
+                        <CalendarDays className="size-3 text-primary" aria-hidden="true" />
+                        {formatearFecha(p.fecha_evento)} {p.hora_evento ? `${p.hora_evento.slice(0, 5)} h` : ""}
+                      </span>
+                      {p.lugar && <span className="truncate">{p.lugar}</span>}
+                      {p.tenida && <Badge variant="secondary" className="text-[10px]">{p.tenida}</Badge>}
+                    </div>
+                  ) : (
+                    p.resumen && (
+                      <p className="line-clamp-1 text-xs text-muted-foreground">{p.resumen}</p>
+                    )
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

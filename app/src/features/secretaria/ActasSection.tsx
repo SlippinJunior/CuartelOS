@@ -118,22 +118,22 @@ export function ActasSection() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Select value={anio} onChange={(e) => setAnio(e.target.value)} aria-label="Año" className="w-28">
+      <div className="grid grid-cols-2 items-center gap-2 sm:flex sm:flex-wrap">
+        <Select value={anio} onChange={(e) => setAnio(e.target.value)} aria-label="Año" className="w-full sm:w-28">
           {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
         </Select>
-        <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-40">
+        <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-full sm:w-40">
           <option value="">Todas</option>
           <option value="borrador">Borradores</option>
           <option value="aprobada">Aprobadas</option>
         </Select>
-        <Badge variant="outline" className="self-center">
+        <Badge variant="outline" className="w-fit self-center">
           {filas.length} actas
         </Badge>
         {puedeEditar && (
-          <Button className="ml-auto" onClick={() => setEditor("nuevo")}>
+          <Button className="col-span-2 w-full sm:col-span-1 sm:ml-auto sm:w-auto" onClick={() => setEditor("nuevo")}>
             <Plus /> Nueva acta
           </Button>
         )}

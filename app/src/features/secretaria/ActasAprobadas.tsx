@@ -91,7 +91,7 @@ export function ActasAprobadas() {
         const deEstaActa = (acuerdos ?? []).filter((x) => x.acta_id === a.id);
         return (
           <Card key={a.id}>
-            <CardHeader className="flex-row items-start justify-between gap-2 pb-2">
+            <CardHeader className="flex-row flex-wrap items-start justify-between gap-2 pb-2">
               <CardTitle className="text-base">
                 Acta N° {a.numero}/{a.anio}
                 <span className="ml-2 text-xs font-normal text-muted-foreground">

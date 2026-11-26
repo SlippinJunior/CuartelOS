@@ -8,7 +8,7 @@ import { usePerfil } from "@/features/auth/sesion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -117,19 +117,20 @@ export function AcuerdosSection() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Input
+      <div className="grid gap-2.5 sm:flex sm:flex-wrap sm:items-center">
+        <SearchInput
           placeholder="Buscar en el libro de acuerdos"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="max-w-xs"
+          onLimpiar={() => setBusqueda("")}
+          containerClassName="w-full sm:max-w-xs"
           aria-label="Buscar acuerdo"
         />
-        <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-40">
+        <Select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado" className="w-full sm:w-44">
           <option value="">Todos</option>
           {ESTADOS.map((e) => <option key={e} value={e}>{e.replace("_", " ")}</option>)}
         </Select>
-        <Badge variant="outline" className="self-center">{filas.length} acuerdos</Badge>
+        <Badge variant="outline" className="w-fit self-center">{filas.length} acuerdos</Badge>
       </div>
 
       <ResponsiveList

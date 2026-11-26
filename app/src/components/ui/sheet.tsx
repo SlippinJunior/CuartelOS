@@ -20,6 +20,7 @@ interface SheetProps {
  */
 export function Sheet({ abierto, onCambio, titulo, children, lado = "inferior" }: SheetProps) {
   const ref = React.useRef<HTMLDialogElement>(null);
+  const tituloId = React.useId();
 
   const cerrar = React.useCallback(() => onCambio(false), [onCambio]);
 
@@ -68,11 +69,11 @@ export function Sheet({ abierto, onCambio, titulo, children, lado = "inferior" }
         lado === "inferior" ? "rounded-t-2xl" : "rounded-l-2xl",
       )}
       style={posicion}
-      aria-labelledby="sheet-titulo"
+      aria-labelledby={tituloId}
     >
-      <div className="flex items-center justify-between border-b border-border p-4">
-        <h2 id="sheet-titulo" className="text-base font-semibold">{titulo}</h2>
-        <Button variant="ghost" size="icon" aria-label="Cerrar" onClick={cerrar}>
+      <div className="flex items-center justify-between gap-3 border-b border-border p-4">
+        <h2 id={tituloId} className="min-w-0 truncate text-base font-semibold">{titulo}</h2>
+        <Button variant="ghost" size="icon" className="shrink-0" aria-label="Cerrar" onClick={cerrar}>
           <X />
         </Button>
       </div>
