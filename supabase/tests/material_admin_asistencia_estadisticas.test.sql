@@ -2,7 +2,7 @@
 -- Pruebas pgTAP · Permisos por módulo, Bitácora, Libro 2026 y Estadísticas
 -- =====================================================================
 begin;
-select plan(14);
+select plan(15);
 
 -- Usuarios de prueba: cuartel, bombero, capitan, director
 insert into auth.users (id, email) values
@@ -40,13 +40,15 @@ on conflict (id) do nothing;
 
 insert into asistencia.lista (id, compania_id, anio, numero, fecha, tipo_acto_clave, descripcion, estado, comentarios)
 overriding system value
-values (9901, 1, 2026, 9901, '2026-05-10', '10-1', 'Parte prueba', 'cerrada', 'Incendio estructural controlado')
+values (9901, 1, 2026, 9901, '2026-05-10', '10-1', 'Parte prueba', 'borrador', 'Incendio estructural controlado')
 on conflict (id) do nothing;
 
 insert into asistencia.asistencia (lista_id, persona_id, marca) values
   (9901, 'bbbbbbbb-0000-0000-0000-000000000012', 'A'),
   (9901, 'bbbbbbbb-0000-0000-0000-000000000013', 'F')
 on conflict do nothing;
+
+update asistencia.lista set estado = 'cerrada' where id = 9901;
 
 -- 1-3: Director configura excepciones por módulo sobre los bloques de rol
 set local role authenticated;
